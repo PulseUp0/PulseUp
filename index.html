@@ -296,15 +296,15 @@
 
     import { createClient } from
 
-      'https\://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+      'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
 
 
     // ЗАМЕНИ эти значения данными своего проекта Supabase.
 
-    const SUPABASE_URL = 'https\://PulseUp.supabase.co';
+    const SUPABASE_URL = 'https://xfbbhfyfqprwvcsmvopx.supabase.co';
 
-    const SUPABASE_KEY = 'YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY';
+    const SUPABASE_KEY = 'sb_publishable_1vguY-TDFIuRoVdVkHKeCw_u6TmpAFj';
 
 
 
@@ -334,7 +334,7 @@
 
     function configured() {
 
-      return SUPABASE_URL.startsWith('https\://') &&
+      return SUPABASE_URL.startsWith('https://') &&
 
         !SUPABASE_URL.includes('YOUR_PROJECT') &&
 
@@ -349,12 +349,15 @@
       registration = value;
 
       $('nameWrap').classList.toggle('hidden', !value);
+      $('displayName').required = value;
 
       $('authSubmit').textContent = value ? 'Создать аккаунт' : 'Войти';
 
-      $('loginTab').className = value ? 'secondary' : '';
+      $('loginTab').classList.toggle('active', !value);
+      $('loginTab').classList.toggle('secondary', value);
 
-      $('registerTab').className = value ? '' : 'secondary';
+      $('registerTab').classList.toggle('active', value);
+      $('registerTab').classList.toggle('secondary', !value);
 
       $('password').autocomplete = value ? 'new-password' : 'current-password';
 
@@ -404,7 +407,7 @@
 
       const list = $('messages');
 
-      if (list.querySelector(\`[data-id="${msg.id}"]\`)) return;
+      if (list.querySelector(`[data-id="${msg.id}"]`)) return;
 
 
 
@@ -424,11 +427,11 @@
 
       const date = new Date(msg.created_at);
 
-      meta.textContent = \`${msg.sender_name} · ${
+      meta.textContent = `${msg.sender_name} · ${
 
         date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 
-      }\`;
+      }`;
 
 
 
@@ -702,7 +705,7 @@
 
     } else {
 
-      supabase = createClient(https://xfbbhfyfqprwvcsmvopx.supabase.co, sb_publishable_1vguY-TDFIuRoVdVkHKeCw_u6TmpAFj);
+      supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
       const { data, error } = await supabase.auth.getSession();
 
