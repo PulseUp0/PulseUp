@@ -153,6 +153,19 @@
     .composer button { min-width: 52px; }
     .topline { display: flex; align-items: center; gap: 12px; }
     footer { text-align: center; margin: 20px 0 4px; }
+
+    .profile-card { display:grid; grid-template-columns: 84px minmax(0,1fr); gap:16px; align-items:center; margin:18px 0 8px; padding:16px; border:1px solid var(--border); border-radius:18px; background:rgba(8,7,18,.32); }
+    .profile-avatar { width:84px; height:84px; border-radius:50%; object-fit:cover; display:grid; place-items:center; background:linear-gradient(135deg,#853cff,#3e72ff); border:2px solid rgba(192,168,255,.35); font-size:30px; }
+    .profile-fields { display:grid; grid-template-columns:1fr 1fr; gap:0 12px; }
+    .profile-fields .full { grid-column:1 / -1; }
+    .profile-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .profile-actions button { padding:9px 12px; }
+    .profile-editor { margin:12px 0; padding:16px; border:1px solid var(--border); border-radius:16px; background:rgba(8,7,18,.28); }
+    .profile-editor textarea { width:100%; color:var(--text); background:var(--field); border:1px solid rgba(173,153,219,.2); border-radius:13px; padding:12px 14px; resize:vertical; font:inherit; }
+    .profile-editor input[type=file] { padding:9px; }
+    .profile-name { font-size:18px; font-weight:800; overflow-wrap:anywhere; }
+    @media(max-width:520px) { .profile-fields { grid-template-columns:1fr; } .profile-fields .full { grid-column:auto; } .profile-card { grid-template-columns:68px minmax(0,1fr); } .profile-avatar { width:68px;height:68px; } }
+
     @media (max-width: 760px) {
       .shell { padding: 15px; }
       #auth { grid-template-columns: 1fr; gap: 22px; margin-top: 20px; padding: 23px; }
@@ -266,6 +279,27 @@
 
       <div class="status" id="connection">Подключение к чату…</div>
 
+      <section class="profile-card" aria-label="Профиль пользователя">
+        <img id="profileAvatar" class="profile-avatar" alt="Фото профиля" src="" hidden />
+        <div id="profileAvatarFallback" class="profile-avatar" aria-hidden="true">💜</div>
+        <div class="grow">
+          <div class="profile-name" id="profileName">Твой профиль</div>
+          <div class="muted" id="profileUsername">@username не задан</div>
+          <div class="muted" id="profileBio">Добавь информацию о себе</div>
+          <div class="profile-actions"><button class="secondary" id="editProfileButton" type="button">Редактировать профиль</button></div>
+        </div>
+      </section>
+      <form id="profileEditor" class="profile-editor hidden">
+        <h2>Настройки профиля</h2>
+        <div class="profile-fields">
+          <div><label for="profileDisplayName">Имя</label><input id="profileDisplayName" maxlength="40" required placeholder="Как тебя называть" /></div>
+          <div><label for="profileHandle">Уникальный username</label><input id="profileHandle" maxlength="24" pattern="[A-Za-z0-9_]{3,24}" placeholder="например, pulse_user" /><div class="muted">3–24 символа: латиница, цифры и _</div></div>
+          <div class="full"><label for="profileBioInput">О себе</label><textarea id="profileBioInput" maxlength="160" rows="3" placeholder="Пара слов о себе…"></textarea></div>
+          <div class="full"><label for="profilePhotoInput">Фото профиля</label><input id="profilePhotoInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" /><div class="muted">PNG, JPG, WEBP или GIF, максимум 5 МБ.</div></div>
+        </div>
+        <div class="profile-actions"><button id="saveProfileButton" class="primary" type="submit">Сохранить профиль</button><button id="cancelProfileButton" class="secondary" type="button">Отмена</button></div>
+        <div class="status" id="profileStatus" role="status" aria-live="polite"></div>
+      </form>
       <div class="messages" id="messages" aria-live="polite"></div>
 
       <form id="sendForm" class="composer">
@@ -325,6 +359,7 @@
     let sending = false;
 
     let oldestLoaded = null;
+    let profileAvatarUrl = null;
 
 
 
@@ -394,6 +429,7 @@
       authBox.classList.remove('hidden');
 
       $('messages').replaceChildren();
+      $('profileEditor').classList.add('hidden');
 
       if (channel) supabase.removeChannel(channel);
 
@@ -480,6 +516,100 @@
     }
 
 
+
+    function setProfileAvatar(url) {
+      const img = $('profileAvatar');
+      const fallback = $('profileAvatarFallback');
+      if (url) {
+        img.src = url;
+        img.hidden = false;
+        fallback.hidden = true;
+      } else {
+        img.removeAttribute('src');
+        img.hidden = true;
+        fallback.hidden = false;
+      }
+    }
+
+    async function loadProfile(user) {
+      $('profileName').textContent = user.user_metadata?.display_name || 'Пользователь PulseUp';
+      $('profileUsername').textContent = '@username не задан';
+      $('profileBio').textContent = 'Добавь информацию о себе';
+      $('profileDisplayName').value = user.user_metadata?.display_name || '';
+      $('profileHandle').value = '';
+      $('profileBioInput').value = '';
+      setProfileAvatar(null);
+      profileAvatarUrl = null;
+      const { data, error } = await supabase.from('profiles')
+        .select('id,display_name,username,bio,avatar_url').eq('id', user.id).maybeSingle();
+      if (error) {
+        status('profileStatus', 'Создай таблицу profiles и политики по инструкции. ' + error.message);
+        return;
+      }
+      const profile = data || {};
+      $('profileName').textContent = profile.display_name || user.user_metadata?.display_name || 'Пользователь PulseUp';
+      $('profileUsername').textContent = profile.username ? '@' + profile.username : '@username не задан';
+      $('profileBio').textContent = profile.bio || 'Добавь информацию о себе';
+      $('profileDisplayName').value = profile.display_name || user.user_metadata?.display_name || '';
+      $('profileHandle').value = profile.username || '';
+      $('profileBioInput').value = profile.bio || '';
+      profileAvatarUrl = profile.avatar_url || null;
+      setProfileAvatar(profileAvatarUrl);
+      status('profileStatus', '');
+    }
+
+    $('editProfileButton').onclick = () => {
+      $('profileEditor').classList.remove('hidden');
+      $('profileDisplayName').focus();
+    };
+    $('cancelProfileButton').onclick = () => {
+      $('profileEditor').classList.add('hidden');
+      if (currentUser) loadProfile(currentUser);
+    };
+
+    $('profileEditor').addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!currentUser) return;
+      const button = $('saveProfileButton');
+      button.disabled = true;
+      status('profileStatus', 'Сохраняем профиль…');
+      try {
+        const displayName = $('profileDisplayName').value.trim();
+        const username = $('profileHandle').value.trim().toLowerCase();
+        const bio = $('profileBioInput').value.trim();
+        if (!displayName) throw new Error('Укажи имя.');
+        if (username && !/^[a-z0-9_]{3,24}$/.test(username)) throw new Error('Username: 3–24 символа, латиница, цифры и _.');
+        let avatarUrl = profileAvatarUrl;
+        const file = $('profilePhotoInput').files[0];
+        if (file) {
+          if (!['image/jpeg','image/png','image/webp','image/gif'].includes(file.type)) throw new Error('Выбери изображение PNG, JPG, WEBP или GIF.');
+          if (file.size > 5 * 1024 * 1024) throw new Error('Фото должно быть не больше 5 МБ.');
+          const extension = ({'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/gif':'gif'})[file.type];
+          const path = `${currentUser.id}/${Date.now()}.${extension}`;
+          const { error: uploadError } = await supabase.storage.from('profile-photos').upload(path, file, { upsert: true, contentType: file.type });
+          if (uploadError) throw uploadError;
+          const { data: publicData } = supabase.storage.from('profile-photos').getPublicUrl(path);
+          avatarUrl = publicData.publicUrl;
+        }
+        const row = { id: currentUser.id, display_name: displayName, username: username || null, bio: bio || '', avatar_url: avatarUrl, updated_at: new Date().toISOString() };
+        const { error: saveError } = await supabase.from('profiles').upsert(row, { onConflict: 'id' });
+        if (saveError) throw saveError;
+        const { error: authError } = await supabase.auth.updateUser({ data: { display_name: displayName } });
+        if (authError) throw authError;
+        profileAvatarUrl = avatarUrl;
+        $('profileName').textContent = displayName;
+        $('profileUsername').textContent = username ? '@' + username : '@username не задан';
+        $('profileBio').textContent = bio || 'Добавь информацию о себе';
+        setProfileAvatar(avatarUrl);
+        $('profilePhotoInput').value = '';
+        $('profileEditor').classList.add('hidden');
+        status('profileStatus', 'Профиль сохранён!');
+      } catch (error) {
+        status('profileStatus', error.message || 'Не удалось сохранить профиль.');
+      } finally {
+        button.disabled = false;
+      }
+    });
 
     async function connectChat(user) {
 
