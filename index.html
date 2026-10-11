@@ -560,8 +560,9 @@
         <div id="peopleResults" class="people-results"><p class="muted">Начни вводить имя или username — результаты появятся автоматически.</p></div>
       </section>
       <section id="musicView" class="card hidden" aria-label="Музыка PulseUp">
-        <div class="topline"><div class="grow"><h2>🎵 Музыкальная библиотека</h2><div class="muted">Загружай собственную музыку, открывай треки сообщества и собирай плейлисты</div></div></div>
-        <form id="musicUploadForm" class="profile-editor">
+        <div class="topline" style="align-items:center"><div class="grow"><h2>🎵 Музыка</h2><div class="muted">Твоя коллекция и новые треки сообщества</div></div><button id="musicAddToggle" class="primary" type="button" aria-label="Добавить музыку" title="Добавить музыку" style="width:44px;height:44px;min-width:44px;padding:0;border-radius:50%;font-size:26px;line-height:1">＋</button></div>
+        <div class="profile-actions" role="tablist" aria-label="Разделы музыки" style="margin:14px 0 16px;gap:8px"><button id="musicTabMine" class="primary" type="button" role="tab" aria-selected="true">Моя музыка</button><button id="musicTabNew" class="secondary" type="button" role="tab" aria-selected="false">Новинки</button></div>
+        <form id="musicUploadForm" class="profile-editor hidden">
           <div class="profile-fields">
             <div><label for="musicUploadTitle">Название трека *</label><input id="musicUploadTitle" maxlength="120" required placeholder="Название песни" /></div>
             <div><label for="musicUploadArtist">Исполнитель</label><input id="musicUploadArtist" maxlength="120" placeholder="Имя исполнителя" /></div>
@@ -573,7 +574,7 @@
           <div class="status" id="musicUploadStatus" role="status"></div>
         </form>
         <div class="profile-editor" style="margin-top:18px">
-          <div class="profile-fields"><div><label for="musicLibraryQuery">Поиск в библиотеке</label><input id="musicLibraryQuery" maxlength="120" placeholder="Название, исполнитель или жанр" /></div><div><label for="musicSort">Сортировка</label><select id="musicSort"><option value="new">Новые</option><option value="popular">Популярные</option><option value="mine">Мои треки</option><option value="favorites">Избранное</option></select></div></div>
+          <div class="profile-fields"><div><label for="musicLibraryQuery">Поиск в библиотеке</label><input id="musicLibraryQuery" maxlength="120" placeholder="Название, исполнитель или жанр" /></div><div><label for="musicSort">Сортировка</label><select id="musicSort"><option value="new">Сначала новые</option><option value="popular">Популярные</option><option value="mine">Мои треки</option><option value="favorites">Избранное</option></select></div></div>
           <div class="profile-actions"><button class="primary" id="musicReloadButton" type="button">Показать треки</button></div>
           <div id="musicLibraryStatus" class="status" role="status"></div>
         </div>
@@ -800,6 +801,26 @@
     $('navChat').onclick = () => showAppView('chat');
     $('navPosts').onclick = () => showAppView('posts'); $('navSearch').onclick = () => showAppView('search'); $('navFriends').onclick = () => showAppView('friends');
     $('navMusic').onclick = () => showAppView('music');
+    let musicSection = 'mine';
+    function setMusicSection(section) {
+      musicSection = section;
+      $('musicTabMine').className = section === 'mine' ? 'primary' : 'secondary';
+      $('musicTabNew').className = section === 'new' ? 'primary' : 'secondary';
+      $('musicTabMine').setAttribute('aria-selected', String(section === 'mine'));
+      $('musicTabNew').setAttribute('aria-selected', String(section === 'new'));
+      $('musicSort').value = section === 'mine' ? 'mine' : 'new';
+      loadMusicLibrary();
+    }
+    $('musicTabMine').addEventListener('click', () => setMusicSection('mine'));
+    $('musicTabNew').addEventListener('click', () => setMusicSection('new'));
+    $('musicAddToggle').addEventListener('click', () => {
+      const form = $('musicUploadForm');
+      const opening = form.classList.contains('hidden');
+      form.classList.toggle('hidden', !opening);
+      $('musicAddToggle').textContent = opening ? '×' : '＋';
+      $('musicAddToggle').setAttribute('aria-label', opening ? 'Закрыть добавление музыки' : 'Добавить музыку');
+      if (opening) $('musicUploadTitle').focus();
+    });
     $('navProfile').onclick = () => showAppView('profile');
     $('mobileNavChat').onclick = () => showAppView('chat');
     $('mobileNavPosts').onclick = () => showAppView('posts'); $('mobileNavSearch').onclick = () => showAppView('search');
@@ -844,7 +865,7 @@
         const sort = $('musicSort').value;
         const query = $('musicLibraryQuery').value.trim();
         let request = supabase.from('music_tracks').select('id,uploader_id,title,artist,genre,storage_path,mime_type,file_size,created_at').limit(100);
-        if (sort === 'mine') request = request.eq('uploader_id',currentUser.id);
+        if (musicSection === 'mine' || sort === 'mine') request = request.eq('uploader_id',currentUser.id);
         if (query) request = request.or(`title.ilike.%${query.replace(/[,%()]/g,' ')}%,artist.ilike.%${query.replace(/[,%()]/g,' ')}%,genre.ilike.%${query.replace(/[,%()]/g,' ')}%`);
         request = request.order('created_at',{ascending:false});
         const {data:tracks,error} = await request; if (error) throw error;
