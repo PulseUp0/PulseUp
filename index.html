@@ -646,6 +646,12 @@ input, textarea, select, .input, .text-input {
   border-color:rgba(167, 92, 255, .48) !important;
 }
 </style>
+
+<style id="pulseup-unread-counter-style">
+  #navChat {display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .unread-badge{display:inline-flex;align-items:center;justify-content:center;min-width:21px;height:21px;padding:0 6px;box-sizing:border-box;border-radius:999px;background:linear-gradient(135deg,#b45cff,#713cff);color:#fff;font-size:11px;font-weight:800;line-height:1;box-shadow:0 0 8px rgba(169,83,255,.72),0 0 18px rgba(130,60,255,.34);border:1px solid rgba(224,194,255,.7);vertical-align:middle;}
+  .unread-badge.hidden{display:none!important}.mobile-unread-badge{min-width:17px;height:17px;font-size:10px;padding:0 4px;margin-left:3px;}
+</style>
 </head>
 
 <body>
@@ -720,7 +726,7 @@ input, textarea, select, .input, .text-input {
       <div class="app-layout">
         <aside class="app-sidebar" aria-label="Навигация PulseUp">
           <div class="sidebar-brand">💜 PulseUp</div>
-          <button type="button" class="nav-button active" id="navChat">💬 Сообщения</button>
+          <button type="button" class="nav-button active" id="navChat"><span>💬 Сообщения</span><span class="unread-badge hidden" id="unreadMessagesBadge" aria-label="Непрочитанные сообщения">0</span></button>
           <button type="button" class="nav-button" id="navPosts">📰 Посты</button>
           <button type="button" class="nav-button" id="navSearch">🔎 Поиск</button>
           <button type="button" class="nav-button" id="navFriends">👥 Друзья</button>
@@ -818,7 +824,7 @@ input, textarea, select, .input, .text-input {
       <div id="imageLightbox" class="image-lightbox hidden" role="dialog" aria-modal="true" aria-label="Просмотр изображения"><button type="button" id="closeImageLightbox" aria-label="Закрыть">×</button><img id="lightboxImage" alt="Изображение"></div>
       
       <nav class="mobile-bottom-nav" aria-label="Основная навигация">
-        <button type="button" class="mobile-nav-button" id="mobileNavChat"><span aria-hidden="true">💬</span><span>Чат</span></button>
+        <button type="button" class="mobile-nav-button" id="mobileNavChat"><span aria-hidden="true">💬</span><span>Чат <span class="unread-badge mobile-unread-badge hidden" id="mobileUnreadMessagesBadge">0</span></span></button>
         <button type="button" class="mobile-nav-button active" id="mobileNavPosts"><span aria-hidden="true">📰</span><span>Посты</span></button>
         <button type="button" class="mobile-nav-button" id="mobileNavSearch"><span aria-hidden="true">🔎</span><span>Поиск</span></button>
         <button type="button" class="mobile-nav-button" id="mobileNavFriends"><span aria-hidden="true">👥</span><span>Друзья</span></button>
@@ -1326,6 +1332,7 @@ input, textarea, select, .input, .text-input {
     function showChat(user) {
 
       currentUser = user;
+      updateUnreadMessagesBadge();
 
       authBox.classList.add('hidden');
 
@@ -1616,6 +1623,53 @@ input, textarea, select, .input, .text-input {
       } catch (e) { status('connection', 'Не удалось включить уведомления. Проверь разрешения браузера.'); }
     });
 
+    async function updateUnreadMessagesBadge() {
+      if (!supabase || !currentUser) return;
+      const desktopBadge = $('unreadMessagesBadge');
+      const mobileBadge = $('mobileUnreadMessagesBadge');
+      try {
+        const {data: memberRows, error: memberError} = await supabase.from('conversation_members').select('conversation_id').eq('user_id', currentUser.id);
+        if (memberError) throw memberError;
+        const ids = [...new Set((memberRows || []).map(r => r.conversation_id).filter(Boolean))];
+        if (!ids.length) { setUnreadBadgeValue(0); return; }
+        const {data: readRows, error: readError} = await supabase.from('conversation_reads').select('conversation_id,last_read_at').eq('user_id', currentUser.id).in('conversation_id', ids);
+        if (readError) throw readError;
+        const readAt = new Map((readRows || []).map(r => [r.conversation_id, r.last_read_at]));
+        let total = 0;
+        for (const id of ids) {
+          if (id === currentConversationId) continue;
+          let q = supabase.from('messages').select('id', {count:'exact', head:true}).eq('conversation_id', id).neq('sender_id', currentUser.id);
+          const stamp = readAt.get(id);
+          if (stamp) q = q.gt('created_at', stamp);
+          const {count,error} = await q;
+          if (error) throw error;
+          total += count || 0;
+        }
+        setUnreadBadgeValue(total);
+      } catch (e) {
+        // The badge stays hidden until the read-receipt table is configured in Supabase.
+        setUnreadBadgeValue(0);
+        console.warn('Не удалось обновить счётчик непрочитанных сообщений:', e.message);
+      }
+      function setUnreadBadgeValue(value) {
+        for (const badge of [desktopBadge, mobileBadge]) {
+          if (!badge) continue;
+          badge.textContent = value > 99 ? '99+' : String(value);
+          badge.classList.toggle('hidden', value <= 0);
+          badge.setAttribute('aria-label', `Непрочитанных сообщений: ${value}`);
+        }
+      }
+    }
+
+    async function markConversationRead(conversationId) {
+      if (!supabase || !currentUser || !conversationId) return;
+      try {
+        const {error} = await supabase.from('conversation_reads').upsert({user_id:currentUser.id, conversation_id:conversationId, last_read_at:new Date().toISOString()}, {onConflict:'user_id,conversation_id'});
+        if (error) throw error;
+      } catch (e) { console.warn('Не удалось отметить чат прочитанным:', e.message); }
+      updateUnreadMessagesBadge();
+    }
+
     async function refreshConversations() {
       const { data, error } = await supabase.from('conversation_members')
         .select('conversation_id, conversations(id,title,type,created_at)').eq('user_id', currentUser.id);
@@ -1625,6 +1679,7 @@ input, textarea, select, .input, .text-input {
       conversations.forEach(c => select.add(new Option((c.type === 'direct' ? '👤 ' : '👥 ') + c.title, c.id)));
       select.value = currentConversationId || '';
       renderConversationList();
+      updateUnreadMessagesBadge();
     }
 
     function renderConversationList() {
@@ -1675,13 +1730,13 @@ input, textarea, select, .input, .text-input {
       $('attachChatPhoto').disabled = !currentConversationId;
       $('recordVoiceButton').disabled = !currentConversationId;
       if (!currentConversationId) { if (channel) await supabase.removeChannel(channel); channel = null; status('connection', 'Создай личный чат или группу, чтобы начать переписку.'); return; }
-      try { await loadMessages(); } catch (e) { status('connection', 'Не удалось загрузить чат: ' + e.message); }
+      try { await loadMessages(); await markConversationRead(currentConversationId); } catch (e) { status('connection', 'Не удалось загрузить чат: ' + e.message); }
       if (channel) await supabase.removeChannel(channel);
       channel = supabase.channel('pulseup-chat-' + currentConversationId + '-' + currentUser.id)
         .on('postgres_changes', { event:'INSERT', schema:'public', table:'messages' }, payload => {
           if (payload.new.conversation_id !== currentConversationId) return;
           addMessage(payload.new); $('messages').scrollTop = $('messages').scrollHeight;
-          if (payload.new.sender_id !== currentUser.id) notifyIncomingMessage(payload.new);
+          if (payload.new.sender_id !== currentUser.id) { notifyIncomingMessage(payload.new); if (payload.new.conversation_id === currentConversationId) markConversationRead(currentConversationId); else updateUnreadMessagesBadge(); }
         }).subscribe(state => {
           if (state === 'SUBSCRIBED') status('connection', '● Онлайн · обновления в реальном времени');
           else if (state === 'CHANNEL_ERROR') status('connection', 'Ошибка realtime. Проверь настройки Supabase.');
@@ -2150,6 +2205,125 @@ input,textarea,select,.form-control {
 @media(max-width:760px){body::before{background-size:auto 100%;opacity:.72} }
 </style>
 
+
+<style id="pulseup-message-neon-glass-final">
+/* Message bubbles: remove the hard dark rectangle and use a soft rounded violet glow. */
+#messages .message, .messages .message, article.message {
+  position:relative !important; isolation:isolate !important;
+  background:rgba(28,12,66,.22) !important;
+  border:1px solid rgba(177,111,255,.24) !important;
+  border-radius:20px 20px 20px 7px !important;
+  box-shadow:0 0 0 1px rgba(172,91,255,.035), 0 0 18px rgba(130,47,255,.10) !important;
+  -webkit-backdrop-filter:blur(14px) saturate(135%) !important;
+  backdrop-filter:blur(14px) saturate(135%) !important;
+  overflow:visible !important;
+}
+#messages .message.mine, .messages .message.mine, article.message.mine {
+  background:rgba(54,27,115,.22) !important;
+  border-color:rgba(185,124,255,.32) !important;
+  border-radius:20px 20px 7px 20px !important;
+  box-shadow:0 0 18px rgba(135,55,255,.15), inset 0 0 18px rgba(155,80,255,.045) !important;
+}
+#messages .message .content, .messages .message .content, article.message .content {
+  display:block !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+  padding:0 !important;
+  color:inherit !important;
+  overflow-wrap:anywhere !important;
+}
+#messages .message .meta, .messages .message .meta, article.message .meta {
+  background:transparent !important; border:0 !important; box-shadow:none !important;
+  color:rgba(211,190,255,.78) !important; margin-bottom:5px !important;
+}
+#messages .message:hover, .messages .message:hover, article.message:hover {
+  border-color:rgba(195,145,255,.55) !important;
+  box-shadow:0 0 22px rgba(145,62,255,.20), inset 0 0 16px rgba(173,103,255,.055) !important;
+}
+</style>
+
+
+<style id="pulseup-remove-inner-message-rectangles-v2">
+/* Убираем вложенные прямоугольные подложки внутри пузырька сообщения. */
+#messages .message *, .messages .message *, article.message * {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+#messages .message, .messages .message, article.message {
+  background: rgba(24, 8, 58, .16) !important;
+  border: 1px solid rgba(177, 111, 255, .34) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 0 14px rgba(139, 56, 255, .13), inset 0 0 12px rgba(159, 91, 255, .035) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
+  backdrop-filter: blur(16px) saturate(140%) !important;
+}
+#messages .message.mine, .messages .message.mine, article.message.mine {
+  background: rgba(42, 18, 92, .16) !important;
+  border-radius: 22px !important;
+  border-color: rgba(181, 119, 255, .42) !important;
+  box-shadow: 0 0 18px rgba(139, 56, 255, .18), inset 0 0 12px rgba(159, 91, 255, .04) !important;
+}
+#messages .message .content, .messages .message .content, article.message .content,
+#messages .message .meta, .messages .message .meta, article.message .meta {
+  background: none !important; background-color: transparent !important;
+  border: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+  outline: 0 !important;
+}
+#messages .message::before, #messages .message::after,
+.messages .message::before, .messages .message::after,
+article.message::before, article.message::after {
+  background: transparent !important; box-shadow: none !important; border: 0 !important;
+}
+</style>
+
+
+<style id="pulseup-force-remove-message-text-rectangles-v2">
+/* Final override: remove the dark strips behind message text and timestamps. */
+#messages article.message > .meta,
+#messages article.message > .content,
+#messages article.message > .content *,
+#messages article.message .meta,
+#messages article.message .content,
+#messages article.message .content p,
+#messages article.message .content span,
+#messages article.message .content strong,
+#messages article.message .content div {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  outline: 0 !important;
+  border: 0 !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+#messages article.message > .meta::before,
+#messages article.message > .meta::after,
+#messages article.message > .content::before,
+#messages article.message > .content::after,
+#messages article.message > .content *::before,
+#messages article.message > .content *::after {
+  content: none !important;
+  display: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+#messages article.message {
+  background: rgba(25, 9, 58, .22) !important;
+  border: 1px solid rgba(171, 105, 255, .78) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 0 12px rgba(143, 57, 255, .17) !important;
+}
+#messages article.message.mine { background: rgba(66, 36, 130, .22) !important; }
+</style>
+
 </body>
 
 
@@ -2361,4 +2535,39 @@ body > * { position:relative; z-index:1; }
   box-shadow:0 0 17px rgba(133,44,255,.13),inset 0 0 16px rgba(159,82,255,.045) !important;
 }
 @media(max-width:760px){body::before{background-size:auto 100% !important;opacity:.86 !important}}
+</style>
+
+<style id="pulseup-message-remove-text-backplates-final">
+/* Убираем отдельные тёмные прямоугольники под буквами внутри сообщений */
+#messages .message .content,
+#messages .message .meta,
+#messages .message p,
+#messages .message span,
+#messages .message strong,
+#messages .message div {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  border-color: transparent !important;
+}
+#messages .message {
+  position: relative !important;
+  isolation: isolate !important;
+  background: rgba(25, 9, 58, .28) !important;
+  border: 1px solid rgba(164, 105, 255, .72) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 0 10px rgba(138, 50, 255, .13), 0 0 22px rgba(138, 50, 255, .09) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+#messages .message.mine {
+  background: rgba(61, 32, 125, .28) !important;
+  border-color: rgba(186, 130, 255, .82) !important;
+}
+#messages .message:hover {
+  box-shadow: 0 0 12px rgba(154, 74, 255, .22), 0 0 26px rgba(154, 74, 255, .13) !important;
+}
 </style>
