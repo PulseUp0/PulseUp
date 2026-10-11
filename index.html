@@ -456,6 +456,33 @@
 }
 @media screen and (min-width:761px) { .mobile-bottom-nav { display:none !important; } }
 </style>
+
+<style id="pulseup-friends-mobile-overflow-fix">
+/* Friends and people search: fit the entire view on phones without changing desktop. */
+@media screen and (max-width: 760px) {
+  #friendsView, #searchView { box-sizing:border-box !important; overflow:visible !important; }
+  #friendsView .topline, #searchView .topline { display:flex; align-items:flex-start; gap:10px; min-width:0; flex-wrap:wrap; }
+  #friendsView .topline .grow, #searchView .topline .grow { flex:1 1 180px; min-width:0; }
+  #friendsView h2, #searchView h2 { font-size:clamp(18px,5vw,23px); overflow-wrap:anywhere; }
+  #friendsView p, #searchView p { overflow-wrap:anywhere; }
+  #friendsView #openPeopleSearch { width:100%; min-height:46px; white-space:normal; }
+  #searchView input, #searchView select, #searchView button { box-sizing:border-box; }
+  #searchView .people-results { display:grid; grid-template-columns:minmax(0,1fr); gap:10px; width:100%; min-width:0; }
+  #searchView .person-card { display:grid; grid-template-columns:44px minmax(0,1fr); align-items:start; gap:10px; padding:11px; width:100%; min-width:0; box-sizing:border-box; }
+  #searchView .person-card img, #searchView .person-avatar { width:44px; height:44px; min-width:44px; }
+  #searchView .person-info { min-width:0; width:100%; overflow-wrap:anywhere; word-break:break-word; }
+  #searchView .person-actions { grid-column:1 / -1; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); width:100%; min-width:0; gap:8px; }
+  #searchView .person-actions button { min-width:0; width:100%; min-height:42px; padding:8px 6px; white-space:normal; overflow-wrap:anywhere; }
+  #searchView .status, #friendsView .status { overflow-wrap:anywhere; }
+}
+@media screen and (max-width:380px) {
+  #friendsView, #searchView { padding:10px !important; }
+  #searchView .person-card { grid-template-columns:38px minmax(0,1fr); padding:9px; gap:8px; }
+  #searchView .person-card img, #searchView .person-avatar { width:38px; height:38px; min-width:38px; }
+  #searchView .person-actions { grid-template-columns:minmax(0,1fr); }
+}
+</style>
+
 </head>
 
 <body>
