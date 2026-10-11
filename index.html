@@ -2325,80 +2325,63 @@ article.message::before, article.message::after {
 </style>
 
 <style id="pulseup-mobile-responsive-v1">
-/* Mobile-only responsive pass. Desktop rules are intentionally untouched. */
-@media (max-width:760px) {
-  html, body { width:100%; max-width:100%; min-width:0; overflow-x:hidden !important; }
+/* Mobile-only layout pass. Desktop rules and appearance are untouched. */
+@media (max-width: 760px) {
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { width:100% !important; min-width:0 !important; max-width:100% !important; overflow-x:clip !important; }
   body { min-height:100dvh; }
-  .shell { width:100%; max-width:none !important; margin:0 !important; padding: max(10px, env(safe-area-inset-top)) 0 calc(82px + env(safe-area-inset-bottom)) !important; }
-  header { width:100%; min-width:0; padding:10px 14px 13px !important; gap:9px; }
-  header .logo { width:42px; height:42px; flex-basis:42px; border-radius:14px; font-size:23px; }
-  header h1 { font-size:21px; }
-  .app-layout { display:block !important; width:100%; min-width:0; padding:0 10px !important; margin:0 !important; }
-  /* The desktop sidebar is replaced by the fixed bottom navigation. */
-  .app-layout > .app-sidebar { display:none !important; }
-  .app-main { display:block; width:100%; max-width:100%; min-width:0; padding:0 0 10px !important; }
-  .app-main > .card, .app-main > section, #chatView, #postsView, #searchView, #friendsView, #musicView, #profileView {
-    width:100% !important; max-width:100% !important; min-width:0 !important;
-    margin:8px 0 0 !important; padding:13px !important; border-radius:18px !important;
-  }
-  .topline { min-width:0; gap:8px; flex-wrap:wrap; }
-  .topline > .grow { flex:1 1 150px; min-width:0; }
-  h2 { font-size:clamp(18px,5vw,22px); overflow-wrap:anywhere; }
-  .muted, .status, p, label { overflow-wrap:anywhere; }
-  input:not([type=checkbox]):not([type=radio]), textarea, select { width:100%; max-width:100%; min-width:0; font-size:16px; }
-  button { max-width:100%; }
-  .profile-fields, .form-grid { grid-template-columns:minmax(0,1fr) !important; }
-  .profile-fields > *, .profile-fields .full { min-width:0; width:100%; grid-column:1/-1; }
-  .profile-card { display:grid !important; grid-template-columns:56px minmax(0,1fr) !important; gap:11px !important; padding:11px !important; }
-  .profile-avatar { width:56px !important; height:56px !important; }
-  .profile-card > *, .profile-card .grow { min-width:0; max-width:100%; }
-  .profile-actions { display:flex; flex-wrap:wrap; gap:8px; min-width:0; }
-  .profile-actions button { flex:1 1 130px; min-width:0; min-height:42px; }
-  .post-card, .post-list, .people-results, .person-card, .music-pane, .music-track-row { min-width:0; max-width:100%; }
-  .post-card { padding:12px !important; }
-  img.post-photo, .post-photo { display:block; width:100% !important; max-width:100% !important; height:auto !important; max-height:65dvh !important; object-fit:contain !important; }
-  #musicView .music-columns { grid-template-columns:minmax(0,1fr) !important; }
-  #musicView #musicLibraryList { grid-template-columns:minmax(0,1fr) !important; }
-  #musicView .music-tools { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; }
-  #musicView .music-tools input { grid-column:1/-1; min-width:0; }
-  #musicView .music-tools select { max-width:none; width:100%; }
-  #chatView { overflow:visible; }
-  #chatView .conversation-tools { max-width:100%; }
-  #chatView .conversation-list { width:100%; min-width:0; }
-  #chatView .messages { width:100%; min-width:0; height:min(48dvh,440px); min-height:180px; padding:12px 0; }
-  #chatView .message { max-width:92%; }
-  #sendForm, .composer { display:flex !important; flex-wrap:nowrap !important; align-items:center; gap:6px !important; width:100%; min-width:0; padding:5px 0 !important; }
-  #messageInput { flex:1 1 0 !important; width:1% !important; min-width:0 !important; padding:11px 10px !important; }
-  #sendForm button, .composer button { flex:0 0 38px !important; width:38px !important; min-width:38px !important; height:42px; min-height:42px; padding:0 !important; display:grid; place-items:center; }
-  .mobile-bottom-nav {
-    display:grid !important; grid-template-columns:repeat(6,minmax(0,1fr)) !important;
-    position:fixed !important; left:0 !important; right:0 !important; bottom:0 !important;
-    width:100% !important; max-width:100% !important; margin:0 !important;
-    padding:6px 5px calc(6px + env(safe-area-inset-bottom)) !important;
-    gap:3px !important; box-sizing:border-box !important; z-index:10000 !important;
-    background:rgba(15,8,34,.78) !important;
-    -webkit-backdrop-filter:blur(24px) saturate(150%) !important;
-    backdrop-filter:blur(24px) saturate(150%) !important;
-    border-top:1px solid rgba(177,112,255,.34) !important;
-    box-shadow:0 -8px 30px rgba(75,20,150,.20) !important;
-  }
-  .mobile-nav-button { display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; gap:3px !important; min-width:0 !important; width:100% !important; min-height:48px !important; padding:4px 1px !important; margin:0 !important; border-radius:12px !important; font-size:clamp(9px,2.65vw,11px) !important; line-height:1.1 !important; white-space:nowrap !important; overflow:visible !important; }
-  .mobile-nav-button span:first-child { font-size:20px !important; line-height:1.1 !important; }
-  .mobile-nav-button span:not(:first-child) { max-width:100%; overflow:hidden; text-overflow:ellipsis; }
-  .mobile-nav-button.active { background:rgba(133,65,255,.20) !important; border:1px solid rgba(191,139,255,.38) !important; box-shadow:0 0 15px rgba(135,55,255,.22), inset 0 0 12px rgba(150,80,255,.08) !important; }
-  .mobile-unread-badge { position:absolute; transform:translate(12px,-12px); }
-  .mobile-nav-button { position:relative; }
-  #auth { grid-template-columns:minmax(0,1fr) !important; width:100%; max-width:100%; margin:12px 0 0; gap:18px; padding:18px !important; }
-  #auth .hero-title { font-size:clamp(32px,9vw,44px); }
+  .shell { width:100% !important; max-width:100% !important; min-width:0 !important; margin:0 !important; padding: max(10px, env(safe-area-inset-top)) 0 calc(88px + env(safe-area-inset-bottom)) !important; }
+  .shell > header, .shell > main, .shell > footer { width:100% !important; max-width:100% !important; min-width:0 !important; }
+  .app-layout { display:block !important; width:100% !important; max-width:100% !important; min-width:0 !important; margin:0 !important; padding:0 10px !important; }
+  .app-sidebar { display:none !important; }
+  .app-main { display:block !important; width:100% !important; max-width:100% !important; min-width:0 !important; margin:0 !important; padding:0 !important; }
+  #chat, #chatView, #postsView, #searchView, #friendsView, #musicView, #profileView,
+  #chat > .app-layout, .card, .panel, .profile-card, .profile-editor, .post-list,
+  .people-results, .music-columns, .music-pane, .conversation-list, .chat-window,
+  .public-profile-panel, .post-card, .person-card { min-width:0 !important; max-width:100% !important; }
+  #chatView, #postsView, #searchView, #friendsView, #musicView, #profileView { width:100% !important; margin-left:0 !important; margin-right:0 !important; padding:clamp(12px,3.5vw,17px) !important; overflow-wrap:anywhere; }
+  .topline { min-width:0 !important; flex-wrap:wrap !important; gap:10px !important; }
+  .topline > *, .grow { min-width:0 !important; max-width:100%; }
+  h1 { font-size:clamp(22px,6vw,30px) !important; }
+  h2 { font-size:clamp(19px,5.2vw,25px) !important; }
+  h3 { font-size:clamp(16px,4.5vw,20px) !important; }
+  p, label, .muted, .status { overflow-wrap:anywhere; word-break:normal; }
+  input, textarea, select { width:100% !important; max-width:100% !important; min-width:0 !important; font-size:16px !important; }
+  button { max-width:100%; min-width:0; }
+  img, video, audio, iframe { max-width:100% !important; }
+  .profile-fields, .form-grid, .music-columns { grid-template-columns:minmax(0,1fr) !important; }
+  .profile-actions { display:flex; flex-wrap:wrap; gap:8px !important; min-width:0; }
+  .profile-actions > button { flex:1 1 auto; min-width:0; }
+  .music-tools { display:grid !important; grid-template-columns:minmax(0,1fr) auto !important; gap:8px !important; min-width:0; }
+  .music-tools input { grid-column:1 / -1; }
+  .conversation-list { max-height:none !important; overflow:visible !important; }
+  .conversation-row { width:100% !important; min-width:0 !important; }
+  #sendForm { display:flex !important; flex-wrap:nowrap !important; align-items:flex-end; gap:6px !important; width:100% !important; min-width:0 !important; }
+  #messageInput { flex:1 1 0 !important; width:1px !important; min-width:0 !important; }
+  #sendForm button { flex:0 0 auto; padding-left:10px; padding-right:10px; }
+  .chat-window, #messagesList, .messages-list { min-width:0 !important; max-width:100% !important; overflow-x:hidden !important; }
+  .message, .message-bubble, .message-content { max-width:100% !important; overflow-wrap:anywhere; }
+  .post-card, .post, .person-card, .music-track { width:100% !important; min-width:0 !important; }
+  img.post-photo, #postsView img, #profilePostsList img, #publicProfilePosts img { max-width:100% !important; height:auto !important; object-fit:contain !important; }
+  .mobile-bottom-nav { display:grid !important; grid-template-columns:repeat(6,minmax(0,1fr)) !important; gap:2px !important; position:fixed !important; left:0 !important; right:0 !important; bottom:0 !important; width:100% !important; max-width:100% !important; margin:0 !important; padding:6px 4px calc(6px + env(safe-area-inset-bottom)) !important; z-index:99999 !important; background:rgba(13,8,28,.88) !important; -webkit-backdrop-filter:blur(22px) saturate(145%) !important; backdrop-filter:blur(22px) saturate(145%) !important; border-top:1px solid rgba(190,130,255,.42) !important; box-shadow:0 -5px 24px rgba(111,38,255,.14) !important; }
+  .mobile-nav-button { display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; gap:3px !important; width:100% !important; min-width:0 !important; min-height:52px !important; padding:5px 1px !important; border-radius:13px !important; font-size:clamp(9px,2.65vw,12px) !important; line-height:1.1 !important; white-space:normal !important; overflow:hidden; }
+  .mobile-nav-button > span:first-child { font-size:20px !important; line-height:1.1 !important; }
+  .mobile-nav-button > span:last-child { max-width:100%; white-space:nowrap; }
+  .mobile-nav-button.active { background:rgba(145,74,255,.16) !important; box-shadow:inset 0 0 0 1px rgba(196,147,255,.38), 0 0 15px rgba(133,55,255,.15) !important; }
+  .mobile-unread-badge { display:inline-flex !important; vertical-align:middle; }
+  .mobile-unread-badge.hidden { display:none !important; }
+  .public-profile-modal, .image-lightbox { padding:10px !important; }
+  .public-profile-panel { width:100% !important; max-width:100% !important; max-height:calc(100dvh - 20px) !important; overflow:auto !important; }
 }
-@media (max-width:380px) {
+@media (max-width: 380px) {
   .app-layout { padding-left:7px !important; padding-right:7px !important; }
-  .app-main > .card, .app-main > section, #chatView, #postsView, #searchView, #friendsView, #musicView, #profileView { padding:10px !important; }
-  #sendForm, .composer { gap:4px !important; }
-  #sendForm button, .composer button { flex-basis:35px !important; width:35px !important; min-width:35px !important; }
-  .mobile-nav-button span:first-child { font-size:18px !important; }
+  #chatView, #postsView, #searchView, #friendsView, #musicView, #profileView { padding:11px !important; }
+  .mobile-nav-button > span:first-child { font-size:18px !important; }
+  .mobile-nav-button { min-height:48px !important; }
+  #sendForm { gap:4px !important; }
+  #sendForm button { padding-left:8px !important; padding-right:8px !important; }
 }
-@media (min-width:761px) { .mobile-bottom-nav { display:none !important; } }
+@media (min-width: 761px) { .mobile-bottom-nav { display:none !important; } }
 </style>
 
 </body>
