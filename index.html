@@ -498,6 +498,73 @@
 @media(max-width:600px){.conversation-list{max-height:none;overflow:visible;margin:8px -4px 14px}.conversation-row{padding:9px 8px;gap:10px}.conversation-avatar{width:44px;height:44px;flex-basis:44px}.conversation-row-title{font-size:14px}.conversation-row-subtitle{font-size:12px}.conversation-tools{gap:6px!important}.conversation-tools button{flex:1 1 calc(50% - 6px);min-width:0;font-size:12px;padding:9px 7px}}
 </style>
 
+
+<style id="pulseup-soft-rounded-refresh">
+  /* Softer, cohesive rounded visual language across the whole app */
+  :root { --ui-radius: 16px; --ui-radius-sm: 12px; }
+  button, input, textarea, select, .input, .field, .search-box,
+  .profile-actions button, .music-section-tab {
+    border-radius: 13px !important;
+  }
+  .card, .panel, .modal, .dialog, .dropdown, .menu, .toast,
+  .music-pane, .music-track, .playlist-card, .profile-card,
+  .friend-card, .conversation-list, .conversation-row, .chat-list,
+  .post, .composer, .settings-card {
+    border-radius: 17px !important;
+  }
+  .avatar, .music-cover, .track-cover, .user-avatar, .friend-avatar {
+    border-radius: 50% !important;
+    overflow: hidden;
+  }
+  #musicView .profile-actions[role="tablist"] {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex-wrap: nowrap !important;
+    width: max-content !important;
+    max-width: 100% !important;
+    gap: 5px !important;
+    padding: 4px !important;
+    border-radius: 15px !important;
+    box-sizing: border-box !important;
+  }
+  #musicView .music-section-tab {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 94px !important;
+    min-height: 38px !important;
+    padding: 8px 14px !important;
+    border-radius: 12px !important;
+    white-space: nowrap !important;
+    line-height: 1.15 !important;
+  }
+  #musicView .music-section-tab[aria-selected="true"] {
+    box-shadow: 0 3px 12px rgba(123, 78, 255, .22) !important;
+  }
+  button, .conversation-row, .music-track, .music-icon-button {
+    transition: border-radius .16s ease, background-color .16s ease,
+      border-color .16s ease, transform .16s ease, box-shadow .16s ease;
+  }
+  button:active { transform: scale(.985); }
+  @media (max-width: 600px) {
+    #musicView .profile-actions[role="tablist"] { flex-direction: row !important; }
+    #musicView .music-section-tab {
+      min-width: 88px !important;
+      min-height: 36px !important;
+      padding: 8px 11px !important;
+      font-size: 14px !important;
+    }
+    .card, .panel, .music-pane, .friend-card, .profile-card { border-radius: 15px !important; }
+    input, textarea, select { max-width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    button, .conversation-row, .music-track, .music-icon-button { transition: none !important; }
+  }
+</style>
 </head>
 
 <body>
