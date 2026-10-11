@@ -166,7 +166,8 @@
     #chat .topline { margin-bottom:8px; }
     #profileView .profile-card { margin-top:0; }
     #profileView .profile-editor { margin-top:16px; }
-    @media(max-width:760px) { .app-layout { grid-template-columns:1fr; } .app-sidebar { display:flex; flex-wrap:wrap; align-items:center; gap:6px; padding:10px; } .sidebar-brand { width:100%; margin:2px 4px 5px; } .nav-button { width:auto; flex:1; justify-content:center; margin:0; } .sidebar-user { width:100%; margin-top:8px; padding-top:10px; } }
+    @media(max-width:760px) { .app-layout { grid-template-columns:1fr; } .app-sidebar { display:flex; flex-wrap:wrap; align-items:center; gap:6px; padding:10px; } .sidebar-brand { width:100%; margin:2px 4px 5px; } .nav-button { width:auto; flex:1 1 calc(50% - 6px); justify-content:center; margin:0; } .sidebar-user { display:none; } .app-sidebar #logout { width:auto !important; flex:1 1 100%; margin-top:4px !important; } }
+    @media(min-width:761px) { .app-layout { grid-template-columns:230px minmax(0,1fr); } .app-sidebar { position:sticky; top:16px; } .nav-button { min-height:44px; } #navProfile { margin-top:8px; } }
     .profile-card { display:grid; grid-template-columns: 84px minmax(0,1fr); gap:16px; align-items:center; margin:18px 0 8px; padding:16px; border:1px solid var(--border); border-radius:18px; background:rgba(8,7,18,.32); }
     .profile-avatar { width:84px; height:84px; border-radius:50%; object-fit:cover; display:grid; place-items:center; background:linear-gradient(135deg,#853cff,#3e72ff); border:2px solid rgba(192,168,255,.35); font-size:30px; }
     .profile-fields { display:grid; grid-template-columns:1fr 1fr; gap:0 12px; }
