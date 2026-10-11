@@ -415,7 +415,7 @@
 
 <style id="pulseup-final-mobile-nav-fix">
 @media screen and (max-width:760px) {
-  .mobile-bottom-nav { display:grid !important; grid-template-columns:repeat(5,minmax(0,1fr)) !important; position:fixed !important; left:0 !important; right:0 !important; bottom:0 !important; width:100% !important; z-index:99999 !important; box-sizing:border-box !important; padding:7px 5px calc(7px + env(safe-area-inset-bottom)) !important; background:rgba(14,10,27,.97) !important; border-top:1px solid rgba(183,145,255,.35) !important; }
+  .mobile-bottom-nav { display:grid !important; grid-template-columns:repeat(6,minmax(0,1fr)) !important; position:fixed !important; left:0 !important; right:0 !important; bottom:0 !important; width:100% !important; z-index:99999 !important; box-sizing:border-box !important; padding:7px 5px calc(7px + env(safe-area-inset-bottom)) !important; background:rgba(14,10,27,.97) !important; border-top:1px solid rgba(183,145,255,.35) !important; }
   .mobile-nav-button { display:flex !important; min-width:0 !important; width:100% !important; min-height:50px !important; padding:4px 1px !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; gap:3px !important; font-size:clamp(9px,2.5vw,12px) !important; line-height:1.1 !important; }
   .mobile-nav-button span { display:block; max-width:100%; overflow-wrap:anywhere; }
   .shell { padding-bottom:calc(100px + env(safe-area-inset-bottom)) !important; }
@@ -501,6 +501,7 @@
           <button type="button" class="nav-button" id="navPosts">📰 Посты</button>
           <button type="button" class="nav-button" id="navSearch">🔎 Поиск</button>
           <button type="button" class="nav-button" id="navFriends">👥 Друзья</button>
+          <button type="button" class="nav-button" id="navMusic">🎵 Музыка</button>
           <button type="button" class="nav-button" id="navProfile">👤 Профиль</button>
           <div class="sidebar-user">
             <img id="sidebarAvatar" class="sidebar-avatar" alt="" hidden />
@@ -558,12 +559,43 @@
         <form id="peopleSearchForm" class="profile-editor"><div class="profile-fields"><div class="full"><label for="peopleQuery">Имя или username</label><input id="peopleQuery" placeholder="Например, Анна или anna_01" autocomplete="off" /></div><div class="full"><label for="peopleBirthday">Дата рождения</label><input id="peopleBirthday" type="date" /></div></div><div class="profile-actions"><button class="primary" type="submit">Найти</button><button class="secondary" id="clearPeopleSearch" type="button">Очистить</button></div><div class="muted">Поиск по дате рождения доступен, если пользователь указал её в профиле.</div><div class="status" id="peopleSearchStatus" role="status"></div></form>
         <div id="peopleResults" class="people-results"><p class="muted">Начни вводить имя или username — результаты появятся автоматически.</p></div>
       </section>
+      <section id="musicView" class="card hidden" aria-label="Музыка PulseUp">
+        <div class="topline"><div class="grow"><h2>🎵 Музыка</h2><div class="muted">Ищи треки и слушай через встроенный плеер</div></div></div>
+        <div class="profile-editor">
+          <form id="musicSearchForm">
+            <label for="musicQuery">Что хочешь послушать?</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input id="musicQuery" maxlength="120" placeholder="Исполнитель, песня или жанр" autocomplete="off" style="flex:1;min-width:180px" />
+              <button class="primary" type="submit">Найти музыку</button>
+            </div>
+          </form>
+          <div style="margin-top:14px">
+            <div class="muted" style="margin-bottom:8px">Популярные направления</div>
+            <div class="profile-actions">
+              <button type="button" class="secondary music-preset" data-query="lofi chill">🌙 Lo-fi</button>
+              <button type="button" class="secondary music-preset" data-query="pop hits">✨ Поп</button>
+              <button type="button" class="secondary music-preset" data-query="jazz">🎷 Джаз</button>
+              <button type="button" class="secondary music-preset" data-query="electronic chill">🌌 Электроника</button>
+              <button type="button" class="secondary music-preset" data-query="classical piano">🎹 Классика</button>
+            </div>
+          </div>
+          <div class="status" id="musicStatus" role="status" style="margin-top:10px">Выбери жанр или введи название — плеер откроется после нажатия.</div>
+        </div>
+        <div id="musicPlayerWrap" class="hidden" style="margin-top:16px">
+          <div class="card" style="padding:12px">
+            <div class="topline"><div class="grow"><h3 id="musicNowTitle">Подборка музыки</h3><div class="muted">Плеер SoundCloud</div></div><button type="button" class="secondary" id="musicOpenExternal">↗ Открыть</button></div>
+            <iframe id="musicPlayer" title="Музыкальный плеер SoundCloud" width="100%" height="400" scrolling="no" frameborder="0" allow="autoplay" loading="lazy" style="border:0;border-radius:12px;background:#15132a" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          </div>
+          <p class="muted" style="font-size:12px">Музыка предоставляется SoundCloud. Доступность треков и воспроизведения зависит от автора, региона и правил сервиса.</p>
+        </div>
+      </section>
       <section id="friendsView" class="card hidden" aria-label="Друзья"><div class="topline"><div class="grow"><h2>👥 Друзья</h2><div class="muted">Находи людей и начинай личные чаты</div></div></div><p class="muted">Используй поиск, чтобы найти пользователя по имени или дате рождения. Нажми «Написать», чтобы открыть личный чат.</p><button class="primary" id="openPeopleSearch" type="button">🔎 Найти людей</button></section>
       <nav class="mobile-bottom-nav" aria-label="Основная навигация">
         <button type="button" class="mobile-nav-button" id="mobileNavChat"><span aria-hidden="true">💬</span><span>Чат</span></button>
         <button type="button" class="mobile-nav-button active" id="mobileNavPosts"><span aria-hidden="true">📰</span><span>Посты</span></button>
         <button type="button" class="mobile-nav-button" id="mobileNavSearch"><span aria-hidden="true">🔎</span><span>Поиск</span></button>
         <button type="button" class="mobile-nav-button" id="mobileNavFriends"><span aria-hidden="true">👥</span><span>Друзья</span></button>
+        <button type="button" class="mobile-nav-button" id="mobileNavMusic"><span aria-hidden="true">🎵</span><span>Музыка</span></button>
         <button type="button" class="mobile-nav-button" id="mobileNavProfile"><span aria-hidden="true">👤</span><span>Профиль</span></button>
       </nav>
       <section id="profileView" class="card hidden" aria-label="Профиль пользователя">
@@ -765,20 +797,50 @@
 
 
     function showAppView(view) {
-      const views = {chat:'chatView', posts:'postsView', search:'searchView', friends:'friendsView', profile:'profileView'};
+      const views = {chat:'chatView', posts:'postsView', search:'searchView', music:'musicView', friends:'friendsView', profile:'profileView'};
       Object.entries(views).forEach(([key,id]) => $(id).classList.toggle('hidden', key !== view));
-      ['navChat','navPosts','navSearch','navFriends','navProfile'].forEach((id,i)=>$(id).classList.toggle('active',['chat','posts','search','friends','profile'][i]===view));
-      ['mobileNavChat','mobileNavPosts','mobileNavSearch','mobileNavFriends','mobileNavProfile'].forEach((id,i)=>$(id).classList.toggle('active',['chat','posts','search','friends','profile'][i]===view));
+      ['navChat','navPosts','navSearch','navMusic','navFriends','navProfile'].forEach((id,i)=>$(id).classList.toggle('active',['chat','posts','search','music','friends','profile'][i]===view));
+      ['mobileNavChat','mobileNavPosts','mobileNavSearch','mobileNavMusic','mobileNavFriends','mobileNavProfile'].forEach((id,i)=>$(id).classList.toggle('active',['chat','posts','search','music','friends','profile'][i]===view));
       if (view === 'profile' && currentUser) loadProfile(currentUser);
       if (view === 'posts' || view === 'profile') loadPosts();
     }
     $('navChat').onclick = () => showAppView('chat');
     $('navPosts').onclick = () => showAppView('posts'); $('navSearch').onclick = () => showAppView('search'); $('navFriends').onclick = () => showAppView('friends');
+    $('navMusic').onclick = () => showAppView('music');
     $('navProfile').onclick = () => showAppView('profile');
     $('mobileNavChat').onclick = () => showAppView('chat');
     $('mobileNavPosts').onclick = () => showAppView('posts'); $('mobileNavSearch').onclick = () => showAppView('search');
+    $('mobileNavMusic').onclick = () => showAppView('music');
     $('mobileNavFriends').onclick = () => showAppView('friends'); $('mobileNavProfile').onclick = () => showAppView('profile');
     $('openPeopleSearch').onclick = () => showAppView('search');
+
+    $('musicSearchForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      openMusicSearch($('musicQuery').value);
+    });
+
+    function openMusicSearch(rawQuery) {
+      const query = String(rawQuery || '').trim().slice(0, 120);
+      if (!query) {
+        status('musicStatus', 'Введи название песни, исполнителя или выбери жанр.');
+        $('musicQuery').focus();
+        return;
+      }
+      const searchUrl = 'https://soundcloud.com/search/sounds?q=' + encodeURIComponent(query);
+      const embedUrl = 'https://w.soundcloud.com/player/?url=' + encodeURIComponent(searchUrl) + '&color=%238b5cf6&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=true';
+      $('musicNowTitle').textContent = query;
+      $('musicPlayer').src = embedUrl;
+      $('musicPlayerWrap').classList.remove('hidden');
+      $('musicOpenExternal').onclick = () => window.open(searchUrl, '_blank', 'noopener,noreferrer');
+      status('musicStatus', 'Готово. Нажми воспроизведение внутри плеера, чтобы начать слушать.');
+    }
+    document.querySelectorAll('.music-preset').forEach((button) => {
+      button.addEventListener('click', () => {
+        $('musicQuery').value = button.dataset.query || '';
+        openMusicSearch(button.dataset.query || '');
+      });
+    });
+
 
     let peopleSearchTimer = null;
     let peopleSearchRequestId = 0;
