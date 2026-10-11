@@ -243,6 +243,10 @@
     .profile-name, #profileUsername, #profileBio { overflow-wrap: anywhere; }
     .profile-avatar, .sidebar-avatar { flex-shrink: 0; }
     .mobile-bottom-nav { display: none; }
+
+    .people-results,.post-list{display:grid;gap:12px;margin-top:16px}.person-card,.post-card{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid var(--border);border-radius:16px;background:rgba(8,7,18,.3);min-width:0}.person-card img,.person-avatar{width:48px;height:48px;flex:0 0 48px;object-fit:cover;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#853cff,#3e72ff)}.person-info{flex:1;min-width:0;overflow-wrap:anywhere}.person-actions{display:flex;gap:8px;flex-wrap:wrap}.post-card{display:block}.post-meta{font-size:12px;color:var(--muted);margin-bottom:8px}.post-body{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55}.post-author{font-weight:750}
+    @media(max-width:760px){.mobile-bottom-nav{grid-template-columns:repeat(4,minmax(0,1fr))}.mobile-nav-button{font-size:10px;padding:4px 1px}.mobile-nav-button span:first-child{font-size:18px}.app-main{padding-bottom:calc(82px + env(safe-area-inset-bottom))}}
+
     @media (max-width: 760px) {
       body { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
       .shell { width: 100%; padding: 10px; }
@@ -376,8 +380,11 @@
       <div class="app-layout">
         <aside class="app-sidebar" aria-label="Навигация PulseUp">
           <div class="sidebar-brand">💜 PulseUp</div>
-          <button type="button" class="nav-button active" id="navChat">💬 Общий чат</button>
-          <button type="button" class="nav-button" id="navProfile">👤 Мой профиль</button>
+          <button type="button" class="nav-button active" id="navChat">💬 Сообщения</button>
+          <button type="button" class="nav-button" id="navPosts">📰 Посты</button>
+          <button type="button" class="nav-button" id="navSearch">🔎 Поиск</button>
+          <button type="button" class="nav-button" id="navFriends">👥 Друзья</button>
+          <button type="button" class="nav-button" id="navProfile">👤 Профиль</button>
           <div class="sidebar-user">
             <img id="sidebarAvatar" class="sidebar-avatar" alt="" hidden />
             <div id="sidebarAvatarFallback" class="sidebar-avatar" aria-hidden="true">💜</div>
@@ -414,10 +421,9 @@
 
       <form id="sendForm" class="composer">
 
-        <input id="messageInput" maxlength="2000" required
-
-          placeholder="Напиши сообщение…" autocomplete="off" />
-
+        <input id="messageInput" maxlength="2000" placeholder="Напиши сообщение…" autocomplete="off" />
+        <button type="button" id="attachChatPhoto" class="secondary" aria-label="Прикрепить фото" title="Прикрепить фото">📷</button><input id="chatPhotoInput" type="file" accept="image/*" hidden />
+        <button id="recordVoiceButton" type="button" class="secondary" title="Записать голосовое" aria-label="Записать голосовое">🎙️</button>
         <button id="sendButton" type="submit" aria-label="Отправить">➤</button>
 
       </form>
@@ -425,16 +431,20 @@
       <div class="status" id="chatStatus" role="status"></div>
 
           </div>
-      <section id="friendsView" class="card hidden" aria-label="Друзья">
-        <div class="topline"><div class="grow"><h2>👥 Друзья</h2><div class="muted">Твои контакты в PulseUp</div></div></div>
-        <div class="friends-empty" style="margin-top:18px;padding:22px;border:1px solid var(--border);border-radius:18px;background:rgba(8,7,18,.28)">
-          <div style="font-size:34px;margin-bottom:8px">🫂</div>
-          <strong>Тут будут твои друзья</strong>
-          <div class="muted" style="margin-top:6px">Раздел пока без списка контактов — навигация уже готова, а поиск и добавление друзей можно подключить следующим шагом.</div>
-        </div>
+      <section id="postsView" class="card hidden" aria-label="Лента публикаций">
+        <div class="topline"><div class="grow"><h2>📰 Посты</h2><div class="muted">Что нового у сообщества</div></div></div>
+        <form id="postForm" class="profile-editor"><label for="postText">Поделись новостью</label><textarea id="postText" rows="3" maxlength="2000" placeholder="Что у тебя нового?"></textarea><label for="postPhotoInput">Фото к публикации (необязательно)</label><input id="postPhotoInput" type="file" accept="image/*" /><div class="profile-actions"><button class="primary" type="submit">Опубликовать</button></div><div class="status" id="postStatus" role="status"></div></form>
+        <div id="postsList" class="post-list"><p class="muted">Загружаем публикации…</p></div>
       </section>
+      <section id="searchView" class="card hidden" aria-label="Поиск пользователей">
+        <div class="topline"><div class="grow"><h2>🔎 Поиск людей</h2><div class="muted">Найди знакомых по имени или дате рождения</div></div></div>
+        <form id="peopleSearchForm" class="profile-editor"><div class="profile-fields"><div class="full"><label for="peopleQuery">Имя или username</label><input id="peopleQuery" placeholder="Например, Анна или anna_01" autocomplete="off" /></div><div class="full"><label for="peopleBirthday">Дата рождения</label><input id="peopleBirthday" type="date" /></div></div><div class="profile-actions"><button class="primary" type="submit">Найти</button><button class="secondary" id="clearPeopleSearch" type="button">Очистить</button></div><div class="muted">Поиск по дате рождения доступен, если пользователь указал её в профиле.</div><div class="status" id="peopleSearchStatus" role="status"></div></form>
+        <div id="peopleResults" class="people-results"><p class="muted">Введи имя или дату рождения.</p></div>
+      </section>
+      <section id="friendsView" class="card hidden" aria-label="Друзья"><div class="topline"><div class="grow"><h2>👥 Друзья</h2><div class="muted">Находи людей и начинай личные чаты</div></div></div><p class="muted">Используй поиск, чтобы найти пользователя по имени или дате рождения. Нажми «Написать», чтобы открыть личный чат.</p><button class="primary" id="openPeopleSearch" type="button">🔎 Найти людей</button></section>
       <nav class="mobile-bottom-nav" aria-label="Основная навигация">
-        <button type="button" class="mobile-nav-button active" id="mobileNavChat"><span aria-hidden="true">💬</span><span>Сообщения</span></button>
+        <button type="button" class="mobile-nav-button active" id="mobileNavPosts"><span aria-hidden="true">📰</span><span>Посты</span></button>
+        <button type="button" class="mobile-nav-button" id="mobileNavSearch"><span aria-hidden="true">🔎</span><span>Поиск</span></button>
         <button type="button" class="mobile-nav-button" id="mobileNavFriends"><span aria-hidden="true">👥</span><span>Друзья</span></button>
         <button type="button" class="mobile-nav-button" id="mobileNavProfile"><span aria-hidden="true">👤</span><span>Профиль</span></button>
       </nav>
@@ -455,12 +465,13 @@
         <div class="profile-fields">
           <div><label for="profileDisplayName">Имя</label><input id="profileDisplayName" maxlength="40" required placeholder="Как тебя называть" /></div>
           <div><label for="profileHandle">Уникальный username</label><input id="profileHandle" maxlength="24" pattern="[A-Za-z0-9_]{3,24}" placeholder="например, pulse_user" /><div class="muted">3–24 символа: латиница, цифры и _</div></div>
-          <div class="full"><label for="profileBioInput">О себе</label><textarea id="profileBioInput" maxlength="160" rows="3" placeholder="Пара слов о себе…"></textarea></div>
+          <div><label for="profileBirthdayInput">Дата рождения</label><input id="profileBirthdayInput" type="date" /></div><div class="full"><label for="profileBioInput">О себе</label><textarea id="profileBioInput" maxlength="160" rows="3" placeholder="Пара слов о себе…"></textarea></div>
           <div class="full"><label for="profilePhotoInput">Фото профиля</label><input id="profilePhotoInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" /><div class="muted">PNG, JPG, WEBP или GIF, максимум 5 МБ.</div></div>
         </div>
         <div class="profile-actions"><button id="saveProfileButton" class="primary" type="submit">Сохранить профиль</button><button id="cancelProfileButton" class="secondary" type="button">Отмена</button></div>
         <div class="status" id="profileStatus" role="status" aria-live="polite"></div>
       </form>
+      <section class="profile-editor" aria-label="Публикации профиля"><h3>Мои публикации</h3><div id="profilePostsList" class="post-list"><p class="muted">Загружаем публикации…</p></div></section>
       </section>
         </div>
       </div>
@@ -562,24 +573,39 @@
 
 
     function showAppView(view) {
-      const isProfile = view === 'profile';
-      const isFriends = view === 'friends';
-      const isChat = !isProfile && !isFriends;
-      $('chatView').classList.toggle('hidden', !isChat);
-      $('friendsView').classList.toggle('hidden', !isFriends);
-      $('profileView').classList.toggle('hidden', !isProfile);
-      $('navChat').classList.toggle('active', isChat);
-      $('navProfile').classList.toggle('active', isProfile);
-      $('mobileNavChat').classList.toggle('active', isChat);
-      $('mobileNavFriends').classList.toggle('active', isFriends);
-      $('mobileNavProfile').classList.toggle('active', isProfile);
-      if (isProfile && currentUser) loadProfile(currentUser);
+      const views = {chat:'chatView', posts:'postsView', search:'searchView', friends:'friendsView', profile:'profileView'};
+      Object.entries(views).forEach(([key,id]) => $(id).classList.toggle('hidden', key !== view));
+      ['navChat','navPosts','navSearch','navFriends','navProfile'].forEach((id,i)=>$(id).classList.toggle('active',['chat','posts','search','friends','profile'][i]===view));
+      ['mobileNavPosts','mobileNavSearch','mobileNavFriends','mobileNavProfile'].forEach((id,i)=>$(id).classList.toggle('active',['posts','search','friends','profile'][i]===view));
+      if (view === 'profile' && currentUser) loadProfile(currentUser);
+      if (view === 'posts' || view === 'profile') loadPosts();
     }
     $('navChat').onclick = () => showAppView('chat');
+    $('navPosts').onclick = () => showAppView('posts'); $('navSearch').onclick = () => showAppView('search'); $('navFriends').onclick = () => showAppView('friends');
     $('navProfile').onclick = () => showAppView('profile');
-    $('mobileNavChat').onclick = () => showAppView('chat');
-    $('mobileNavFriends').onclick = () => showAppView('friends');
-    $('mobileNavProfile').onclick = () => showAppView('profile');
+    $('mobileNavPosts').onclick = () => showAppView('posts'); $('mobileNavSearch').onclick = () => showAppView('search');
+    $('mobileNavFriends').onclick = () => showAppView('friends'); $('mobileNavProfile').onclick = () => showAppView('profile');
+    $('openPeopleSearch').onclick = () => showAppView('search');
+
+    async function searchPeople() {
+      const query = $('peopleQuery').value.trim(); const birthday = $('peopleBirthday').value;
+      if (!query && !birthday) { status('peopleSearchStatus','Введи имя/username или выбери дату рождения.'); return; }
+      status('peopleSearchStatus','Ищем пользователей…'); $('peopleResults').replaceChildren();
+      try {
+        let req = supabase.from('profiles').select('id,display_name,username,bio,avatar_url,birth_date').neq('id',currentUser.id).limit(50);
+        if (query) req = req.or(`display_name.ilike.%${query.replace(/[%_,()]/g,'')}%,username.ilike.%${query.replace(/[%_,()]/g,'')}%`);
+        if (birthday) req = req.eq('birth_date',birthday);
+        const {data,error}=await req.order('display_name',{ascending:true}); if(error) throw error;
+        if(!data?.length){$('peopleResults').innerHTML='<p class="muted">Никого не нашли. Попробуй изменить запрос.</p>';status('peopleSearchStatus','');return;}
+        data.forEach(p=>{const card=document.createElement('article');card.className='person-card';const avatar=document.createElement('div');avatar.className='person-avatar';avatar.textContent='💜';if(p.avatar_url){const img=document.createElement('img');img.src=p.avatar_url;img.alt='';img.onerror=()=>img.remove();avatar.replaceChildren(img);}const info=document.createElement('div');info.className='person-info';const name=document.createElement('div');name.className='post-author';name.textContent=p.display_name||'Пользователь';const handle=document.createElement('div');handle.className='muted';handle.textContent=p.username?'@'+p.username:'';const bio=document.createElement('div');bio.className='muted';bio.textContent=p.bio||'';const actions=document.createElement('div');actions.className='person-actions';const msg=document.createElement('button');msg.className='primary';msg.type='button';msg.textContent='Написать';msg.onclick=()=>createDirectForProfile(p);actions.append(msg);info.append(name,handle,bio,actions);card.append(avatar,info);$('peopleResults').append(card);}); status('peopleSearchStatus',`Найдено: ${data.length}`);
+      } catch(e){status('peopleSearchStatus','Ошибка поиска. Проверь SQL-настройку профилей и поле birth_date: '+e.message);}
+    }
+    $('peopleSearchForm').addEventListener('submit',e=>{e.preventDefault();searchPeople();});
+    $('clearPeopleSearch').onclick=()=>{$('peopleQuery').value='';$('peopleBirthday').value='';$('peopleResults').innerHTML='<p class="muted">Введи имя или дату рождения.</p>';status('peopleSearchStatus','');};
+    async function createDirectForProfile(profile){try{const {data:existing,error}=await supabase.from('conversation_members').select('conversation_id,conversations!inner(id,type,title)').eq('user_id',currentUser.id);if(error)throw error;for(const row of existing||[]){if(row.conversations?.type!=='direct')continue;const {data:members}=await supabase.from('conversation_members').select('user_id').eq('conversation_id',row.conversation_id);if((members||[]).some(m=>m.user_id===profile.id)){currentConversationId=row.conversation_id;await refreshConversations();await switchConversation(row.conversation_id);showAppView('chat');return;}}const {data:conv,error:ce}=await supabase.from('conversations').insert({title:profile.display_name||profile.username,type:'direct',created_by:currentUser.id}).select('id').single();if(ce)throw ce;const {error:me}=await supabase.from('conversation_members').insert([{conversation_id:conv.id,user_id:currentUser.id},{conversation_id:conv.id,user_id:profile.id}]);if(me)throw me;await refreshConversations();await switchConversation(conv.id);showAppView('chat');}catch(e){alert('Не удалось открыть личный чат: '+e.message);}}
+    async function loadPosts(){try{const {data,error}=await supabase.from('posts').select('id,content,created_at,author_id,image_url').order('created_at',{ascending:false}).limit(50);if(error)throw error;const list=$('postsList');list.replaceChildren();const profileList=$('profilePostsList');if(profileList)profileList.replaceChildren();if(!data?.length){list.innerHTML='<p class="muted">Пока нет публикаций. Будь первым!</p>';if(profileList)profileList.innerHTML='<p class="muted">Пока нет публикаций.</p>';return;}const ids=[...new Set(data.map(p=>p.author_id))];const {data:authors}=await supabase.from('profiles').select('id,display_name,username').in('id',ids);const authorMap=new Map((authors||[]).map(a=>[a.id,a]));data.forEach(p=>{const author=authorMap.get(p.author_id);const card=document.createElement('article');card.className='post-card';const meta=document.createElement('div');meta.className='post-meta';meta.textContent=(author?.display_name||author?.username||'Пользователь')+' · '+new Date(p.created_at).toLocaleString('ru-RU');const body=document.createElement('div');body.className='post-body';body.textContent=p.content||'';card.append(meta);if(p.content)card.append(body);if(p.image_url){const img=document.createElement('img');img.className='post-photo';img.src=p.image_url;img.alt='Фото публикации';card.append(img);}list.append(card);if(profileList && p.author_id===currentUser?.id)profileList.append(card.cloneNode(true));});}catch(e){$('postsList').innerHTML='<p class="muted">Не удалось загрузить ленту. Выполни SQL-файл настройки постов. '+e.message+'</p>';}}
+    $('postForm').addEventListener('submit',async e=>{e.preventDefault();const content=$('postText').value.trim();const file=$('postPhotoInput').files?.[0];if((!content&&!file)||!currentUser)return;status('postStatus','Публикуем…');try{let image_url=null;if(file){if(!file.type.startsWith('image/'))throw new Error('Выбери файл изображения.');if(file.size>8*1024*1024)throw new Error('Фото должно быть до 8 МБ.');const ext=(file.name.split('.').pop()||'jpg').replace(/[^a-z0-9]/gi,'').toLowerCase()||'jpg';const path=`${currentUser.id}/${Date.now()}.${ext}`;const {error:upErr}=await supabase.storage.from('post-media').upload(path,file,{upsert:false,contentType:file.type});if(upErr)throw upErr;image_url=supabase.storage.from('post-media').getPublicUrl(path).data.publicUrl;}const {error}=await supabase.from('posts').insert({author_id:currentUser.id,content,image_url});if(error)throw error;$('postText').value='';$('postPhotoInput').value='';status('postStatus','Опубликовано!');await loadPosts();}catch(err){status('postStatus','Не удалось опубликовать: '+err.message);}});
+
 
     function showChat(user) {
 
@@ -646,16 +672,31 @@
 
 
 
-      const body = document.createElement('div');
+      if (msg.content) {
+        const body = document.createElement('div');
+        body.className = 'content';
+        body.textContent = msg.content;
+        item.append(meta, body);
+      } else {
+        item.append(meta);
+      }
 
-      body.className = 'content';
-
-      body.textContent = msg.content;
-
-
-
-      item.append(meta, body);
-
+      // Render attachments stored with the message.
+      if (msg.attachment_url && msg.attachment_type === 'image') {
+        const img = document.createElement('img');
+        img.src = msg.attachment_url;
+        img.alt = 'Фото в сообщении';
+        img.loading = 'lazy';
+        img.style.cssText = 'display:block;max-width:min(100%,360px);max-height:360px;object-fit:contain;border-radius:12px;margin-top:8px';
+        item.append(img);
+      } else if (msg.attachment_url && msg.attachment_type === 'audio') {
+        const audio = document.createElement('audio');
+        audio.controls = true;
+        audio.preload = 'metadata';
+        audio.src = msg.attachment_url;
+        audio.style.cssText = 'display:block;max-width:100%;width:280px;margin-top:8px';
+        item.append(audio);
+      }
       list.append(item);
 
     }
@@ -664,7 +705,7 @@
 
     async function loadMessages() {
       let query = supabase.from('messages')
-        .select('id,sender_id,sender_name,content,created_at,conversation_id')
+        .select('id,sender_id,sender_name,content,created_at,conversation_id,attachment_url,attachment_type')
         .order('id', { ascending: false }).limit(100);
       query = currentConversationId ? query.eq('conversation_id', currentConversationId) : query.is('conversation_id', null);
       const { data, error } = await query;
@@ -732,7 +773,7 @@
       if (localAvatarPreviewUrl) { URL.revokeObjectURL(localAvatarPreviewUrl); localAvatarPreviewUrl = null; }
       $('profilePhotoInput').value = '';
       const { data, error } = await supabase.from('profiles')
-        .select('id,display_name,username,bio,avatar_url').eq('id', user.id).maybeSingle();
+        .select('id,display_name,username,bio,avatar_url,birth_date').eq('id', user.id).maybeSingle();
       if (error) {
         status('profileStatus', 'Создай таблицу profiles и политики по инструкции. ' + error.message);
         return;
@@ -745,6 +786,7 @@
       $('profileDisplayName').value = profile.display_name || user.user_metadata?.display_name || '';
       $('profileHandle').value = profile.username || '';
       $('profileBioInput').value = profile.bio || '';
+      $('profileBirthdayInput').value = profile.birth_date || '';
       profileAvatarUrl = profile.avatar_url || null;
       setProfileAvatar(profileAvatarUrl);
       status('profileStatus', '');
@@ -769,6 +811,7 @@
         const displayName = $('profileDisplayName').value.trim();
         const username = $('profileHandle').value.trim().toLowerCase();
         const bio = $('profileBioInput').value.trim();
+        const birth_date = $('profileBirthdayInput').value || null;
         if (!displayName) throw new Error('Укажи имя.');
         if (username && !/^[a-z0-9_]{3,24}$/.test(username)) throw new Error('Username: 3–24 символа, латиница, цифры и _.');
         let avatarUrl = profileAvatarUrl;
@@ -783,7 +826,7 @@
           const { data: publicData } = supabase.storage.from('profile-photos').getPublicUrl(path);
           avatarUrl = publicData.publicUrl;
         }
-        const row = { id: currentUser.id, display_name: displayName, username: username || null, bio: bio || '', avatar_url: avatarUrl, updated_at: new Date().toISOString() };
+        const row = { id: currentUser.id, display_name: displayName, username: username || null, bio: bio || '', avatar_url: avatarUrl, birth_date, updated_at: new Date().toISOString() };
         const { error: saveError } = await supabase.from('profiles').upsert(row, { onConflict: 'id' });
         if (saveError) throw saveError;
         const { error: authError } = await supabase.auth.updateUser({ data: { display_name: displayName } });
@@ -881,6 +924,12 @@
       await refreshConversations();
       await switchConversation(currentConversationId);
     }
+
+    async function uploadChatFile(file, type) { if (!currentUser) return; if(file.size > 12*1024*1024) throw new Error('Файл должен быть до 12 МБ.'); const ext=(file.name.split('.').pop()|| (type==='audio'?'webm':'jpg')).replace(/[^a-z0-9]/gi,'').toLowerCase()||'bin'; const path=`${currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`; const {error}=await supabase.storage.from('chat-media').upload(path,file,{upsert:false,contentType:file.type||'application/octet-stream'}); if(error)throw error; const url=supabase.storage.from('chat-media').getPublicUrl(path).data.publicUrl; const senderName=String(currentUser.user_metadata?.display_name||'User').trim().slice(0,40)||'User'; const {error:msgError}=await supabase.from('messages').insert({sender_id:currentUser.id,sender_name:senderName,content:'',conversation_id:currentConversationId,attachment_url:url,attachment_type:type}); if(msgError)throw msgError; }
+    $('attachChatPhoto').onclick=()=>$('chatPhotoInput').click();
+    $('chatPhotoInput').addEventListener('change',async()=>{const file=$('chatPhotoInput').files?.[0];if(!file)return;try{status('chatStatus','Отправляем фото…');await uploadChatFile(file,'image');status('chatStatus','Фото отправлено');}catch(e){status('chatStatus','Не удалось отправить фото: '+e.message);}finally{$('chatPhotoInput').value='';}});
+    let mediaRecorder=null, voiceChunks=[];
+    $('recordVoiceButton').onclick=async()=>{const btn=$('recordVoiceButton');if(mediaRecorder?.state==='recording'){mediaRecorder.stop();btn.textContent='🎙️';btn.title='Записать голосовое';return;}try{if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder)throw new Error('Запись голосовых не поддерживается этим браузером.');const stream=await navigator.mediaDevices.getUserMedia({audio:true});mediaRecorder=new MediaRecorder(stream);voiceChunks=[];mediaRecorder.ondataavailable=e=>{if(e.data.size)voiceChunks.push(e.data);};mediaRecorder.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());const blob=new Blob(voiceChunks,{type:mediaRecorder.mimeType||'audio/webm'});if(blob.size){const ext=(blob.type.includes('mp4')?'m4a':blob.type.includes('ogg')?'ogg':'webm');const file=new File([blob],`voice-${Date.now()}.${ext}`,{type:blob.type});try{status('chatStatus','Отправляем голосовое…');await uploadChatFile(file,'audio');status('chatStatus','Голосовое отправлено');}catch(e){status('chatStatus','Не удалось отправить голосовое: '+e.message);}}};mediaRecorder.start();btn.textContent='⏹️';btn.title='Остановить запись и отправить';status('chatStatus','Запись… Нажми ⏹️, чтобы отправить.');}catch(e){status('chatStatus',e.message||'Нет доступа к микрофону. Разреши его в браузере.');}};
 
     $('sendForm').addEventListener('submit', async event => {
       event.preventDefault();
