@@ -377,10 +377,15 @@
     #musicView .music-tools{display:flex;gap:8px;align-items:center;margin:12px 0;flex-wrap:wrap}
     #musicView .music-tools input{flex:1;min-width:180px}
     #musicView .music-tools select{max-width:170px}
+    #musicView .profile-actions[role="tablist"]{display:inline-flex;align-items:center;gap:4px!important;padding:4px;background:#202020;border-radius:12px;margin:12px 0 16px!important;max-width:100%;box-sizing:border-box}
+    #musicView .music-section-tab{border:0!important;border-radius:9px!important;padding:7px 12px!important;min-height:32px;font-size:14px;font-weight:500;line-height:1.1;white-space:nowrap;box-shadow:none!important}
+    #musicView .music-section-tab.primary{background:#3b3b3b!important;color:#f5f5f5!important}
+    #musicView .music-section-tab.secondary{background:transparent!important;color:#9b9b9b!important}
+    #musicView .music-section-tab:focus-visible{outline:2px solid #9c78ff;outline-offset:2px}
     #musicView .music-pane .muted.empty{padding:12px;font-size:13px}
     #musicView #musicPlaylistsList .post-card{padding:10px;margin-bottom:7px}
     #musicView #musicNowPlaying{background:rgba(24,20,54,.9);border-color:rgba(150,112,255,.25)}
-    @media(max-width:760px){#musicView .music-columns{grid-template-columns:1fr}#musicView #musicLibraryList{grid-template-columns:1fr}#musicView{padding:12px}#musicView .music-track-row{grid-template-columns:38px minmax(0,1fr) auto}}
+    @media(max-width:760px){#musicView .profile-actions[role="tablist"]{width:auto;max-width:100%;overflow-x:auto}#musicView .music-section-tab{padding:7px 10px!important;font-size:13px}#musicView .music-columns{grid-template-columns:1fr}#musicView #musicLibraryList{grid-template-columns:1fr}#musicView{padding:12px}#musicView .music-track-row{grid-template-columns:38px minmax(0,1fr) auto}}
 
   </style>
 
@@ -546,9 +551,9 @@
 
         <div class="grow">
 
-          <h2>💬 Общий чат</h2>
+          <h2>💬 Сообщения</h2>
 
-          <div class="muted">Сообщения видны всем участникам чата</div>
+          <div class="muted">Выбери личный чат или создай новую группу</div>
 
         </div>
 
@@ -556,11 +561,12 @@
       </div>
 
       <div class="conversation-tools" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0">
-        <select id="conversationSelect" aria-label="Выбрать чат" style="flex:1;min-width:150px;padding:10px;border-radius:12px;background:#15132a;color:#fff;border:1px solid var(--border)"><option value="">Общий чат</option></select>
+        <select id="conversationSelect" aria-label="Выбрать чат" style="flex:1;min-width:150px;padding:10px;border-radius:12px;background:#15132a;color:#fff;border:1px solid var(--border)"><option value="">Выбери чат…</option></select>
         <button type="button" class="secondary" id="newDirectChat">＋ Личный чат</button>
-        <button type="button" class="secondary" id="newGroupChat">＋ Группа</button>
+        <button type="button" class="secondary" id="newGroupChat">＋ Создать группу</button>
+        <button type="button" class="secondary" id="enableNotifications" title="Включить звуковые уведомления">🔔 Уведомления</button>
       </div>
-      <div class="muted" style="font-size:12px;margin-bottom:8px">Личный чат — по username. Для группы укажи username участников через запятую.</div>
+      <div class="muted" style="font-size:12px;margin-bottom:8px">Общего чата нет. Создай личную переписку или группу; для группы укажи username участников через запятую.</div>
       <div class="status" id="connection">Подключение к чату…</div>
 
       <div class="messages" id="messages" aria-live="polite"></div>
@@ -589,7 +595,7 @@
       </section>
       <section id="musicView" class="card hidden" aria-label="Музыка PulseUp">
         <div class="topline" style="align-items:center"><div class="grow"><h2>♫ Музыка</h2></div><button id="musicAddToggle" class="primary" type="button" aria-label="Добавить музыку" title="Добавить музыку" style="width:44px;height:44px;min-width:44px;padding:0;border-radius:50%;font-size:26px;line-height:1">＋</button></div>
-        <div class="profile-actions" role="tablist" aria-label="Разделы музыки" style="margin:14px 0 16px;gap:8px"><button id="musicTabMine" class="primary" type="button" role="tab" aria-selected="true">Моя музыка</button><button id="musicTabNew" class="secondary" type="button" role="tab" aria-selected="false">Новинки</button></div>
+        <div class="profile-actions" role="tablist" aria-label="Разделы музыки" style="margin:14px 0 16px;gap:8px"><button id="musicTabNew" class="primary music-section-tab" type="button" role="tab" aria-selected="true">Главная</button><button id="musicTabMine" class="secondary music-section-tab" type="button" role="tab" aria-selected="false">Моя музыка</button></div>
         <form id="musicUploadForm" class="profile-editor hidden">
           <div class="profile-fields">
             <div><label for="musicUploadTitle">Название трека *</label><input id="musicUploadTitle" maxlength="120" required placeholder="Название песни" /></div>
@@ -826,7 +832,7 @@
     $('navChat').onclick = () => showAppView('chat');
     $('navPosts').onclick = () => showAppView('posts'); $('navSearch').onclick = () => showAppView('search'); $('navFriends').onclick = () => showAppView('friends');
     $('navMusic').onclick = () => showAppView('music');
-    let musicSection = 'mine';
+    let musicSection = 'new';
     function setMusicSection(section) {
       musicSection = section;
       $('musicTabMine').className = section === 'mine' ? 'primary' : 'secondary';
@@ -838,6 +844,7 @@
     }
     $('musicTabMine').addEventListener('click', () => setMusicSection('mine'));
     $('musicTabNew').addEventListener('click', () => setMusicSection('new'));
+    setMusicSection('new');
     $('musicAddToggle').addEventListener('click', () => {
       const form = $('musicUploadForm');
       const opening = form.classList.contains('hidden');
@@ -1168,7 +1175,8 @@
       let query = supabase.from('messages')
         .select('id,sender_id,sender_name,content,created_at,conversation_id,attachment_url,attachment_type')
         .order('id', { ascending: false }).limit(100);
-      query = currentConversationId ? query.eq('conversation_id', currentConversationId) : query.is('conversation_id', null);
+      if (!currentConversationId) { $('messages').replaceChildren(); oldestLoaded = null; return; }
+      query = query.eq('conversation_id', currentConversationId);
       const { data, error } = await query;
       if (error) throw error;
       $('messages').replaceChildren();
@@ -1309,12 +1317,49 @@
       }
     });
 
+    // Короткий мягкий двухнотный сигнал, синтезированный браузером (без сторонних аудиофайлов).
+    let notificationAudioContext = null;
+    function playMessageChime() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        notificationAudioContext ||= new AudioCtx();
+        if (notificationAudioContext.state === 'suspended') notificationAudioContext.resume();
+        const ctx = notificationAudioContext, now = ctx.currentTime;
+        [[880, 0], [1174.66, 0.13]].forEach(([freq, delay]) => {
+          const osc = ctx.createOscillator(), gain = ctx.createGain();
+          osc.type = 'sine'; osc.frequency.setValueAtTime(freq, now + delay);
+          gain.gain.setValueAtTime(0.0001, now + delay);
+          gain.gain.exponentialRampToValueAtTime(0.12, now + delay + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + delay + 0.22);
+          osc.connect(gain); gain.connect(ctx.destination); osc.start(now + delay); osc.stop(now + delay + 0.24);
+        });
+      } catch (e) { /* браузер может блокировать звук до первого взаимодействия */ }
+    }
+    function notifyIncomingMessage(msg) {
+      playMessageChime();
+      if (document.hidden && 'Notification' in window && Notification.permission === 'granted') {
+        const notification = new Notification(msg.sender_name || 'Новое сообщение', { body: String(msg.content || 'Вложение').slice(0, 120), tag: 'pulseup-message-' + msg.id });
+        notification.onclick = () => { window.focus(); notification.close(); };
+      }
+    }
+    $('enableNotifications').addEventListener('click', async () => {
+      try {
+        if (notificationAudioContext?.state === 'suspended') await notificationAudioContext.resume();
+        else { const AudioCtx = window.AudioContext || window.webkitAudioContext; if (AudioCtx) { notificationAudioContext = new AudioCtx(); await notificationAudioContext.resume(); } }
+        playMessageChime();
+        if ('Notification' in window && Notification.permission === 'default') await Notification.requestPermission();
+        const granted = !('Notification' in window) || Notification.permission === 'granted';
+        status('connection', granted ? 'Звуковые уведомления включены.' : 'Звук включён. Разреши уведомления в настройках браузера для системных оповещений.');
+      } catch (e) { status('connection', 'Не удалось включить уведомления. Проверь разрешения браузера.'); }
+    });
+
     async function refreshConversations() {
       const { data, error } = await supabase.from('conversation_members')
         .select('conversation_id, conversations(id,title,type,created_at)').eq('user_id', currentUser.id);
       if (error) { status('connection', 'Для личных и групповых чатов выполни SQL-файл настройки в Supabase.'); return; }
       conversations = (data || []).map(row => row.conversations).filter(Boolean);
-      const select = $('conversationSelect'); select.replaceChildren(new Option('Общий чат', ''));
+      const select = $('conversationSelect'); select.replaceChildren(new Option('Выбери чат…', ''));
       conversations.forEach(c => select.add(new Option((c.type === 'direct' ? '👤 ' : '👥 ') + c.title, c.id)));
       select.value = currentConversationId || '';
     }
@@ -1322,15 +1367,21 @@
     async function switchConversation(id) {
       currentConversationId = id || null;
       const conv = conversations.find(c => c.id === currentConversationId);
-      $('chatView').querySelector('.topline h2').textContent = conv ? conv.title : '💬 Общий чат';
-      $('chatView').querySelector('.topline .muted').textContent = conv ? (conv.type === 'direct' ? 'Личная переписка' : 'Групповой чат') : 'Сообщения видны всем участникам чата';
+      $('chatView').querySelector('.topline h2').textContent = conv ? conv.title : '💬 Сообщения';
+      $('chatView').querySelector('.topline .muted').textContent = conv ? (conv.type === 'direct' ? 'Личная переписка' : 'Групповой чат') : 'Выбери чат сверху или создай новый';
       $('messages').replaceChildren();
+      $('messageInput').disabled = !currentConversationId;
+      $('sendButton').disabled = !currentConversationId;
+      $('attachChatPhoto').disabled = !currentConversationId;
+      $('recordVoiceButton').disabled = !currentConversationId;
+      if (!currentConversationId) { if (channel) await supabase.removeChannel(channel); channel = null; status('connection', 'Создай личный чат или группу, чтобы начать переписку.'); return; }
       try { await loadMessages(); } catch (e) { status('connection', 'Не удалось загрузить чат: ' + e.message); }
       if (channel) await supabase.removeChannel(channel);
-      channel = supabase.channel('pulseup-chat-' + (currentConversationId || 'public') + '-' + currentUser.id)
+      channel = supabase.channel('pulseup-chat-' + currentConversationId + '-' + currentUser.id)
         .on('postgres_changes', { event:'INSERT', schema:'public', table:'messages' }, payload => {
-          if ((payload.new.conversation_id || null) !== currentConversationId) return;
+          if (payload.new.conversation_id !== currentConversationId) return;
           addMessage(payload.new); $('messages').scrollTop = $('messages').scrollHeight;
+          if (payload.new.sender_id !== currentUser.id) notifyIncomingMessage(payload.new);
         }).subscribe(state => {
           if (state === 'SUBSCRIBED') status('connection', '● Онлайн · обновления в реальном времени');
           else if (state === 'CHANNEL_ERROR') status('connection', 'Ошибка realtime. Проверь настройки Supabase.');
@@ -1388,7 +1439,7 @@
       showChat(user);
 
       await refreshConversations();
-      await switchConversation(currentConversationId);
+      await switchConversation(currentConversationId && conversations.some(c => c.id === currentConversationId) ? currentConversationId : null);
     }
 
     async function uploadChatFile(file, type) { if (!currentUser) return; if(file.size > 12*1024*1024) throw new Error('Файл должен быть до 12 МБ.'); const ext=(file.name.split('.').pop()|| (type==='audio'?'webm':'jpg')).replace(/[^a-z0-9]/gi,'').toLowerCase()||'bin'; const path=`${currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`; const {error}=await supabase.storage.from('chat-media').upload(path,file,{upsert:false,contentType:file.type||'application/octet-stream'}); if(error)throw error; const url=supabase.storage.from('chat-media').getPublicUrl(path).data.publicUrl; const senderName=String(currentUser.user_metadata?.display_name||'User').trim().slice(0,40)||'User'; const {error:msgError}=await supabase.from('messages').insert({sender_id:currentUser.id,sender_name:senderName,content:'',conversation_id:currentConversationId,attachment_url:url,attachment_type:type}); if(msgError)throw msgError; }
