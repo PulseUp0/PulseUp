@@ -421,6 +421,16 @@ img.post-image, .post img, .post-media img, .post-image {
   box-shadow:0 0 12px rgba(145,54,255,.22);
 }
 
+
+    /* PulseUp unified violet line-icon treatment */
+    .pu-icon{width:20px;height:20px;display:inline-block;vertical-align:middle;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .pu-icon-button{display:inline-grid;place-items:center;width:38px;height:38px;flex:0 0 38px;border:1px solid rgba(145,91,255,.42);border-radius:12px;background:rgba(27,13,62,.55);color:#c4a2ff;cursor:pointer}
+    .pu-icon-button:hover{background:rgba(112,55,220,.24);border-color:#a879ff}
+    .conversation-delete{margin-left:2px;color:#ff9ab9;border-color:rgba(255,115,160,.35)}
+    .conversation-avatar{border:1px solid rgba(165,119,255,.5);box-shadow:0 0 14px rgba(125,70,255,.13);overflow:hidden}
+    .conversation-avatar img,.person-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;cursor:pointer}
+    .person-avatar,.person-card img{cursor:pointer}
+    .post-author{cursor:pointer}
 </style>
 
 
@@ -518,7 +528,7 @@ img.post-image, .post img, .post-media img, .post-image {
 
 /* Compact VK-style conversation list */
 .conversation-list{display:flex;flex-direction:column;gap:2px;margin:12px 0 16px;max-height:min(58vh,620px);overflow-y:auto;border-radius:14px}
-.conversation-row{display:flex;align-items:center;gap:12px;width:100%;min-width:0;padding:10px 12px;border:0;border-radius:12px;background:transparent;color:inherit;text-align:left;cursor:pointer;transition:background .15s}
+.conversation-item{display:flex;align-items:center;gap:8px;width:100%;min-width:0;border-radius:12px}.conversation-row{display:flex;align-items:center;gap:12px;flex:1;width:auto;min-width:0;padding:10px 12px;border:0;border-radius:12px;background:transparent;color:inherit;text-align:left;cursor:pointer;transition:background .15s}
 .conversation-row:hover,.conversation-row:focus-visible{background:rgba(255,255,255,.07);outline:none}
 .conversation-row.active{background:rgba(139,92,246,.18);box-shadow:inset 3px 0 #9b72ff}
 .conversation-avatar{width:46px;height:46px;flex:0 0 46px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#8b5cf6,#43308a);font-size:18px;font-weight:700;color:#fff}
@@ -526,7 +536,7 @@ img.post-image, .post img, .post-media img, .post-image {
 .conversation-row-title{font-weight:650;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .conversation-row-subtitle{font-size:12px;opacity:.68;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .conversation-row-meta{font-size:11px;opacity:.55;flex:0 0 auto;align-self:flex-start}
-@media(max-width:600px){.conversation-list{max-height:none;overflow:visible;margin:8px -4px 14px}.conversation-row{padding:9px 8px;gap:10px}.conversation-avatar{width:44px;height:44px;flex-basis:44px}.conversation-row-title{font-size:14px}.conversation-row-subtitle{font-size:12px}.conversation-tools{gap:6px!important}.conversation-tools button{flex:1 1 calc(50% - 6px);min-width:0;font-size:12px;padding:9px 7px}}
+@media(max-width:600px){.conversation-list{max-height:none;overflow:visible;margin:8px -4px 14px}.conversation-item{gap:5px}.conversation-row{padding:9px 6px;gap:10px}.conversation-delete{width:36px;height:36px;flex-basis:36px}.conversation-avatar{width:44px;height:44px;flex-basis:44px}.conversation-row-title{font-size:14px}.conversation-row-subtitle{font-size:12px}.conversation-tools{gap:6px!important}.conversation-tools button{flex:1 1 calc(50% - 6px);min-width:0;font-size:12px;padding:9px 7px}}
 </style>
 
 
@@ -766,7 +776,7 @@ input, textarea, select, .input, .text-input {
           <button type="button" role="menuitem" id="enableNotifications">🔔 Включить уведомления</button>
         </div>
       </div>
-      <div class="muted" style="font-size:12px;margin-bottom:8px">Общего чата нет. Создай личную переписку или группу; для группы укажи username участников через запятую.</div>
+      <div class="muted" style="font-size:12px;margin-bottom:8px">Общего чата нет. Создай личную переписку или группу; для группы выбери участников из списка друзей.</div>
       <div id="conversationList" class="conversation-list" aria-label="Список переписок"></div>
       <div class="status" id="connection">Подключение к чату…</div>
 
@@ -1675,6 +1685,26 @@ input, textarea, select, .input, .text-input {
         .select('conversation_id, conversations(id,title,type,created_at)').eq('user_id', currentUser.id);
       if (error) { status('connection', 'Для личных и групповых чатов выполни SQL-файл настройки в Supabase.'); return; }
       conversations = (data || []).map(row => row.conversations).filter(Boolean);
+      // Load member avatars for direct chats and a representative avatar for groups.
+      try {
+        const ids = conversations.map(c => c.id);
+        if (ids.length) {
+          const { data: members } = await supabase.from('conversation_members').select('conversation_id,user_id').in('conversation_id', ids);
+          const memberRows = members || [];
+          const userIds = [...new Set(memberRows.map(m => m.user_id).filter(id => id && id !== currentUser.id))];
+          let profileMap = new Map();
+          if (userIds.length) {
+            const { data: profiles } = await supabase.from('profiles').select('id,display_name,username,avatar_url').in('id', userIds);
+            profileMap = new Map((profiles || []).map(p => [p.id, p]));
+          }
+          conversations.forEach(c => {
+            const idsForChat = memberRows.filter(m => m.conversation_id === c.id).map(m => m.user_id).filter(id => id !== currentUser.id);
+            const profilesForChat = idsForChat.map(id => profileMap.get(id)).filter(Boolean);
+            c.avatar_url = profilesForChat.find(p => p.avatar_url)?.avatar_url || '';
+            c.avatar_profile = profilesForChat[0] || null;
+          });
+        }
+      } catch (avatarError) { console.warn('Не удалось загрузить аватарки чатов:', avatarError.message); }
       const select = $('conversationSelect'); select.replaceChildren(new Option('Выбери чат…', ''));
       conversations.forEach(c => select.add(new Option((c.type === 'direct' ? '👤 ' : '👥 ') + c.title, c.id)));
       select.value = currentConversationId || '';
@@ -1695,22 +1725,63 @@ input, textarea, select, .input, .text-input {
         return;
       }
       conversations.forEach(c => {
+        const item = document.createElement('div'); item.className = 'conversation-item';
         const row = document.createElement('button');
-        row.type = 'button';
-        row.className = 'conversation-row' + (c.id === currentConversationId ? ' active' : '');
+        row.type = 'button'; row.className = 'conversation-row' + (c.id === currentConversationId ? ' active' : '');
         row.setAttribute('aria-label', 'Открыть чат ' + (c.title || 'Без названия'));
-        const avatar = document.createElement('span');
-        avatar.className = 'conversation-avatar';
-        avatar.textContent = c.type === 'direct' ? '👤' : '👥';
+        const avatar = document.createElement('span'); avatar.className = 'conversation-avatar';
+        if (c.avatar_url) {
+          const img = document.createElement('img'); img.src = c.avatar_url; img.alt = ''; img.loading = 'lazy';
+          img.onerror = () => { avatar.replaceChildren(); avatar.textContent = c.type === 'direct' ? '👤' : '👥'; };
+          avatar.append(img);
+        } else avatar.textContent = c.type === 'direct' ? '👤' : '👥';
+        avatar.style.cursor = c.avatar_profile ? 'pointer' : 'default';
+        avatar.title = c.avatar_profile ? 'Открыть профиль ' + (c.avatar_profile.display_name || c.avatar_profile.username || 'пользователя') : (c.type === 'direct' ? 'Профиль собеседника недоступен' : 'Аватар группы');
+        avatar.setAttribute('role', c.avatar_profile ? 'button' : 'img');
+        if (c.avatar_profile) {
+          avatar.tabIndex = 0;
+          const openChatProfile = ev => {
+            ev.stopPropagation();
+            openPublicProfile(c.avatar_profile);
+          };
+          avatar.addEventListener('click', openChatProfile);
+          avatar.addEventListener('keydown', ev => {
+            if (ev.key === 'Enter' || ev.key === ' ') {
+              ev.preventDefault();
+              openChatProfile(ev);
+            }
+          });
+        }
         const copy = document.createElement('span'); copy.className = 'conversation-row-copy';
         const title = document.createElement('span'); title.className = 'conversation-row-title'; title.textContent = c.title || 'Без названия';
         const subtitle = document.createElement('span'); subtitle.className = 'conversation-row-subtitle'; subtitle.textContent = c.type === 'direct' ? 'Личная переписка' : 'Групповой чат';
         copy.append(title, subtitle);
         const meta = document.createElement('span'); meta.className = 'conversation-row-meta';
         meta.textContent = c.created_at ? new Date(c.created_at).toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit'}) : '';
-        row.append(avatar, copy, meta);
-        row.addEventListener('click', () => switchConversation(c.id));
-        list.append(row);
+        row.append(avatar, copy, meta); row.addEventListener('click', () => switchConversation(c.id));
+        const del = document.createElement('button'); del.type = 'button'; del.className = 'pu-icon-button conversation-delete';
+        del.title = 'Удалить диалог у обоих участников'; del.setAttribute('aria-label', 'Удалить диалог у обоих участников');
+        del.innerHTML = '<svg class="pu-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2m-11 0 1 14h12l1-14M10 10v6m4-6v6"/></svg>';
+        del.addEventListener('click', async ev => {
+          ev.stopPropagation();
+          if (!confirm('Удалить этот диалог у обоих участников? Переписка может быть удалена без возможности восстановления.')) return;
+          try {
+            // Delete through a database function so the conversation can be removed
+            // for every participant under a server-side permission check.
+            const { error } = await supabase.rpc('delete_conversation_for_all', {
+              conversation_id_input: c.id
+            });
+            if (error) throw error;
+            if (currentConversationId === c.id) {
+              currentConversationId = null;
+              if (channel) { await supabase.removeChannel(channel); channel = null; }
+              $('messages').replaceChildren(); $('messageInput').disabled = true; $('sendButton').disabled = true;
+              $('attachChatPhoto').disabled = true; $('recordVoiceButton').disabled = true;
+            }
+            await refreshConversations(); status('chatStatus', 'Диалог удалён.');
+          } catch (err) { status('chatStatus', 'Не удалось удалить диалог у обоих. Проверь права DELETE в Supabase: ' + err.message); }
+        });
+        item.append(row, del); list.append(item);
       });
     }
 
@@ -1722,7 +1793,19 @@ input, textarea, select, .input, .text-input {
       if (backButton) backButton.style.display = currentConversationId ? 'inline-flex' : 'none';
       renderConversationList();
       const conv = conversations.find(c => c.id === currentConversationId);
-      $('chatView').querySelector('.topline h2').textContent = conv ? conv.title : '💬 Сообщения';
+      const chatTitle = $('chatView').querySelector('.topline h2');
+      chatTitle.textContent = conv ? conv.title : '💬 Сообщения';
+      chatTitle.style.cursor = conv?.type === 'direct' && conv.avatar_profile ? 'pointer' : 'default';
+      chatTitle.title = conv?.type === 'direct' && conv.avatar_profile
+        ? 'Открыть профиль ' + (conv.avatar_profile.display_name || conv.avatar_profile.username || 'собеседника')
+        : '';
+      chatTitle.onclick = conv?.type === 'direct' && conv.avatar_profile
+        ? () => openPublicProfile(conv.avatar_profile)
+        : null;
+      chatTitle.onkeydown = conv?.type === 'direct' && conv.avatar_profile
+        ? ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openPublicProfile(conv.avatar_profile); } }
+        : null;
+      chatTitle.tabIndex = conv?.type === 'direct' && conv.avatar_profile ? 0 : -1;
       $('chatView').querySelector('.topline .muted').textContent = conv ? '' : 'Выбери чат или создай новый';
       $('messages').replaceChildren();
       $('messageInput').disabled = !currentConversationId;
@@ -1769,13 +1852,20 @@ input, textarea, select, .input, .text-input {
           }
         } else {
           const groupName = title;
-          const rawUsers = prompt('Username участников через запятую (без @):') || '';
-          for (const username of rawUsers.split(',').map(v => v.trim().replace(/^@/, '').toLowerCase()).filter(Boolean)) {
-            const { data: profile, error } = await supabase.from('profiles').select('id').ilike('username', username).maybeSingle();
-            if (error) throw error;
-            if (profile && !memberIds.includes(profile.id)) memberIds.push(profile.id);
-          }
-          if (memberIds.length < 2) throw new Error('Добавь хотя бы одного участника с заполненным username.');
+          const { data: links, error: linksError } = await supabase.from('follows')
+            .select('following_id').eq('follower_id', chatCreatorId);
+          if (linksError) throw linksError;
+          const friendIds = [...new Set((links || []).map(x => x.following_id).filter(id => id && id !== chatCreatorId))];
+          if (!friendIds.length) throw new Error('Сначала добавь друзей — группу можно создать только с друзьями.');
+          const { data: friends, error: friendsError } = await supabase.from('profiles')
+            .select('id,display_name,username,avatar_url').in('id', friendIds);
+          if (friendsError) throw friendsError;
+          const numbered = (friends || []).map((p, i) => `${i + 1}. ${p.display_name || p.username || 'Пользователь'}${p.username ? ' (@' + p.username + ')' : ''}`).join('\\n');
+          const chosen = prompt('Выбери друзей по номерам через запятую:\\n\\n' + numbered);
+          if (!chosen) return;
+          const indexes = chosen.split(',').map(v => Number(v.trim()) - 1).filter(n => Number.isInteger(n) && n >= 0 && n < friends.length);
+          for (const i of indexes) if (!memberIds.includes(friends[i].id)) memberIds.push(friends[i].id);
+          if (memberIds.length < 2) throw new Error('Выбери хотя бы одного друга из списка.');
           title = groupName;
         }
         const { data: conv, error: cErr } = await supabase.from('conversations').insert({ title, type, created_by: chatCreatorId }).select('id,title,type').single();
@@ -1937,7 +2027,46 @@ input, textarea, select, .input, .text-input {
 
     }
 
-  </script>
+  
+    // Any photograph on the site can be opened in a full-size viewer.
+    (() => {
+      const viewer = document.getElementById('sitePhotoViewer');
+      const viewerImage = document.getElementById('sitePhotoViewerImage');
+      const closeButton = document.getElementById('sitePhotoViewerClose');
+      if (!viewer || !viewerImage || !closeButton) return;
+      const closeViewer = () => {
+        viewer.hidden = true;
+        viewerImage.removeAttribute('src');
+        document.body.style.overflow = '';
+      };
+      const openViewer = (src, alt) => {
+        if (!src) return;
+        viewerImage.src = src;
+        viewerImage.alt = alt || 'Фотография в полном размере';
+        viewer.hidden = false;
+        document.body.style.overflow = 'hidden';
+      };
+      document.addEventListener('click', event => {
+        const img = event.target.closest('img');
+        if (!img || img.id === 'sitePhotoViewerImage' || img.closest('#sitePhotoViewer')) return;
+        if (img.hidden || !img.currentSrc && !img.src) return;
+        const src = img.currentSrc || img.src;
+        if (!src || src.startsWith('data:image/svg')) return;
+        // Skip tiny decorative images/icons; make profile avatars and content photos zoomable.
+        const isAvatar = /avatar|profile|photo|user/i.test(img.id + ' ' + img.className + ' ' + (img.alt || ''));
+        const isContentPhoto = img.closest('.post, .post-card, .message, .content, .public-profile-panel, .profile-card, .conversation-row, .friend-card, .people-result, .image-lightbox');
+        if (!isAvatar && !isContentPhoto && img.naturalWidth < 80 && img.naturalHeight < 80) return;
+        event.preventDefault();
+        event.stopPropagation();
+        openViewer(src, img.alt);
+      }, true);
+      closeButton.addEventListener('click', closeViewer);
+      viewer.addEventListener('click', event => { if (event.target === viewer) closeViewer(); });
+      document.addEventListener('keydown', event => { if (event.key === 'Escape' && !viewer.hidden) closeViewer(); });
+      viewerImage.addEventListener('click', closeViewer);
+    })();
+
+</script>
 
 
 <style id="pulseup-remove-gray-tab-backplate">
@@ -2401,6 +2530,11 @@ article.message::before, article.message::after {
 @media (min-width:761px) { .mobile-bottom-nav { display:none !important; } }
 </style>
 
+
+  <div id="sitePhotoViewer" hidden role="dialog" aria-modal="true" aria-label="Просмотр фотографии">
+    <button type="button" id="sitePhotoViewerClose" aria-label="Закрыть фотографию">×</button>
+    <img id="sitePhotoViewerImage" alt="Фотография в полном размере">
+  </div>
 </body>
 
 
@@ -2647,43 +2781,136 @@ body > * { position:relative; z-index:1; }
 #messages .message:hover {
   box-shadow: 0 0 12px rgba(154, 74, 255, .22), 0 0 26px rgba(154, 74, 255, .13) !important;
 }
-</style>
 
-<style id="pulseup-mobile-nav-viewport-fix">
-@media screen and (max-width: 760px) {
-  html, body { min-height:100%; width:100%; margin:0 !important; padding:0 !important; overflow-x:hidden !important; }
-  body { padding-bottom: calc(76px + env(safe-area-inset-bottom)) !important; }
-  .mobile-bottom-nav {
-    position:fixed !important; inset:auto 0 0 0 !important;
-    width:100vw !important; max-width:100vw !important; margin:0 !important;
-    display:grid !important; grid-template-columns:repeat(6,minmax(0,1fr)) !important;
-    gap:2px !important; box-sizing:border-box !important;
-    padding:5px 5px calc(5px + env(safe-area-inset-bottom)) !important;
-    z-index:2147483647 !important; transform:none !important;
-    background:rgba(14,7,32,.97) !important;
-    border-top:1px solid rgba(183,145,255,.4) !important;
-    box-shadow:0 -8px 28px rgba(70,20,130,.22) !important;
-    -webkit-backdrop-filter:blur(22px) saturate(145%) !important;
-    backdrop-filter:blur(22px) saturate(145%) !important;
-  }
-  .mobile-nav-button { min-width:0 !important; width:100% !important; min-height:48px !important; padding:3px 0 !important; margin:0 !important; display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; gap:3px !important; font-size:clamp(9px,2.5vw,11px) !important; line-height:1.05 !important; white-space:nowrap !important; }
-  .mobile-nav-button span:first-child { font-size:20px !important; }
-  .shell { padding-bottom:calc(86px + env(safe-area-inset-bottom)) !important; }
-  .app-main { padding-bottom:8px !important; }
-}
-@media screen and (min-width:761px) { .mobile-bottom-nav { display:none !important; } }
+    /* Telegram-inspired public profile: compact, responsive, and contained in viewport. */
+    .public-profile-modal {
+      position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center;
+      justify-content: center; padding: 20px; background: rgba(3, 2, 15, .78);
+      backdrop-filter: blur(14px); overflow: auto;
+    }
+    .public-profile-modal.hidden { display: none !important; }
+    .public-profile-panel {
+      position: relative; width: min(620px, 100%); max-height: min(86vh, 850px);
+      overflow: auto; padding: 0 22px 24px; border: 1px solid rgba(173, 105, 255, .55);
+      border-radius: 24px; background: linear-gradient(160deg, rgba(30, 14, 65, .98), rgba(10, 6, 30, .98));
+      box-shadow: 0 24px 90px rgba(0,0,0,.55), 0 0 36px rgba(142, 53, 255, .18);
+      color: #f5efff;
+    }
+    .public-profile-close {
+      position: sticky; top: 12px; margin: 12px 0 0 auto; display: flex; align-items: center;
+      justify-content: center; width: 36px; height: 36px; border-radius: 50%; z-index: 3;
+      background: rgba(90, 45, 150, .5); font-size: 23px; line-height: 1;
+    }
+    .public-profile-head {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      gap: 10px; margin: -22px -22px 22px; padding: 4px 24px 24px;
+      border-bottom: 1px solid rgba(185, 143, 255, .2);
+      background: radial-gradient(ellipse at 50% 0%, rgba(126, 51, 255, .24), transparent 68%);
+    }
+    #publicProfileAvatar {
+      display: block; width: 112px; height: 112px; min-width: 112px; min-height: 112px; max-width: 112px; max-height: 112px; box-sizing: border-box; flex: 0 0 112px; object-fit: cover; object-position: center;
+      border-radius: 50%; border: 3px solid rgba(197, 151, 255, .9);
+      background: linear-gradient(135deg, #4f20a6, #17102f); box-shadow: 0 0 28px rgba(142, 53, 255, .3);
+    }
+    #publicProfileName { margin: 4px 0 2px; font-size: 24px; font-weight: 750; overflow-wrap: anywhere; }
+    #publicProfileUsername { color: #c2a8ed; font-size: 14px; }
+    #publicProfileBio { margin: 9px auto 0; max-width: 420px; line-height: 1.5; color: #d5c8ec; }
+    .public-profile-head .profile-actions {
+      display: flex; justify-content: center; flex-wrap: wrap; gap: 9px; margin-top: 16px;
+    }
+    .public-profile-head .profile-actions button { min-height: 42px; border-radius: 14px; padding: 9px 18px; }
+    .public-profile-panel h3 { margin: 20px 0 10px; font-size: 16px; }
+    #publicProfilePosts, #publicProfileMusic { display: grid; gap: 10px; }
+    @media (max-width: 600px) {
+      .public-profile-modal { align-items: flex-end; padding: 0; }
+      .public-profile-panel { width: 100%; max-height: 90dvh; border-radius: 24px 24px 0 0; padding: 0 16px calc(18px + env(safe-area-inset-bottom)); }
+      .public-profile-close { top: 10px; margin-top: 10px; }
+      .public-profile-head { margin: -22px -16px 18px; padding: 2px 18px 20px; }
+      #publicProfileAvatar { width: 96px; height: 96px; min-width: 96px; min-height: 96px; max-width: 96px; max-height: 96px; flex-basis: 96px; }
+      #publicProfileName { font-size: 22px; }
+      .public-profile-head .profile-actions { width: 100%; }
+      .public-profile-head .profile-actions button { flex: 1 1 130px; }
+    }
+
+
+    /* Fix desktop profile modal clipping at the top; keep the full avatar visible. */
+    #publicProfileModal.public-profile-modal {
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+    #publicProfileModal .public-profile-panel {
+      box-sizing: border-box;
+      max-height: calc(100vh - 48px);
+      max-height: calc(100dvh - 48px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-top: 12px;
+      scrollbar-gutter: stable;
+    }
+    #publicProfileModal .public-profile-close {
+      position: sticky;
+      top: 8px;
+      margin: 0 0 10px auto;
+    }
+    #publicProfileModal .public-profile-head {
+      margin-top: 0;
+      padding-top: 8px;
+      overflow: visible;
+    }
+    #publicProfileModal #publicProfileAvatar {
+      display: block;
+      width: 112px;
+      height: 112px;
+      min-width: 112px;
+      min-height: 112px;
+      max-width: 112px;
+      max-height: 112px;
+      flex: 0 0 112px;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    @media (max-width: 600px) {
+      #publicProfileModal.public-profile-modal {
+        align-items: flex-end;
+        padding: 0;
+      }
+      #publicProfileModal .public-profile-panel {
+        max-height: 90dvh;
+        padding-top: 10px;
+      }
+      #publicProfileModal .public-profile-head {
+        margin-top: 0;
+        padding-top: 8px;
+      }
+    }
+
+
+    /* Global photo viewer for avatars and all site photos */
+    #sitePhotoViewer {
+      position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center;
+      justify-content: center; padding: 24px; box-sizing: border-box;
+      background: rgba(2, 1, 12, .92); backdrop-filter: blur(10px);
+    }
+    #sitePhotoViewer[hidden] { display: none !important; }
+    #sitePhotoViewer img {
+      display: block; max-width: min(94vw, 1400px); max-height: 88vh; max-height: 88dvh;
+      width: auto; height: auto; object-fit: contain; border-radius: 12px;
+      box-shadow: 0 0 36px rgba(145, 68, 255, .28); cursor: zoom-out;
+    }
+    #sitePhotoViewer button {
+      position: absolute; top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right));
+      width: 44px; height: 44px; border-radius: 50%; font-size: 28px; line-height: 1;
+      color: #fff; background: rgba(88, 43, 145, .85); border: 1px solid rgba(199, 153, 255, .6);
+      cursor: pointer;
+    }
+    img.site-photo-zoomable { cursor: zoom-in !important; }
+    @media (max-width: 600px) {
+      #sitePhotoViewer { padding: 12px; }
+      #sitePhotoViewer img { max-width: 96vw; max-height: 84dvh; }
+    }
+
 </style>
-<script id="pulseup-mobile-nav-relocate">
-(function(){
-  function fixMobileNav(){
-    const nav=document.querySelector('.mobile-bottom-nav');
-    if(!nav) return;
-    // Move out of transformed/filtered content wrappers so position:fixed anchors to the viewport.
-    if(nav.parentElement!==document.body) document.body.appendChild(nav);
-    const ids=['mobileNavChat','mobileNavFriends','mobileNavSearch','mobileNavPosts','mobileNavMusic','mobileNavProfile'];
-    ids.forEach(id=>{const el=document.getElementById(id); if(el && el.parentElement===nav) nav.appendChild(el);});
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',fixMobileNav,{once:true}); else fixMobileNav();
-  window.addEventListener('pageshow',fixMobileNav);
-})();
-</script>
