@@ -390,7 +390,38 @@
     #musicView #musicNowPlaying{background:rgba(24,20,54,.9);border-color:rgba(150,112,255,.25)}
     @media(max-width:760px){#musicView .profile-actions[role="tablist"]{width:auto;max-width:100%;overflow-x:auto}#musicView .music-section-tab{padding:7px 10px!important;font-size:13px}#musicView .music-columns{grid-template-columns:1fr}#musicView #musicLibraryList{grid-template-columns:1fr}#musicView{padding:12px}#musicView .music-track-row{grid-template-columns:38px minmax(0,1fr) auto}}
 
-  </style>
+  
+
+/* PulseUp violet glass + lightning ambience */
+html, body { background-color:#09051b !important; }
+body { position:relative; isolation:isolate; }
+body::before {
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 1000' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cfilter id='g'%3E%3CfeGaussianBlur stdDeviation='5'/%3E%3C/filter%3E%3C/defs%3E%3Cg fill='none' stroke='%239b4dff' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M0 170 L90 130 122 65 180 94 230 12 258 70 310 44 350 0 M0 730 L95 690 125 625 170 654 220 570 245 620 300 590 355 500' stroke-width='3' opacity='.8'/%3E%3Cpath d='M1600 110 L1515 160 1480 220 1440 190 1385 275 1350 225 1300 285 1260 335 M1600 690 L1510 735 1475 800 1425 760 1380 850 1340 810 1290 890 1250 940' stroke-width='3' opacity='.8'/%3E%3Cpath d='M0 170 L90 130 122 65 180 94 230 12 258 70 310 44 350 0 M0 730 L95 690 125 625 170 654 220 570 245 620 300 590 355 500 M1600 110 L1515 160 1480 220 1440 190 1385 275 1350 225 1300 285 1260 335 M1600 690 L1510 735 1475 800 1425 760 1380 850 1340 810 1290 890 1250 940' stroke-width='11' opacity='.55' filter='url(%23g)'/%3E%3C/g%3E%3C/svg%3E") center/100% 100% no-repeat,
+    radial-gradient(ellipse at 10% 20%, rgba(120,25,220,.30), transparent 42%),
+    radial-gradient(ellipse at 90% 75%, rgba(75,25,210,.26), transparent 40%),
+    linear-gradient(135deg,#10051e,#080a2b 60%,#10051e);
+}
+/* Interior panels become translucent frosted glass rather than opaque blocks. */
+.sidebar, .side-panel, .main, .main-content, .content, .page, .app-shell,
+.chat-list, .chat-window, .post-card, .post, .profile-card, .music-card,
+section, .panel, .card {
+  background-color:rgba(18, 9, 42, .48) !important;
+  -webkit-backdrop-filter:blur(18px) saturate(135%);
+  backdrop-filter:blur(18px) saturate(135%);
+  border-color:rgba(166, 91, 255, .38);
+}
+.post-card, .post, .chat-list, .chat-window, .panel, .card {
+  box-shadow:0 0 0 1px rgba(154,77,255,.08), 0 0 18px rgba(137,45,255,.12), inset 0 0 22px rgba(137,45,255,.035);
+}
+img.post-image, .post img, .post-media img, .post-image {
+  max-width:100%; height:auto; object-fit:contain; display:block;
+  border-radius:13px; border:1px solid rgba(178,111,255,.75);
+  box-shadow:0 0 12px rgba(145,54,255,.22);
+}
+
+</style>
 
 
 <style id="pulseup-mobile-fullscreen-fix">
@@ -565,6 +596,56 @@
     button, .conversation-row, .music-track, .music-icon-button { transition: none !important; }
   }
 </style>
+
+<style id="pulseup-visible-violet-lightning-glass">
+/* Strong, visible violet lightning + genuinely translucent glass surfaces */
+html, body { background-color:#080416 !important; }
+body {
+  background-image:
+    radial-gradient(ellipse at 12% 15%, rgba(111, 20, 210, .28), transparent 42%),
+    radial-gradient(ellipse at 88% 20%, rgba(46, 48, 220, .22), transparent 40%),
+    linear-gradient(135deg, #10051f 0%, #10092b 48%, #08091f 100%) !important;
+  background-attachment: fixed !important;
+  position: relative;
+  isolation: isolate;
+}
+body::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  opacity:.82;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 1000' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cfilter id='g' x='-80%25' y='-80%25' width='260%25' height='260%25'%3E%3CfeGaussianBlur stdDeviation='7' result='b'/%3E%3CfeMerge%3E%3CfeMergeNode in='b'/%3E%3CfeMergeNode in='SourceGraphic'/%3E%3C/feMerge%3E%3C/filter%3E%3C/defs%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23g)'%3E%3Cpath d='M110 0 L150 65 L118 92 L190 140 L155 188 L205 230 L172 278 L220 315 L185 360 L236 405 L205 460 L260 500' stroke='%237c22ff' stroke-width='3'/%3E%3Cpath d='M110 0 L150 65 L118 92 L190 140 L155 188 L205 230 L172 278 L220 315 L185 360 L236 405 L205 460 L260 500' stroke='%23d7a6ff' stroke-width='1.3'/%3E%3Cpath d='M1490 0 L1440 55 L1474 94 L1392 140 L1435 183 L1360 225 L1398 274 L1320 322 L1362 366 L1308 414 L1340 456 L1272 510' stroke='%237c22ff' stroke-width='3'/%3E%3Cpath d='M1490 0 L1440 55 L1474 94 L1392 140 L1435 183 L1360 225 L1398 274 L1320 322 L1362 366 L1308 414 L1340 456 L1272 510' stroke='%23d7a6ff' stroke-width='1.3'/%3E%3Cpath d='M0 690 L70 650 L42 620 L122 578 L95 540 L165 495 L140 455 L205 420' stroke='%236d19ff' stroke-width='3'/%3E%3Cpath d='M1600 670 L1528 635 L1560 598 L1480 560 L1512 522 L1445 485 L1470 445 L1408 408' stroke='%236d19ff' stroke-width='3'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:100% 100%;
+  background-repeat:no-repeat;
+  filter:drop-shadow(0 0 16px rgba(130,36,255,.55));
+}
+/* Override earlier opaque panel backgrounds */
+.app-shell, .app, .layout, .sidebar, .side-panel, .main, .main-content,
+.content, .page, .chat-list, .chat-window, .post-card, .post, .profile-card,
+.music-card, section, .panel, .card, .composer, .messages-panel, .feed,
+header, nav {
+  background-color:rgba(24, 9, 52, .34) !important;
+  -webkit-backdrop-filter:blur(22px) saturate(145%) !important;
+  backdrop-filter:blur(22px) saturate(145%) !important;
+  border-color:rgba(173, 104, 255, .43) !important;
+}
+.sidebar, .side-panel, .main, .main-content, .content, .page, .app-shell {
+  box-shadow:0 0 22px rgba(121, 38, 255, .10), inset 0 0 26px rgba(145, 67, 255, .045);
+}
+.chat-list, .chat-window, .post-card, .post, .profile-card, .music-card,
+.composer, .messages-panel, .feed, .panel, .card {
+  box-shadow:0 0 0 1px rgba(167, 92, 255, .10), 0 0 22px rgba(125, 34, 255, .15), inset 0 0 24px rgba(139, 64, 255, .055);
+}
+input, textarea, select, .input, .text-input {
+  background:rgba(10, 5, 28, .38) !important;
+  -webkit-backdrop-filter:blur(14px) !important;
+  backdrop-filter:blur(14px) !important;
+  border-color:rgba(167, 92, 255, .48) !important;
+}
+</style>
 </head>
 
 <body>
@@ -658,6 +739,7 @@
 
       <div class="topline">
 
+        <button type="button" id="backToConversationList" class="secondary" aria-label="Назад к списку чатов" style="display:none">← Все чаты</button>
         <div class="grow">
 
           <h2>💬 Сообщения</h2>
@@ -669,11 +751,14 @@
 
       </div>
 
-      <div class="conversation-tools" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0">
+      <div class="conversation-tools" style="display:flex;justify-content:flex-end;gap:8px;position:relative;margin:8px 0">
         <select id="conversationSelect" aria-label="Выбрать чат" style="display:none"><option value="">Выбери чат…</option></select>
-        <button type="button" class="secondary" id="newDirectChat">＋ Личный чат</button>
-        <button type="button" class="secondary" id="newGroupChat">＋ Создать группу</button>
-        <button type="button" class="secondary" id="enableNotifications" title="Включить звуковые уведомления">🔔 Уведомления</button>
+        <button type="button" class="secondary chat-more-button" id="chatMoreButton" aria-haspopup="true" aria-expanded="false" aria-label="Действия с чатами" title="Действия">⋯</button>
+        <div id="chatMoreMenu" class="chat-more-menu hidden" role="menu">
+          <button type="button" role="menuitem" id="newDirectChat">＋ Новый чат</button>
+          <button type="button" role="menuitem" id="newGroupChat">＋ Создать группу</button>
+          <button type="button" role="menuitem" id="enableNotifications">🔔 Включить уведомления</button>
+        </div>
       </div>
       <div class="muted" style="font-size:12px;margin-bottom:8px">Общего чата нет. Создай личную переписку или группу; для группы укажи username участников через запятую.</div>
       <div id="conversationList" class="conversation-list" aria-label="Список переписок"></div>
@@ -684,7 +769,7 @@
       <form id="sendForm" class="composer">
 
         <input id="messageInput" maxlength="2000" placeholder="Напиши сообщение…" autocomplete="off" />
-        <button type="button" id="attachChatPhoto" class="secondary" aria-label="Прикрепить фото" title="Прикрепить фото">📷</button><input id="chatPhotoInput" type="file" accept="image/*" hidden />
+        <button type="button" id="attachChatPhoto" class="secondary" aria-label="Прикрепить фото или видео" title="Фото или видео">＋</button><input id="chatPhotoInput" type="file" accept="image/*,video/*" hidden />
         <button id="recordVoiceButton" type="button" class="secondary" title="Записать голосовое" aria-label="Записать голосовое">🎙️</button>
         <button id="sendButton" type="submit" aria-label="Отправить">➤</button>
 
@@ -694,8 +779,8 @@
 
           </div>
       <section id="postsView" class="card hidden" aria-label="Лента публикаций">
-        <div class="topline"><div class="grow"><h2>📰 Посты</h2><div class="muted">Что нового у сообщества</div></div></div>
-        <form id="postForm" class="profile-editor"><label for="postText">Поделись новостью</label><textarea id="postText" rows="3" maxlength="2000" placeholder="Что у тебя нового?"></textarea><label for="postPhotoInput">Фото к публикации (необязательно)</label><input id="postPhotoInput" type="file" accept="image/*" /><div class="profile-actions"><button class="primary" type="submit">Опубликовать</button></div><div class="status" id="postStatus" role="status"></div></form>
+        <div class="topline posts-topline"><div class="grow"><h2>📰 Посты</h2><div class="muted">Что нового у сообщества</div></div><div class="posts-actions"><button type="button" id="postsMoreButton" class="secondary chat-more-button" aria-label="Действия с публикациями" aria-haspopup="true" aria-expanded="false">⋯</button><div id="postsMoreMenu" class="chat-more-menu hidden" role="menu"><button type="button" id="openPostComposer" role="menuitem">＋ Новая публикация</button></div></div></div>
+        <form id="postForm" class="profile-editor hidden post-composer"><label for="postText">Текст публикации</label><textarea id="postText" rows="3" maxlength="2000" placeholder="Что у тебя нового?"></textarea><label for="postPhotoInput">Фото (необязательно)</label><input id="postPhotoInput" type="file" accept="image/*" /><div class="profile-actions"><button class="primary" type="submit">Опубликовать</button><button class="secondary" type="button" id="cancelPostComposer">Отмена</button></div><div class="status" id="postStatus" role="status"></div></form>
         <div id="postsList" class="post-list"><p class="muted">Загружаем публикации…</p></div>
       </section>
       <section id="searchView" class="card hidden" aria-label="Поиск пользователей">
@@ -723,7 +808,15 @@
         <div class="music-columns"><section class="music-pane"><div class="music-pane-head"><h3>♙ Моя музыка</h3></div><div class="music-pane-body"><div id="musicMineList" class="post-list"><p class="muted">Загружаем…</p></div></div></section><section class="music-pane"><div class="music-pane-head"><h3>✧ Новинки</h3></div><div class="music-pane-body"><div id="musicLibraryList" class="post-list"><p class="muted">Загружаем…</p></div></div></section></div>
         <div class="profile-editor" style="margin-top:18px"><h3>🎶 Мои плейлисты</h3><form id="musicPlaylistForm"><label for="musicPlaylistTitle">Название нового плейлиста</label><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="musicPlaylistTitle" maxlength="100" required placeholder="Например, Ночной вайб" style="flex:1;min-width:180px"/><button class="primary" type="submit">Создать</button></div></form><div id="musicPlaylistsList" class="post-list" style="margin-top:10px"></div></div>
       </section>
-      <section id="friendsView" class="card hidden" aria-label="Друзья"><div class="topline"><div class="grow"><h2>👥 Друзья</h2><div class="muted">Находи людей и начинай личные чаты</div></div></div><p class="muted">Используй поиск, чтобы найти пользователя по имени или дате рождения. Нажми «Написать», чтобы открыть личный чат.</p><button class="primary" id="openPeopleSearch" type="button">🔎 Найти людей</button></section>
+      <section id="friendsView" class="card hidden" aria-label="Друзья"><div class="topline"><div class="grow"><h2>👥 Друзья</h2><div class="muted">Находи людей и начинай личные чаты</div></div></div><p class="muted">Используй поиск, чтобы найти пользователя по имени или дате рождения. Нажми «Написать», чтобы открыть личный чат.</p><button class="primary" id="openPeopleSearch" type="button">🔎 Найти людей</button><h3 style="margin-top:18px">Мои друзья</h3><div id="friendsList" class="people-results"><p class="muted">Загружаем друзей…</p></div></section>
+      <section id="publicProfileModal" class="public-profile-modal hidden" role="dialog" aria-modal="true" aria-label="Профиль пользователя">
+        <div class="public-profile-panel"><button type="button" id="closePublicProfile" class="secondary public-profile-close" aria-label="Закрыть профиль">×</button>
+          <div class="public-profile-head"><img id="publicProfileAvatar" alt="Фото профиля"/><div><h2 id="publicProfileName">Профиль</h2><div id="publicProfileUsername" class="muted"></div><p id="publicProfileBio" class="muted"></p><div class="profile-actions"><button type="button" id="publicProfileFriend" class="primary">＋ Добавить в друзья</button><button type="button" id="publicProfileMessage" class="secondary">Написать</button></div></div></div>
+          <h3>Публикации</h3><div id="publicProfilePosts" class="post-list"></div><h3>Музыка</h3><div id="publicProfileMusic" class="post-list"></div>
+        </div>
+      </section>
+      <div id="imageLightbox" class="image-lightbox hidden" role="dialog" aria-modal="true" aria-label="Просмотр изображения"><button type="button" id="closeImageLightbox" aria-label="Закрыть">×</button><img id="lightboxImage" alt="Изображение"></div>
+      
       <nav class="mobile-bottom-nav" aria-label="Основная навигация">
         <button type="button" class="mobile-nav-button" id="mobileNavChat"><span aria-hidden="true">💬</span><span>Чат</span></button>
         <button type="button" class="mobile-nav-button active" id="mobileNavPosts"><span aria-hidden="true">📰</span><span>Посты</span></button>
@@ -937,6 +1030,7 @@
       Object.entries(navViews).forEach(([id,key]) => $(id).classList.toggle('active', key === view));
       if (view === 'music' && currentUser) { loadMusicLibrary(); loadMusicPlaylists(); }
       if (view === 'profile' && currentUser) loadProfile(currentUser);
+      if (view === 'friends' && currentUser) loadFriendsList();
       if (view === 'posts' || view === 'profile') loadPosts();
     }
     $('navChat').onclick = () => showAppView('chat');
@@ -964,6 +1058,7 @@
       if (opening) $('musicUploadTitle').focus();
     });
     $('navProfile').onclick = () => showAppView('profile');
+    $('profileAvatar').addEventListener('click',()=>showAppView('profile')); $('sidebarAvatar').addEventListener('click',()=>showAppView('profile')); $('profileAvatarFallback').addEventListener('click',()=>showAppView('profile')); $('sidebarAvatarFallback').addEventListener('click',()=>showAppView('profile'));
     $('mobileNavChat').onclick = () => showAppView('chat');
     $('mobileNavPosts').onclick = () => showAppView('posts'); $('mobileNavSearch').onclick = () => showAppView('search');
     $('mobileNavMusic').onclick = () => showAppView('music');
@@ -1066,6 +1161,41 @@
     async function loadMusicPlaylists(){if(!supabase||!currentUser)return;const list=$('musicPlaylistsList');try{const {data,error}=await supabase.from('music_playlists').select('id,title,description,owner_id,created_at').eq('owner_id',currentUser.id).order('created_at',{ascending:false});if(error)throw error;cachedMusicPlaylists=data||[];list.replaceChildren();if(!data?.length){list.innerHTML='<p class="muted">Плейлистов пока нет.</p>';return;}data.forEach(playlist=>{const row=document.createElement('article');row.className='post-card';const title=document.createElement('strong');title.textContent=playlist.title;const remove=document.createElement('button');remove.type='button';remove.className='secondary';remove.textContent='Удалить плейлист';remove.addEventListener('click',async()=>{if(!confirm('Удалить плейлист?'))return;const {error}=await supabase.from('music_playlists').delete().eq('id',playlist.id);if(error){status('musicLibraryStatus','Не удалось удалить плейлист: '+error.message);return;}loadMusicPlaylists();});row.append(title,remove);list.append(row);});}catch(e){list.textContent='Не удалось загрузить плейлисты. Выполни SQL-настройку. '+e.message;}}
 
 
+    // Профили пользователей открываются по нажатию на аватар или имя.
+    let viewedProfile = null;
+    async function openPublicProfile(profile) {
+      if (!profile?.id) return;
+      viewedProfile = profile;
+      const modal=$('publicProfileModal'); modal.classList.remove('hidden');
+      $('publicProfileName').textContent=profile.display_name||'Пользователь';
+      $('publicProfileUsername').textContent=profile.username?'@'+profile.username:'';
+      $('publicProfileBio').textContent=profile.bio||'Пока ничего не рассказал о себе.';
+      $('publicProfileAvatar').src=profile.avatar_url||'';
+      $('publicProfileAvatar').style.visibility=profile.avatar_url?'visible':'hidden';
+      $('publicProfilePosts').innerHTML='<p class="muted">Загружаем публикации…</p>';
+      $('publicProfileMusic').innerHTML='<p class="muted">Загружаем музыку…</p>';
+      $('publicProfileFriend').textContent='＋ Добавить в друзья'; $('publicProfileFriend').disabled=profile.id===currentUser?.id;
+      try {
+        const {data:posts,error:postErr}=await supabase.from('posts').select('id,content,created_at,image_url').eq('author_id',profile.id).order('created_at',{ascending:false}).limit(20);
+        if(postErr) throw postErr;
+        const pl=$('publicProfilePosts');pl.replaceChildren();
+        if(!posts?.length) pl.innerHTML='<p class="muted">Публикаций пока нет.</p>';
+        (posts||[]).forEach(post=>{const card=document.createElement('article');card.className='post-card';const text=document.createElement('p');text.textContent=post.content||'';card.append(text);if(post.image_url){const img=document.createElement('img');img.className='post-photo';img.src=post.image_url;img.alt='Фото публикации';img.onclick=()=>openImage(post.image_url);card.append(img);}const date=document.createElement('div');date.className='muted';date.textContent=new Date(post.created_at).toLocaleDateString('ru-RU');card.append(date);pl.append(card);});
+      } catch(e) {$('publicProfilePosts').textContent='Не удалось загрузить публикации: '+e.message;}
+      try {const {data:tracks,error}=await supabase.from('music_tracks').select('id,title,artist,storage_path,mime_type').eq('uploader_id',profile.id).order('created_at',{ascending:false}).limit(20);if(error)throw error;const list=$('publicProfileMusic');list.replaceChildren();if(!tracks?.length)list.innerHTML='<p class="muted">Музыки пока нет.</p>';for(const track of tracks||[]){const row=document.createElement('div');row.className='post-card';row.textContent='♫ '+track.title+(track.artist?' — '+track.artist:'');list.append(row);}}catch(e){$('publicProfileMusic').textContent='Не удалось загрузить музыку.';}
+    }
+    $('closePublicProfile').onclick=()=>$('publicProfileModal').classList.add('hidden');
+    $('publicProfileModal').addEventListener('click',e=>{if(e.target===$('publicProfileModal'))$('publicProfileModal').classList.add('hidden');});
+    async function addFriend(profile){if(!currentUser||!profile?.id||profile.id===currentUser.id)return;try{const {error}=await supabase.from('follows').upsert({follower_id:currentUser.id,following_id:profile.id},{onConflict:'follower_id,following_id'});if(error)throw error;$('publicProfileFriend').textContent='✓ Добавлен';$('publicProfileFriend').disabled=true;status('peopleSearchStatus','Пользователь добавлен в друзья.');}catch(e){alert('Не удалось добавить в друзья. Проверь таблицу follows и RLS: '+e.message);}}
+    $('publicProfileFriend').onclick=()=>addFriend(viewedProfile);
+    $('publicProfileMessage').onclick=async()=>{if(viewedProfile){$('publicProfileModal').classList.add('hidden');await createDirectForProfile(viewedProfile);}};
+    function openImage(src){$('lightboxImage').src=src;$('imageLightbox').classList.remove('hidden');}
+    $('closeImageLightbox').onclick=()=>$('imageLightbox').classList.add('hidden');
+
+    $('imageLightbox').addEventListener('click',e=>{if(e.target===$('imageLightbox'))$('imageLightbox').classList.add('hidden');});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('publicProfileModal').classList.add('hidden');$('imageLightbox').classList.add('hidden');$('floatingCreateMenu')?.classList.add('hidden');}});
+    document.addEventListener('click',e=>{if(!e.target.closest('.floating-create-wrap')){$('floatingCreateMenu')?.classList.add('hidden');$('floatingCreateButton')?.setAttribute('aria-expanded','false');}});
+
     let peopleSearchTimer = null;
     let peopleSearchRequestId = 0;
 
@@ -1115,7 +1245,7 @@
           card.className = 'person-card';
           const avatar = document.createElement('div');
           avatar.className = 'person-avatar';
-          avatar.textContent = '💜';
+          avatar.textContent = '💜'; avatar.title='Открыть профиль'; avatar.addEventListener('click',()=>openPublicProfile(p));
           if (p.avatar_url) {
             const img = document.createElement('img');
             img.src = p.avatar_url;
@@ -1128,7 +1258,7 @@
           info.className = 'person-info';
           const name = document.createElement('div');
           name.className = 'post-author';
-          name.textContent = p.display_name || 'Пользователь';
+          name.textContent = p.display_name || 'Пользователь'; name.style.cursor='pointer'; name.addEventListener('click',()=>openPublicProfile(p));
           const handle = document.createElement('div');
           handle.className = 'muted';
           handle.textContent = p.username ? '@' + p.username : '';
@@ -1143,7 +1273,9 @@
           msg.textContent = 'Написать';
           msg.onclick = () => createDirectForProfile(p);
 
-          actions.append(msg);
+          const add = document.createElement('button'); add.className='secondary'; add.type='button'; add.textContent='＋ В друзья'; add.onclick=()=>addFriend(p);
+          const profileBtn = document.createElement('button'); profileBtn.className='secondary'; profileBtn.type='button'; profileBtn.textContent='Профиль'; profileBtn.onclick=()=>openPublicProfile(p);
+          actions.append(msg, add, profileBtn);
           info.append(name, handle, bio, actions);
           card.append(avatar, info);
           $('peopleResults').append(card);
@@ -1181,9 +1313,15 @@
       $('peopleQuery').focus();
     };
     async function createDirectForProfile(profile){try{const {data:existing,error}=await supabase.from('conversation_members').select('conversation_id,conversations!inner(id,type,title)').eq('user_id',currentUser.id);if(error)throw error;for(const row of existing||[]){if(row.conversations?.type!=='direct')continue;const {data:members}=await supabase.from('conversation_members').select('user_id').eq('conversation_id',row.conversation_id);if((members||[]).some(m=>m.user_id===profile.id)){currentConversationId=row.conversation_id;await refreshConversations();await switchConversation(row.conversation_id);showAppView('chat');return;}}const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();if(authError)throw authError;if(!authUser)throw new Error('Сессия истекла. Выйди из аккаунта и войди снова.');if(authUser.id!==currentUser.id)currentUser=authUser;const chatCreatorId=authUser.id;const {data:conv,error:ce}=await supabase.from('conversations').insert({title:profile.display_name||profile.username,type:'direct',created_by:chatCreatorId}).select('id').single();if(ce)throw ce;const {error:me}=await supabase.from('conversation_members').insert([{conversation_id:conv.id,user_id:chatCreatorId},{conversation_id:conv.id,user_id:profile.id}]);if(me)throw me;await refreshConversations();await switchConversation(conv.id);showAppView('chat');}catch(e){alert('Не удалось открыть личный чат: '+e.message);}}
-    async function loadPosts(){try{const {data,error}=await supabase.from('posts').select('id,content,created_at,author_id,image_url').order('created_at',{ascending:false}).limit(50);if(error)throw error;const list=$('postsList');list.replaceChildren();const profileList=$('profilePostsList');if(profileList)profileList.replaceChildren();if(!data?.length){list.innerHTML='<p class="muted">Пока нет публикаций. Будь первым!</p>';if(profileList)profileList.innerHTML='<p class="muted">Пока нет публикаций.</p>';return;}const ids=[...new Set(data.map(p=>p.author_id))];const {data:authors}=await supabase.from('profiles').select('id,display_name,username').in('id',ids);const authorMap=new Map((authors||[]).map(a=>[a.id,a]));data.forEach(p=>{const author=authorMap.get(p.author_id);const card=document.createElement('article');card.className='post-card';const meta=document.createElement('div');meta.className='post-meta';meta.textContent=(author?.display_name||author?.username||'Пользователь')+' · '+new Date(p.created_at).toLocaleString('ru-RU');const body=document.createElement('div');body.className='post-body';body.textContent=p.content||'';card.append(meta);if(p.content)card.append(body);if(p.image_url){const img=document.createElement('img');img.className='post-photo';img.src=p.image_url;img.alt='Фото публикации';card.append(img);}list.append(card);if(profileList && p.author_id===currentUser?.id)profileList.append(card.cloneNode(true));});}catch(e){$('postsList').innerHTML='<p class="muted">Не удалось загрузить ленту. Выполни SQL-файл настройки постов. '+e.message+'</p>';}}
-    $('postForm').addEventListener('submit',async e=>{e.preventDefault();const content=$('postText').value.trim();const file=$('postPhotoInput').files?.[0];if((!content&&!file)||!currentUser)return;status('postStatus','Публикуем…');try{let image_url=null;if(file){if(!file.type.startsWith('image/'))throw new Error('Выбери файл изображения.');if(file.size>8*1024*1024)throw new Error('Фото должно быть до 8 МБ.');const ext=(file.name.split('.').pop()||'jpg').replace(/[^a-z0-9]/gi,'').toLowerCase()||'jpg';const path=`${currentUser.id}/${Date.now()}.${ext}`;const {error:upErr}=await supabase.storage.from('post-media').upload(path,file,{upsert:false,contentType:file.type});if(upErr)throw upErr;image_url=supabase.storage.from('post-media').getPublicUrl(path).data.publicUrl;}const {error}=await supabase.from('posts').insert({author_id:currentUser.id,content,image_url});if(error)throw error;$('postText').value='';$('postPhotoInput').value='';status('postStatus','Опубликовано!');await loadPosts();}catch(err){status('postStatus','Не удалось опубликовать: '+err.message);}});
+    async function loadPosts(){try{const {data,error}=await supabase.from('posts').select('id,content,created_at,author_id,image_url').order('created_at',{ascending:false}).limit(50);if(error)throw error;const list=$('postsList');list.replaceChildren();const profileList=$('profilePostsList');if(profileList)profileList.replaceChildren();if(!data?.length){list.innerHTML='<p class="muted">Пока нет публикаций. Будь первым!</p>';if(profileList)profileList.innerHTML='<p class="muted">Пока нет публикаций.</p>';return;}const ids=[...new Set(data.map(p=>p.author_id))];const {data:authors}=await supabase.from('profiles').select('id,display_name,username,bio,avatar_url').in('id',ids);const authorMap=new Map((authors||[]).map(a=>[a.id,a]));data.forEach(p=>{const author=authorMap.get(p.author_id);const card=document.createElement('article');card.className='post-card';const meta=document.createElement('div');meta.className='post-meta';meta.textContent=(author?.display_name||author?.username||'Пользователь')+' · '+new Date(p.created_at).toLocaleString('ru-RU');meta.style.cursor='pointer';meta.title='Открыть профиль автора';meta.onclick=()=>{if(author)openPublicProfile({id:author.id,...author});};const body=document.createElement('div');body.className='post-body';body.textContent=p.content||'';card.append(meta);if(p.content)card.append(body);if(p.image_url){const img=document.createElement('img');img.className='post-photo';img.src=p.image_url;img.alt='Фото публикации';img.onclick=()=>openImage(p.image_url);card.append(img);}list.append(card);if(profileList && p.author_id===currentUser?.id)profileList.append(card.cloneNode(true));});}catch(e){$('postsList').innerHTML='<p class="muted">Не удалось загрузить ленту. Выполни SQL-файл настройки постов. '+e.message+'</p>';}}
+    $('postsMoreButton').addEventListener('click',()=>{const menu=$('postsMoreMenu');const opening=menu.classList.contains('hidden');menu.classList.toggle('hidden',!opening);$('postsMoreButton').setAttribute('aria-expanded',String(opening));});
+    $('openPostComposer').addEventListener('click',()=>{$('postsMoreMenu').classList.add('hidden');$('postsMoreButton').setAttribute('aria-expanded','false');$('postForm').classList.remove('hidden');$('postText').focus();});
+    $('cancelPostComposer').addEventListener('click',()=>{$('postForm').classList.add('hidden');$('postStatus').textContent='';});
+    document.addEventListener('click',e=>{if(!$('postsMoreMenu').contains(e.target)&&!$('postsMoreButton').contains(e.target)){$('postsMoreMenu').classList.add('hidden');$('postsMoreButton').setAttribute('aria-expanded','false');}});
+    $('postForm').addEventListener('submit',async e=>{e.preventDefault();const content=$('postText').value.trim();const file=$('postPhotoInput').files?.[0];if((!content&&!file)||!currentUser)return;status('postStatus','Публикуем…');try{let image_url=null;if(file){if(!file.type.startsWith('image/'))throw new Error('Выбери файл изображения.');if(file.size>8*1024*1024)throw new Error('Фото должно быть до 8 МБ.');const ext=(file.name.split('.').pop()||'jpg').replace(/[^a-z0-9]/gi,'').toLowerCase()||'jpg';const path=`${currentUser.id}/${Date.now()}.${ext}`;const {error:upErr}=await supabase.storage.from('post-media').upload(path,file,{upsert:false,contentType:file.type});if(upErr)throw upErr;image_url=supabase.storage.from('post-media').getPublicUrl(path).data.publicUrl;}const {error}=await supabase.from('posts').insert({author_id:currentUser.id,content,image_url});if(error)throw error;$('postText').value='';$('postPhotoInput').value='';status('postStatus','Опубликовано!');$('postForm').classList.add('hidden');await loadPosts();}catch(err){status('postStatus','Не удалось опубликовать: '+err.message);}});
 
+
+    async function loadFriendsList(){const list=$('friendsList');if(!list||!currentUser||!supabase)return;list.innerHTML='<p class="muted">Загружаем друзей…</p>';try{const {data:links,error}=await supabase.from('follows').select('following_id').eq('follower_id',currentUser.id).order('created_at',{ascending:false});if(error)throw error;const ids=(links||[]).map(x=>x.following_id).filter(id=>id!==currentUser.id);if(!ids.length){list.innerHTML='<p class="muted">Пока нет друзей. Найди людей через поиск.</p>';return;}const {data:profiles,error:pe}=await supabase.from('profiles').select('id,display_name,username,bio,avatar_url').in('id',ids);if(pe)throw pe;list.replaceChildren();(profiles||[]).forEach(p=>{const card=document.createElement('article');card.className='person-card';const avatar=document.createElement('div');avatar.className='person-avatar';avatar.textContent='💜';if(p.avatar_url){const img=document.createElement('img');img.src=p.avatar_url;img.alt='';avatar.replaceChildren(img);}avatar.onclick=()=>openPublicProfile(p);const info=document.createElement('div');info.className='person-info';const name=document.createElement('div');name.className='post-author';name.textContent=p.display_name||p.username||'Пользователь';name.onclick=()=>openPublicProfile(p);const handle=document.createElement('div');handle.className='muted';handle.textContent=p.username?'@'+p.username:'';const actions=document.createElement('div');actions.className='person-actions';const message=document.createElement('button');message.className='primary';message.textContent='Написать';message.onclick=()=>createDirectForProfile(p);const view=document.createElement('button');view.className='secondary';view.textContent='Профиль';view.onclick=()=>openPublicProfile(p);actions.append(message,view);info.append(name,handle,actions);card.append(avatar,info);list.append(card);});}catch(e){list.innerHTML='<p class="muted">Не удалось загрузить друзей. Проверь таблицу follows и права доступа: '+e.message+'</p>';}}
 
     function showChat(user) {
 
@@ -1267,13 +1405,11 @@
         img.loading = 'lazy';
         img.style.cssText = 'display:block;max-width:min(100%,360px);max-height:360px;object-fit:contain;border-radius:12px;margin-top:8px';
         item.append(img);
+      } else if (msg.attachment_url && msg.attachment_type === 'video') {
+        const video = document.createElement('video'); video.controls = true; video.preload = 'metadata'; video.playsInline = true; video.src = msg.attachment_url; item.append(video);
       } else if (msg.attachment_url && msg.attachment_type === 'audio') {
-        const audio = document.createElement('audio');
-        audio.controls = true;
-        audio.preload = 'metadata';
-        audio.src = msg.attachment_url;
-        audio.style.cssText = 'display:block;max-width:100%;width:280px;margin-top:8px';
-        item.append(audio);
+        const audio = document.createElement('audio'); audio.controls = true; audio.preload = 'metadata'; audio.src = msg.attachment_url;
+        audio.style.cssText = 'display:block;max-width:100%;width:280px;margin-top:8px'; item.append(audio);
       }
       list.append(item);
 
@@ -1453,6 +1589,22 @@
         notification.onclick = () => { window.focus(); notification.close(); };
       }
     }
+    $('backToConversationList')?.addEventListener('click', async () => {
+      currentConversationId = null;
+      $('chatView').classList.remove('conversation-open');
+      $('backToConversationList').style.display = 'none';
+      if (channel) await supabase.removeChannel(channel);
+      channel = null;
+      $('chatView').querySelector('.topline h2').textContent = '💬 Сообщения';
+      $('chatView').querySelector('.topline .muted').textContent = 'Выбери чат или создай новую группу';
+      $('messages').replaceChildren();
+      $('messageInput').disabled = true;
+      $('sendButton').disabled = true;
+      $('attachChatPhoto').disabled = true;
+      $('recordVoiceButton').disabled = true;
+      renderConversationList();
+    });
+
     $('enableNotifications').addEventListener('click', async () => {
       try {
         if (notificationAudioContext?.state === 'suspended') await notificationAudioContext.resume();
@@ -1509,10 +1661,14 @@
 
     async function switchConversation(id) {
       currentConversationId = id || null;
+      const chatView = $('chatView');
+      chatView.classList.toggle('conversation-open', !!currentConversationId);
+      const backButton = $('backToConversationList');
+      if (backButton) backButton.style.display = currentConversationId ? 'inline-flex' : 'none';
       renderConversationList();
       const conv = conversations.find(c => c.id === currentConversationId);
       $('chatView').querySelector('.topline h2').textContent = conv ? conv.title : '💬 Сообщения';
-      $('chatView').querySelector('.topline .muted').textContent = conv ? (conv.type === 'direct' ? 'Личная переписка' : 'Групповой чат') : 'Выбери чат сверху или создай новый';
+      $('chatView').querySelector('.topline .muted').textContent = conv ? '' : 'Выбери чат или создай новый';
       $('messages').replaceChildren();
       $('messageInput').disabled = !currentConversationId;
       $('sendButton').disabled = !currentConversationId;
@@ -1577,6 +1733,10 @@
     $('conversationSelect').addEventListener('change', e => switchConversation(e.target.value));
     $('newDirectChat').addEventListener('click', () => createConversation('direct'));
     $('newGroupChat').addEventListener('click', () => createConversation('group'));
+    $('chatMoreButton').addEventListener('click', () => { const menu=$('chatMoreMenu'); const opening=menu.classList.contains('hidden'); menu.classList.toggle('hidden',!opening); $('chatMoreButton').setAttribute('aria-expanded',String(opening)); });
+    document.addEventListener('click', e => { if (!e.target.closest('.conversation-tools')) { $('chatMoreMenu')?.classList.add('hidden'); $('chatMoreButton')?.setAttribute('aria-expanded','false'); } });
+    ['newDirectChat','newGroupChat','enableNotifications'].forEach(id => $(id).addEventListener('click',()=>{ $('chatMoreMenu').classList.add('hidden'); $('chatMoreButton').setAttribute('aria-expanded','false'); }));
+
 
     async function connectChat(user) {
 
@@ -1586,11 +1746,45 @@
       await switchConversation(currentConversationId && conversations.some(c => c.id === currentConversationId) ? currentConversationId : null);
     }
 
-    async function uploadChatFile(file, type) { if (!currentUser) return; if(file.size > 12*1024*1024) throw new Error('Файл должен быть до 12 МБ.'); const ext=(file.name.split('.').pop()|| (type==='audio'?'webm':'jpg')).replace(/[^a-z0-9]/gi,'').toLowerCase()||'bin'; const path=`${currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`; const {error}=await supabase.storage.from('chat-media').upload(path,file,{upsert:false,contentType:file.type||'application/octet-stream'}); if(error)throw error; const url=supabase.storage.from('chat-media').getPublicUrl(path).data.publicUrl; const senderName=String(currentUser.user_metadata?.display_name||'User').trim().slice(0,40)||'User'; const {error:msgError}=await supabase.from('messages').insert({sender_id:currentUser.id,sender_name:senderName,content:'',conversation_id:currentConversationId,attachment_url:url,attachment_type:type}); if(msgError)throw msgError; }
+    async function uploadChatFile(file, type) {
+      if (!currentUser) throw new Error('Сначала войди в аккаунт.');
+      if (!currentConversationId) throw new Error('Сначала открой нужный чат.');
+      const limits = { image: 12 * 1024 * 1024, video: 40 * 1024 * 1024, audio: 12 * 1024 * 1024 };
+      const limit = limits[type] || 12 * 1024 * 1024;
+      if (file.size > limit) throw new Error(type === 'video' ? 'Видео должно быть до 40 МБ.' : type === 'image' ? 'Фото должно быть до 12 МБ.' : 'Голосовое должно быть до 12 МБ.');
+      const ext = (file.name.split('.').pop() || (type === 'audio' ? 'webm' : type === 'video' ? 'mp4' : 'jpg')).replace(/[^a-z0-9]/gi, '').toLowerCase() || 'bin';
+      const path = `${currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const bucket = supabase.storage.from('chat-media');
+      const { error: uploadError } = await bucket.upload(path, file, { upsert: false, contentType: file.type || 'application/octet-stream' });
+      if (uploadError) {
+        if (/bucket not found/i.test(uploadError.message || '')) throw new Error('В Supabase не создан Storage bucket chat-media. Выполни SQL-файл для настройки вложений.');
+        if (/row-level security|permission|not authorized/i.test(uploadError.message || '')) throw new Error('Supabase запретил загрузку в Storage. Проверь политики bucket chat-media и выполни SQL-файл для настройки вложений.');
+        throw uploadError;
+      }
+      const url = bucket.getPublicUrl(path).data.publicUrl;
+      const senderName = String(currentUser.user_metadata?.display_name || currentUser.email?.split('@')[0] || 'User').trim().slice(0, 40) || 'User';
+      // messages.content in the original schema requires 1..2000 characters; an empty string rejects attachments.
+      const labels = { image: '📷 Фото', video: '🎬 Видео', audio: '🎙️ Голосовое сообщение' };
+      const { error: msgError } = await supabase.from('messages').insert({
+        sender_id: currentUser.id,
+        sender_name: senderName,
+        content: labels[type] || 'Вложение',
+        conversation_id: currentConversationId,
+        attachment_url: url,
+        attachment_type: type
+      });
+      if (msgError) {
+        // Avoid leaving a public orphaned file when the message row could not be created.
+        await bucket.remove([path]).catch(() => {});
+        if (/attachment_url|attachment_type|conversation_id|column .* does not exist/i.test(msgError.message || '')) throw new Error('В таблице messages не хватает колонок для вложений. Выполни SQL-файл для настройки вложений.');
+        throw msgError;
+      }
+      await loadMessages();
+    }
     $('attachChatPhoto').onclick=()=>$('chatPhotoInput').click();
-    $('chatPhotoInput').addEventListener('change',async()=>{const file=$('chatPhotoInput').files?.[0];if(!file)return;try{status('chatStatus','Отправляем фото…');await uploadChatFile(file,'image');status('chatStatus','Фото отправлено');}catch(e){status('chatStatus','Не удалось отправить фото: '+e.message);}finally{$('chatPhotoInput').value='';}});
+    $('chatPhotoInput').addEventListener('change',async()=>{const file=$('chatPhotoInput').files?.[0];if(!file)return;const type=file.type.startsWith('image/')?'image':file.type.startsWith('video/')?'video':null;try{if(!type)throw new Error('Выбери изображение или видео.');if(type==='image'&&file.size>12*1024*1024)throw new Error('Фото должно быть до 12 МБ.');if(type==='video'&&file.size>40*1024*1024)throw new Error('Видео должно быть до 40 МБ.');status('chatStatus',type==='image'?'Отправляем фото…':'Отправляем видео…');await uploadChatFile(file,type);status('chatStatus',type==='image'?'Фото отправлено':'Видео отправлено');}catch(e){status('chatStatus','Не удалось отправить файл: '+e.message);}finally{$('chatPhotoInput').value='';}});
     let mediaRecorder=null, voiceChunks=[];
-    $('recordVoiceButton').onclick=async()=>{const btn=$('recordVoiceButton');if(mediaRecorder?.state==='recording'){mediaRecorder.stop();btn.textContent='🎙️';btn.title='Записать голосовое';return;}try{if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder)throw new Error('Запись голосовых не поддерживается этим браузером.');const stream=await navigator.mediaDevices.getUserMedia({audio:true});mediaRecorder=new MediaRecorder(stream);voiceChunks=[];mediaRecorder.ondataavailable=e=>{if(e.data.size)voiceChunks.push(e.data);};mediaRecorder.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());const blob=new Blob(voiceChunks,{type:mediaRecorder.mimeType||'audio/webm'});if(blob.size){const ext=(blob.type.includes('mp4')?'m4a':blob.type.includes('ogg')?'ogg':'webm');const file=new File([blob],`voice-${Date.now()}.${ext}`,{type:blob.type});try{status('chatStatus','Отправляем голосовое…');await uploadChatFile(file,'audio');status('chatStatus','Голосовое отправлено');}catch(e){status('chatStatus','Не удалось отправить голосовое: '+e.message);}}};mediaRecorder.start();btn.textContent='⏹️';btn.title='Остановить запись и отправить';status('chatStatus','Запись… Нажми ⏹️, чтобы отправить.');}catch(e){status('chatStatus',e.message||'Нет доступа к микрофону. Разреши его в браузере.');}};
+    $('recordVoiceButton').onclick=async()=>{const btn=$('recordVoiceButton');if(mediaRecorder?.state==='recording'){btn.disabled=true;mediaRecorder.stop();btn.textContent='🎙️';btn.title='Записать голосовое';return;}try{if(!currentConversationId)throw new Error('Сначала открой нужный чат.');if(location.protocol!=='https:'&&location.hostname!=='localhost'&&location.protocol!=='file:')throw new Error('Для микрофона открой сайт по HTTPS.');if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder)throw new Error('Запись голосовых не поддерживается этим браузером. Открой сайт по HTTPS и разреши микрофон.');const stream=await navigator.mediaDevices.getUserMedia({audio:true});const options=['audio/webm;codecs=opus','audio/ogg;codecs=opus','audio/mp4'].find(t=>MediaRecorder.isTypeSupported?.(t));mediaRecorder=options?new MediaRecorder(stream,{mimeType:options}):new MediaRecorder(stream);const recorder=mediaRecorder;voiceChunks=[];recorder.ondataavailable=e=>{if(e.data?.size)voiceChunks.push(e.data);};recorder.onerror=()=>status('chatStatus','Ошибка записи голосового. Попробуй ещё раз.');recorder.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());btn.disabled=false;const mime=recorder.mimeType||voiceChunks[0]?.type||'audio/webm';const blob=new Blob(voiceChunks,{type:mime});if(blob.size){const ext=mime.includes('mp4')?'m4a':mime.includes('ogg')?'ogg':'webm';const file=new File([blob],`voice-${Date.now()}.${ext}`,{type:mime});try{status('chatStatus','Отправляем голосовое…');await uploadChatFile(file,'audio');status('chatStatus','Голосовое отправлено');}catch(e){status('chatStatus','Не удалось отправить голосовое: '+e.message);}}};recorder.start(250);btn.textContent='⏹️';btn.title='Остановить запись и отправить';status('chatStatus','Запись… Нажми ⏹️, чтобы отправить.');}catch(e){status('chatStatus',e.message||'Нет доступа к микрофону. Разреши его в браузере.');}};
 
     $('sendForm').addEventListener('submit', async event => {
       event.preventDefault();
@@ -1785,9 +1979,386 @@ input,textarea,select,.search-input{
   -webkit-backdrop-filter:blur(12px)!important;backdrop-filter:blur(12px)!important;
 }
 .message-bubble,.chat-bubble{background:rgba(54,20,112,.62)!important;backdrop-filter:blur(12px)}
-@media(max-width:760px){body{background-attachment:scroll!important}.card,.app-sidebar{background:rgba(10,4,31,.72)!important;backdrop-filter:blur(16px)!important}}
+@media(max-width:760px){body{background-attachment:scroll!important}}
+/* Stronger cosmic background + translucent frosted-glass surfaces */
+html,body{background-color:#03010b!important}
+body{background-image:radial-gradient(ellipse at 12% 12%,rgba(153,35,255,.48),transparent 31%),radial-gradient(ellipse at 88% 18%,rgba(40,70,255,.38),transparent 33%),radial-gradient(ellipse at 52% 95%,rgba(207,24,255,.28),transparent 38%),linear-gradient(135deg,#05010e 0%,#10052b 45%,#03020c 100%)!important;background-attachment:fixed!important}
+.card,.app-sidebar,.profile-card,.profile-editor,.auth-form-panel,#chatView,#postsView,#friendsView,#musicView,#searchView,.panel,.music-pane,.conversation-list,.chat-window,.profile-posts,.post-list,.person-card,.post-card{background:rgba(18,10,42,.38)!important;-webkit-backdrop-filter:blur(24px) saturate(145%)!important;backdrop-filter:blur(24px) saturate(145%)!important;border-color:rgba(190,145,255,.32)!important}
+.conversation-list{max-height:min(58vh,620px);overflow-y:auto}
+/* When a conversation is open, show only that conversation on every screen size. */
+#chatView.conversation-open #conversationList,
+#chatView.conversation-open .conversation-tools,
+#chatView.conversation-open > .muted[style*="font-size:12px"]{display:none!important}
+#chatView.conversation-open #backToConversationList{display:inline-flex!important}
+#chatView.conversation-open .messages{min-height:35vh}
+#chatView:not(.conversation-open) #messages,
+#chatView:not(.conversation-open) #sendForm,
+#chatView:not(.conversation-open) #chatStatus{display:none!important}
+@media(max-width:760px){
+ .card,.app-sidebar,#chatView,#postsView,#friendsView,#musicView,#searchView{background:rgba(18,10,42,.44)!important;-webkit-backdrop-filter:blur(20px) saturate(140%)!important;backdrop-filter:blur(20px) saturate(140%)!important}
+}
+</style>
+
+
+<style id="pulseup-post-photo-neon-fix">
+/* Keep publication media inside its card and give it a subtle violet neon frame. */
+#postsView, #postsView .post-list, #postsView .post-card,
+#profilePostsList, #profilePostsList .post-card,
+#publicProfilePosts, #publicProfilePosts .post-card {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+#postsView .post-card, #profilePostsList .post-card,
+#publicProfilePosts .post-card {
+  overflow: hidden !important;
+  overflow-wrap: anywhere !important;
+}
+#postsView img.post-photo, #profilePostsList img.post-photo,
+#publicProfilePosts img.post-photo, img.post-photo {
+  display: block !important;
+  box-sizing: border-box !important;
+  width: auto !important;
+  max-width: 100% !important;
+  max-height: min(58vh, 520px) !important;
+  height: auto !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+  margin: 12px 0 8px !important;
+  padding: 4px !important;
+  border: 1px solid rgba(177, 105, 255, .58) !important;
+  border-radius: 14px !important;
+  background: rgba(16, 7, 38, .52) !important;
+  box-shadow: 0 0 7px rgba(145, 65, 255, .20), inset 0 0 8px rgba(145, 65, 255, .08) !important;
+  cursor: zoom-in !important;
+}
+#postsView img.post-photo:hover, #profilePostsList img.post-photo:hover,
+#publicProfilePosts img.post-photo:hover, img.post-photo:hover {
+  border-color: rgba(202, 151, 255, .9) !important;
+  box-shadow: 0 0 12px rgba(145, 65, 255, .32), 0 0 22px rgba(92, 72, 255, .12) !important;
+}
+</style>
+
+<style id="pulseup-post-photo-fill-fix">
+/* Фото публикации заполняет ширину карточки, оставаясь внутри её границ */
+#postsView .post-card,
+#profilePostsList .post-card,
+#publicProfilePosts .post-card {
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+#postsView img.post-photo,
+#profilePostsList img.post-photo,
+#publicProfilePosts img.post-photo,
+img.post-photo {
+  display: block !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: 560px !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  border-radius: 14px !important;
+  margin: 10px 0 4px !important;
+  border: 1px solid rgba(174, 105, 255, .82) !important;
+  box-shadow: 0 0 8px rgba(145, 65, 255, .24), 0 0 18px rgba(92, 72, 255, .10) !important;
+  cursor: zoom-in !important;
+}
+@media (max-width: 600px) {
+  #postsView img.post-photo,
+  #profilePostsList img.post-photo,
+  #publicProfilePosts img.post-photo,
+  img.post-photo {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 65vh !important;
+    object-fit: contain !important;
+  }
+}
+</style>
+
+
+<style id="pulseup-visible-violet-lightning-glass-fix">
+/* Real page background: visible violet lightning on the existing cosmic gradient. */
+html, body { min-height:100%; background-color:#09051c !important; }
+body {
+  background-image:
+    radial-gradient(ellipse at 12% 18%, rgba(111,25,205,.32), transparent 38%),
+    radial-gradient(ellipse at 88% 24%, rgba(43,38,202,.28), transparent 42%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 1000' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cfilter id='g' x='-80%25' y='-80%25' width='260%25' height='260%25'%3E%3CfeGaussianBlur stdDeviation='7' result='b'/%3E%3CfeMerge%3E%3CfeMergeNode in='b'/%3E%3CfeMergeNode in='SourceGraphic'/%3E%3C/feMerge%3E%3C/filter%3E%3C/defs%3E%3Cg fill='none' stroke='%239c42ff' stroke-linecap='round' stroke-linejoin='round' filter='url(%23g)' opacity='.88'%3E%3Cpath stroke-width='3' d='M0 110 L115 155 168 100 204 130 274 20 310 55 365 0 M1600 120 L1510 180 1460 132 1415 200 1370 160 1300 260 1260 225 1205 310 M0 720 L90 680 130 720 195 620 230 650 290 540 335 570 M1600 670 L1510 630 1470 690 1400 600 1360 640 1300 540 1250 575'/%3E%3Cpath stroke-width='1.5' stroke='%23d6aaff' d='M0 110 L115 155 168 100 204 130 274 20 310 55 365 0 M1600 120 L1510 180 1460 132 1415 200 1370 160 1300 260 1260 225 1205 310 M0 720 L90 680 130 720 195 620 230 650 290 540 335 570 M1600 670 L1510 630 1470 690 1400 600 1360 640 1300 540 1250 575'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: auto, auto, 100% 100%; background-attachment:fixed; background-repeat:no-repeat;
+}
+/* Make the actual inner surfaces translucent so the background is visible through them. */
+.card,.app-sidebar,.profile-card,.profile-editor,#chatView,#postsView,#friendsView,#musicView,#searchView,.panel,.music-pane,.conversation-list,.chat-window,.profile-posts,.post-list,.person-card,.post-card,.post-composer {
+  background-color:rgba(20,9,48,.40) !important;
+  -webkit-backdrop-filter:blur(22px) saturate(145%) !important;
+  backdrop-filter:blur(22px) saturate(145%) !important;
+  border-color:rgba(174,105,255,.34) !important;
+}
+#postsView .post-card, #postsView .post-list > *, #profilePostsList > *, #publicProfilePosts > * {
+  background-color:rgba(19,8,44,.34) !important;
+  -webkit-backdrop-filter:blur(18px) saturate(140%) !important;
+  backdrop-filter:blur(18px) saturate(140%) !important;
+}
+</style>
+
+
+<style id="pulseup-reference-accurate-lightning-glass">
+/* Reference-matched violet lightning backdrop and clear frosted-glass panels */
+html { min-height:100%; background:#05020f!important; }
+body {
+  position:relative!important;
+  isolation:isolate;
+  background:
+    radial-gradient(ellipse at 8% 18%,rgba(110,0,255,.22),transparent 35%),
+    radial-gradient(ellipse at 88% 28%,rgba(38,32,255,.18),transparent 38%),
+    linear-gradient(135deg,#070313 0%,#100629 52%,#03020b 100%)!important;
+  background-attachment:fixed!important;
+}
+/* SVG lightning bolts are drawn as an overlay, not just a faint glow. */
+body::before {
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 1000' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cfilter id='g' x='-80%25' y='-80%25' width='260%25' height='260%25'%3E%3CfeGaussianBlur stdDeviation='5' result='b'/%3E%3CfeMerge%3E%3CfeMergeNode in='b'/%3E%3CfeMergeNode in='SourceGraphic'/%3E%3C/feMerge%3E%3C/filter%3E%3ClinearGradient id='v' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%23f3d8ff'/%3E%3Cstop offset='.35' stop-color='%23bd55ff'/%3E%3Cstop offset='1' stop-color='%236c20ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='none' stroke-linejoin='round' stroke-linecap='round' filter='url(%23g)' opacity='.92'%3E%3Cpath d='M0 75 L65 112 94 65 122 91 165 18 199 45 236 0 M0 315 L53 286 81 327 119 260 151 280 187 210 228 231 264 165 302 189 340 120' stroke='%238a26ff' stroke-width='13' opacity='.45'/%3E%3Cpath d='M0 75 L65 112 94 65 122 91 165 18 199 45 236 0 M0 315 L53 286 81 327 119 260 151 280 187 210 228 231 264 165 302 189 340 120' stroke='url(%23v)' stroke-width='3.5'/%3E%3Cpath d='M1600 65 L1543 94 1512 44 1484 71 1450 0 M1600 295 L1548 265 1515 309 1476 245 1444 266 1407 199 1366 222 1332 154 1290 180 1255 111' stroke='%238a26ff' stroke-width='14' opacity='.5'/%3E%3Cpath d='M1600 65 L1543 94 1512 44 1484 71 1450 0 M1600 295 L1548 265 1515 309 1476 245 1444 266 1407 199 1366 222 1332 154 1290 180 1255 111' stroke='url(%23v)' stroke-width='3.5'/%3E%3Cpath d='M0 690 L60 653 82 690 125 621 164 644 197 582 230 605 269 530 304 551 345 483 M1600 730 L1540 691 1517 731 1478 666 1440 689 1403 622 1363 646 1327 574 1285 600 1248 528' stroke='%238a26ff' stroke-width='12' opacity='.4'/%3E%3Cpath d='M0 690 L60 653 82 690 125 621 164 644 197 582 230 605 269 530 304 551 345 483 M1600 730 L1540 691 1517 731 1478 666 1440 689 1403 622 1363 646 1327 574 1285 600 1248 528' stroke='url(%23v)' stroke-width='3'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:100% 100%;background-position:center;background-repeat:no-repeat;
+  opacity:.95;
+}
+/* Glass surfaces must let the lightning and gradient show through. */
+:root { --glass-fill:rgba(17,7,43,.58); }
+.app-shell,.app-container,.main-layout,.main-content,.sidebar,.view,.panel,.card,
+#app,#appShell,#mainLayout,#mainContent,#sidebar,#chatView,#postsView,#searchView,#friendsView,#musicView,#profileView,
+.chat-list,.chat-list-container,.conversation,.post-card,.person-card,.music-card,.profile-card,
+#chatList,#chatMessages,#chatComposer,#postsList,#postsFeed {
+  background-color:var(--glass-fill)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(135%)!important;
+  backdrop-filter:blur(20px) saturate(135%)!important;
+  border-color:rgba(171,105,255,.36)!important;
+}
+#app,#appShell,.app-shell,.app-container,.main-layout,.main-content {
+  box-shadow:0 0 28px rgba(119,37,255,.12),inset 0 0 24px rgba(135,48,255,.035)!important;
+}
+.view,.panel,#chatView,#postsView,#searchView,#friendsView,#musicView,#profileView,
+.post-card,.person-card,.chat-list,.conversation {
+  box-shadow:0 0 16px rgba(125,45,255,.12),inset 0 0 18px rgba(153,75,255,.045)!important;
+}
+/* Avoid turning text inputs into overly bright opaque boxes. */
+input,textarea,select,.form-control {
+  background:rgba(10,4,28,.55)!important;
+  -webkit-backdrop-filter:blur(14px)!important;backdrop-filter:blur(14px)!important;
+  border-color:rgba(164,99,255,.42)!important;
+}
+@media(max-width:760px){body::before{background-size:auto 100%;opacity:.72} }
 </style>
 
 </body>
 
+
+<style id="pulseup-menu-remove-box">
+/* Убираем прямоугольную подложку вокруг действий чата и публикаций */
+#chatMoreMenu, #postsMoreMenu, .posts-actions .chat-more-menu, .conversation-tools .chat-more-menu {
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+#chatMoreMenu [role="menuitem"], #postsMoreMenu [role="menuitem"], .posts-actions .chat-more-menu button, .conversation-tools .chat-more-menu button {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+  border-radius: 999px !important;
+  color: #f6efff !important;
+}
+#chatMoreMenu [role="menuitem"]:hover, #chatMoreMenu [role="menuitem"]:focus-visible,
+#postsMoreMenu [role="menuitem"]:hover, #postsMoreMenu [role="menuitem"]:focus-visible,
+.posts-actions .chat-more-menu button:hover, .conversation-tools .chat-more-menu button:hover {
+  background: rgba(151,82,255,.10) !important;
+  border-color: rgba(174,123,255,.20) !important;
+  box-shadow: 0 0 14px rgba(151,82,255,.12) !important;
+  outline: none;
+}
+#chatView .conversation-tools, #postsView .posts-actions {background:transparent!important;border:0!important;box-shadow:none!important}
+</style>
+
 </html>
+
+<style id="minimal-post-composer-fix">
+.posts-topline{align-items:flex-start;position:relative}.posts-actions{position:relative;display:flex;align-items:center;justify-content:flex-end}.posts-actions .chat-more-menu{top:calc(100% + 8px);right:0;left:auto;min-width:210px;z-index:100}.posts-topline .chat-more-button{width:42px;height:42px;min-width:42px;padding:0;border-radius:50%;font-size:27px;line-height:1;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.13);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}.post-composer{margin:16px 0 22px;padding:16px;border-radius:18px;background:rgba(14,8,34,.58);border:1px solid rgba(177,132,255,.22);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}.post-composer textarea,.post-composer input[type=file]{background:rgba(8,4,24,.42);border-color:rgba(177,132,255,.22)}#postsView .post-list{margin-top:16px}
+</style>
+
+<style id="pulseup-subtle-violet-neon-unified">
+/* Единое мягкое фиолетовое свечение PulseUp — акцент на глубине, не на яркости */
+:root{--pu-neon:rgba(151,82,255,.20);--pu-neon-soft:rgba(151,82,255,.11);--pu-border:rgba(174,123,255,.25)}
+.posts-topline .chat-more-button,
+.posts-actions #openPostComposer,
+button, .button, .nav-item, .chat-item, .friend-card, .post-card,
+.profile-editor, .modal-content, .chat-more-menu, .composer, .message-input,
+input:not([type="checkbox"]):not([type="radio"]), textarea, select {
+  transition: box-shadow .2s ease,border-color .2s ease,background-color .2s ease;
+}
+.posts-topline .chat-more-button,
+#postsMoreMenu,
+#openPostComposer,
+.post-composer,
+.post-composer textarea,
+.post-composer input[type="file"]{
+  border-color:var(--pu-border);
+  box-shadow:0 0 0 1px rgba(151,82,255,.035),0 0 15px var(--pu-neon-soft),inset 0 0 12px rgba(151,82,255,.035);
+}
+#postsMoreMenu{background:rgba(19,10,43,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+#openPostComposer{background:linear-gradient(135deg,rgba(117,54,208,.22),rgba(83,71,213,.18));color:#f6efff;border-radius:12px}
+button:hover,.button:hover,.nav-item:hover,.chat-item:hover,.friend-card:hover,.post-card:hover,
+.posts-topline .chat-more-button:hover,#openPostComposer:hover{
+  border-color:rgba(190,145,255,.42)!important;
+  box-shadow:0 0 0 1px rgba(151,82,255,.07),0 0 19px rgba(151,82,255,.17),inset 0 0 12px rgba(151,82,255,.045);
+}
+input:not([type="checkbox"]):not([type="radio"]):focus,textarea:focus,select:focus{
+  outline:none;border-color:rgba(180,128,255,.55)!important;
+  box-shadow:0 0 0 3px rgba(151,82,255,.10),0 0 17px rgba(151,82,255,.13)!important;
+}
+.post-composer label{color:rgba(238,226,255,.86)}
+@media(prefers-reduced-motion:reduce){.posts-topline .chat-more-button,#postsMoreMenu,#openPostComposer,button,.button{transition:none}}
+</style>
+
+<style id="pulseup-chat-neon-match">
+/* Тот же мягкий фиолетовый неон для меню действий в сообщениях */
+#chatView .conversation-tools #chatMoreButton{
+  color:#f5edff!important;
+  background:linear-gradient(135deg,rgba(115,65,190,.20),rgba(76,63,166,.17))!important;
+  border:1px solid rgba(174,123,255,.38)!important;
+  box-shadow:0 0 0 1px rgba(151,82,255,.06),0 0 14px rgba(151,82,255,.16),inset 0 0 12px rgba(151,82,255,.05)!important;
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  transition:background .2s ease,border-color .2s ease,box-shadow .2s ease,transform .2s ease;
+}
+#chatView .conversation-tools #chatMoreButton:hover,
+#chatView .conversation-tools #chatMoreButton:focus-visible{
+  background:linear-gradient(135deg,rgba(137,78,220,.28),rgba(88,75,198,.24))!important;
+  border-color:rgba(197,157,255,.62)!important;
+  box-shadow:0 0 0 2px rgba(151,82,255,.09),0 0 20px rgba(151,82,255,.23),inset 0 0 14px rgba(151,82,255,.07)!important;
+  outline:none;transform:translateY(-1px);
+}
+#chatMoreMenu{
+  background:rgba(19,10,43,.88)!important;
+  border:1px solid rgba(174,123,255,.30)!important;
+  box-shadow:0 8px 28px rgba(0,0,0,.24),0 0 18px rgba(151,82,255,.14),inset 0 0 16px rgba(151,82,255,.035)!important;
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+}
+#chatMoreMenu [role="menuitem"]{
+  color:#f4edff!important;
+  background:linear-gradient(110deg,rgba(126,78,205,.10),rgba(81,72,175,.07))!important;
+  border:1px solid rgba(174,123,255,.13)!important;
+  box-shadow:0 0 10px rgba(151,82,255,.055)!important;
+  transition:background .2s ease,border-color .2s ease,box-shadow .2s ease;
+}
+#chatMoreMenu [role="menuitem"]:hover,
+#chatMoreMenu [role="menuitem"]:focus-visible{
+  background:linear-gradient(110deg,rgba(126,78,205,.22),rgba(81,72,175,.17))!important;
+  border-color:rgba(190,145,255,.40)!important;
+  box-shadow:0 0 14px rgba(151,82,255,.15),inset 0 0 10px rgba(151,82,255,.045)!important;
+  outline:none;
+}
+@media(prefers-reduced-motion:reduce){#chatView .conversation-tools #chatMoreButton,#chatMoreMenu [role="menuitem"]{transition:none}}
+</style>
+
+<style id="pulseup-final-remove-toolbar-frame">
+/* Финальное переопределение: без общего квадратного контейнера вокруг кнопок */
+#chatView .conversation-tools,
+#chatView .conversation-tools:before,
+#chatView .conversation-tools:after,
+#postsView .posts-actions,
+#postsView .posts-actions:before,
+#postsView .posts-actions:after,
+#chatMoreMenu,
+#postsMoreMenu,
+.posts-actions .chat-more-menu,
+.conversation-tools .chat-more-menu {
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+#chatView .conversation-tools,
+#postsView .posts-actions {
+  display:flex !important;
+  align-items:center !important;
+  gap:6px !important;
+  border-radius:0 !important;
+  overflow:visible !important;
+}
+#chatView .conversation-tools button,
+#postsView .posts-actions > button,
+#chatMoreMenu [role="menuitem"],
+#postsMoreMenu [role="menuitem"] {
+  border-radius:999px !important;
+}
+#chatMoreMenu,
+#postsMoreMenu {
+  min-width:max-content !important;
+  width:max-content !important;
+  height:auto !important;
+}
+#chatMoreMenu [role="menuitem"],
+#postsMoreMenu [role="menuitem"] {
+  background:rgba(18,9,42,.0) !important;
+  border:1px solid transparent !important;
+  box-shadow:none !important;
+}
+#chatMoreMenu [role="menuitem"]:hover,
+#chatMoreMenu [role="menuitem"]:focus-visible,
+#postsMoreMenu [role="menuitem"]:hover,
+#postsMoreMenu [role="menuitem"]:focus-visible {
+  background:rgba(151,82,255,.10) !important;
+  border-color:rgba(174,123,255,.20) !important;
+  box-shadow:0 0 14px rgba(151,82,255,.12) !important;
+  outline:none !important;
+}
+</style>
+
+<style id="pulseup-vk-photo-viewer-fix">
+#imageLightbox { z-index: 99999 !important; }
+#imageLightbox img, #lightboxImage { max-width: min(94vw, 1400px) !important; max-height: 88vh !important; width: auto !important; height: auto !important; object-fit: contain !important; cursor: zoom-out; }
+#postsView img.post-photo, #profilePostsList img.post-photo, #publicProfilePosts img.post-photo { cursor: zoom-in !important; }
+</style>
+
+
+<style id="pulseup-final-edge-lightning-glass">
+/* Visible edge lightning layer, kept behind all interface content */
+html, body { min-height:100%; background-color:#05020f !important; }
+body { position:relative !important; isolation:isolate !important; background-image:
+  radial-gradient(ellipse at 12% 20%, rgba(104,0,255,.18), transparent 34%),
+  radial-gradient(ellipse at 88% 22%, rgba(54,40,255,.16), transparent 36%),
+  linear-gradient(135deg,#070313 0%,#100629 52%,#03020b 100%) !important;
+  background-attachment:fixed !important;
+}
+body::before {
+  content:"" !important; position:fixed !important; inset:0 !important; z-index:0 !important;
+  pointer-events:none !important; opacity:.98 !important;
+  background-repeat:no-repeat !important; background-position:center !important; background-size:100% 100% !important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 1000' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cfilter id='glow' x='-100%25' y='-100%25' width='300%25' height='300%25'%3E%3CfeGaussianBlur stdDeviation='7' result='blur'/%3E%3CfeMerge%3E%3CfeMergeNode in='blur'/%3E%3CfeMergeNode in='SourceGraphic'/%3E%3C/feMerge%3E%3C/filter%3E%3ClinearGradient id='bolt' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%23f8eaff'/%3E%3Cstop offset='.35' stop-color='%23d36bff'/%3E%3Cstop offset='1' stop-color='%23721cff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='none' stroke-linejoin='round' stroke-linecap='round' filter='url(%23glow)'%3E%3Cg stroke='%238b21ff' stroke-width='17' opacity='.8'%3E%3Cpath d='M0 20 L44 68 28 103 80 130 62 175 111 208 90 253 145 278 122 328 178 354 152 410 214 444 185 495 245 527 221 580 275 613 250 666 310 700 282 750 339 788 310 835 370 872 342 920 402 960 384 1000'/%3E%3Cpath d='M1600 0 L1550 48 1572 92 1517 125 1540 172 1487 205 1510 250 1452 286 1478 332 1420 367 1445 415 1388 452 1415 500 1354 535 1380 584 1322 620 1347 669 1288 704 1314 750 1255 787 1281 833 1220 870 1247 918 1188 958 1208 1000'/%3E%3C/g%3E%3Cg stroke='url(%23bolt)' stroke-width='4.2'%3E%3Cpath d='M0 20 L44 68 28 103 80 130 62 175 111 208 90 253 145 278 122 328 178 354 152 410 214 444 185 495 245 527 221 580 275 613 250 666 310 700 282 750 339 788 310 835 370 872 342 920 402 960 384 1000'/%3E%3Cpath d='M1600 0 L1550 48 1572 92 1517 125 1540 172 1487 205 1510 250 1452 286 1478 332 1420 367 1445 415 1388 452 1415 500 1354 535 1380 584 1322 620 1347 669 1288 704 1314 750 1255 787 1281 833 1220 870 1247 918 1188 958 1208 1000'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") !important;
+}
+/* Keep app above the lightning layer while allowing the glow to show around it */
+body > * { position:relative; z-index:1; }
+/* True translucent frosted glass, not opaque purple blocks */
+:root { --pulseup-glass: rgba(17,8,42,.34); }
+.app-shell,.app-container,.main-layout,.main-content,.app-sidebar,.sidebar,.view,.panel,.card,
+#app,#appShell,#mainLayout,#mainContent,#sidebar,#chatView,#postsView,#searchView,#friendsView,#musicView,#profileView,
+.chat-list,.chat-list-container,.conversation,.post-card,.person-card,.music-card,.profile-card,
+#chatList,#chatMessages,#chatComposer,#postsList,#postsFeed,.conversation-list,.chat-window,.profile-posts,.post-list {
+  background-color:var(--pulseup-glass) !important;
+  -webkit-backdrop-filter:blur(24px) saturate(145%) !important;
+  backdrop-filter:blur(24px) saturate(145%) !important;
+  border-color:rgba(177,112,255,.42) !important;
+}
+.app-shell,.app-container,.main-layout,.main-content,#app,#appShell,#mainLayout,#mainContent {
+  box-shadow:0 0 26px rgba(129,37,255,.16),inset 0 0 22px rgba(153,73,255,.07) !important;
+}
+.app-sidebar,.sidebar,.view,.panel,.card,#chatView,#postsView,#searchView,#friendsView,#musicView,#profileView,.post-card,.conversation,.chat-list {
+  box-shadow:0 0 17px rgba(133,44,255,.13),inset 0 0 16px rgba(159,82,255,.045) !important;
+}
+@media(max-width:760px){body::before{background-size:auto 100% !important;opacity:.86 !important}}
+</style>
