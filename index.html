@@ -154,6 +154,19 @@
     .topline { display: flex; align-items: center; gap: 12px; }
     footer { text-align: center; margin: 20px 0 4px; }
 
+    .app-layout { display:grid; grid-template-columns:220px minmax(0,1fr); gap:18px; align-items:start; }
+    .app-sidebar { border:1px solid var(--border); border-radius:20px; padding:16px; background:rgba(8,7,18,.38); min-width:0; }
+    .sidebar-brand { font-weight:850; font-size:17px; margin:2px 0 18px; }
+    .nav-button { display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:12px; margin:5px 0; border-radius:12px; color:var(--muted); background:transparent; border:1px solid transparent; }
+    .nav-button.active { color:#fff; background:linear-gradient(120deg,rgba(126,67,235,.28),rgba(63,100,229,.20)); border-color:var(--border); }
+    .sidebar-user { display:flex; align-items:center; gap:10px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border); min-width:0; }
+    .sidebar-avatar { width:42px;height:42px;flex:0 0 42px;border-radius:50%;object-fit:cover;display:grid;place-items:center;background:linear-gradient(135deg,#853cff,#3e72ff);font-size:18px; }
+    .sidebar-user-name { font-weight:750; overflow-wrap:anywhere; }
+    .app-main { min-width:0; }
+    #chat .topline { margin-bottom:8px; }
+    #profileView .profile-card { margin-top:0; }
+    #profileView .profile-editor { margin-top:16px; }
+    @media(max-width:760px) { .app-layout { grid-template-columns:1fr; } .app-sidebar { display:flex; flex-wrap:wrap; align-items:center; gap:6px; padding:10px; } .sidebar-brand { width:100%; margin:2px 4px 5px; } .nav-button { width:auto; flex:1; justify-content:center; margin:0; } .sidebar-user { width:100%; margin-top:8px; padding-top:10px; } }
     .profile-card { display:grid; grid-template-columns: 84px minmax(0,1fr); gap:16px; align-items:center; margin:18px 0 8px; padding:16px; border:1px solid var(--border); border-radius:18px; background:rgba(8,7,18,.32); }
     .profile-avatar { width:84px; height:84px; border-radius:50%; object-fit:cover; display:grid; place-items:center; background:linear-gradient(135deg,#853cff,#3e72ff); border:2px solid rgba(192,168,255,.35); font-size:30px; }
     .profile-fields { display:grid; grid-template-columns:1fr 1fr; gap:0 12px; }
@@ -262,6 +275,21 @@
 
 
     <section class="card hidden" id="chat">
+      <div class="app-layout">
+        <aside class="app-sidebar" aria-label="Навигация PulseUp">
+          <div class="sidebar-brand">💜 PulseUp</div>
+          <button type="button" class="nav-button active" id="navChat">💬 Общий чат</button>
+          <button type="button" class="nav-button" id="navProfile">👤 Мой профиль</button>
+          <div class="sidebar-user">
+            <img id="sidebarAvatar" class="sidebar-avatar" alt="" hidden />
+            <div id="sidebarAvatarFallback" class="sidebar-avatar" aria-hidden="true">💜</div>
+            <div class="grow"><div class="sidebar-user-name" id="sidebarName">Мой аккаунт</div><div class="muted">Твой аккаунт</div></div>
+          </div>
+          <button class="secondary" id="logout" type="button" style="width:100%;margin-top:12px">Выйти</button>
+        </aside>
+        <div class="app-main">
+          <div id="chatView" class="card" style="margin-top:0">
+
 
       <div class="topline">
 
@@ -273,33 +301,11 @@
 
         </div>
 
-        <button class="secondary" id="logout" type="button">Выйти</button>
 
       </div>
 
       <div class="status" id="connection">Подключение к чату…</div>
 
-      <section class="profile-card" aria-label="Профиль пользователя">
-        <img id="profileAvatar" class="profile-avatar" alt="Фото профиля" src="" hidden />
-        <div id="profileAvatarFallback" class="profile-avatar" aria-hidden="true">💜</div>
-        <div class="grow">
-          <div class="profile-name" id="profileName">Твой профиль</div>
-          <div class="muted" id="profileUsername">@username не задан</div>
-          <div class="muted" id="profileBio">Добавь информацию о себе</div>
-          <div class="profile-actions"><button class="secondary" id="editProfileButton" type="button">Редактировать профиль</button></div>
-        </div>
-      </section>
-      <form id="profileEditor" class="profile-editor hidden">
-        <h2>Настройки профиля</h2>
-        <div class="profile-fields">
-          <div><label for="profileDisplayName">Имя</label><input id="profileDisplayName" maxlength="40" required placeholder="Как тебя называть" /></div>
-          <div><label for="profileHandle">Уникальный username</label><input id="profileHandle" maxlength="24" pattern="[A-Za-z0-9_]{3,24}" placeholder="например, pulse_user" /><div class="muted">3–24 символа: латиница, цифры и _</div></div>
-          <div class="full"><label for="profileBioInput">О себе</label><textarea id="profileBioInput" maxlength="160" rows="3" placeholder="Пара слов о себе…"></textarea></div>
-          <div class="full"><label for="profilePhotoInput">Фото профиля</label><input id="profilePhotoInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" /><div class="muted">PNG, JPG, WEBP или GIF, максимум 5 МБ.</div></div>
-        </div>
-        <div class="profile-actions"><button id="saveProfileButton" class="primary" type="submit">Сохранить профиль</button><button id="cancelProfileButton" class="secondary" type="button">Отмена</button></div>
-        <div class="status" id="profileStatus" role="status" aria-live="polite"></div>
-      </form>
       <div class="messages" id="messages" aria-live="polite"></div>
 
       <form id="sendForm" class="composer">
@@ -314,6 +320,33 @@
 
       <div class="status" id="chatStatus" role="status"></div>
 
+          </div>
+      <section id="profileView" class="card hidden" aria-label="Профиль пользователя">
+        <div class="topline"><div class="grow"><h2>Мой профиль</h2><div class="muted">Твои данные в PulseUp</div></div></div>
+      <section class="profile-card" aria-label="Профиль пользователя">
+        <img id="profileAvatar" class="profile-avatar" alt="Фото профиля" src="" hidden />
+        <div id="profileAvatarFallback" class="profile-avatar" aria-hidden="true">💜</div>
+        <div class="grow">
+          <div class="profile-name" id="profileName">Твой профиль</div>
+          <div class="muted" id="profileUsername">@username не задан</div>
+          <div class="muted" id="profileBio">Добавь информацию о себе</div>
+          <div class="profile-actions"><button class="secondary" id="editProfileButton" type="button">Редактировать профиль</button></div>
+        </div>
+      </section>
+      <form id="profileEditor" class="profile-editor hidden">
+        <h2>Редактирование профиля</h2>
+        <div class="profile-fields">
+          <div><label for="profileDisplayName">Имя</label><input id="profileDisplayName" maxlength="40" required placeholder="Как тебя называть" /></div>
+          <div><label for="profileHandle">Уникальный username</label><input id="profileHandle" maxlength="24" pattern="[A-Za-z0-9_]{3,24}" placeholder="например, pulse_user" /><div class="muted">3–24 символа: латиница, цифры и _</div></div>
+          <div class="full"><label for="profileBioInput">О себе</label><textarea id="profileBioInput" maxlength="160" rows="3" placeholder="Пара слов о себе…"></textarea></div>
+          <div class="full"><label for="profilePhotoInput">Фото профиля</label><input id="profilePhotoInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" /><div class="muted">PNG, JPG, WEBP или GIF, максимум 5 МБ.</div></div>
+        </div>
+        <div class="profile-actions"><button id="saveProfileButton" class="primary" type="submit">Сохранить профиль</button><button id="cancelProfileButton" class="secondary" type="button">Отмена</button></div>
+        <div class="status" id="profileStatus" role="status" aria-live="polite"></div>
+      </form>
+      </section>
+        </div>
+      </div>
     </section>
 
     <p class="muted" style="text-align:center;margin-top:20px">
@@ -408,6 +441,18 @@
 
 
 
+
+    function showAppView(view) {
+      const isProfile = view === 'profile';
+      $('chatView').classList.toggle('hidden', isProfile);
+      $('profileView').classList.toggle('hidden', !isProfile);
+      $('navChat').classList.toggle('active', !isProfile);
+      $('navProfile').classList.toggle('active', isProfile);
+      if (isProfile && currentUser) loadProfile(currentUser);
+    }
+    $('navChat').onclick = () => showAppView('chat');
+    $('navProfile').onclick = () => showAppView('profile');
+
     function showChat(user) {
 
       currentUser = user;
@@ -415,6 +460,8 @@
       authBox.classList.add('hidden');
 
       chatBox.classList.remove('hidden');
+      showAppView('chat');
+      loadProfile(user);
 
     }
 
@@ -520,19 +567,20 @@
     function setProfileAvatar(url) {
       const img = $('profileAvatar');
       const fallback = $('profileAvatarFallback');
+      const sideImg = $('sidebarAvatar');
+      const sideFallback = $('sidebarAvatarFallback');
       if (url) {
-        img.src = url;
-        img.hidden = false;
-        fallback.hidden = true;
+        img.src = url; img.hidden = false; fallback.hidden = true;
+        sideImg.src = url; sideImg.hidden = false; sideFallback.hidden = true;
       } else {
-        img.removeAttribute('src');
-        img.hidden = true;
-        fallback.hidden = false;
+        img.removeAttribute('src'); img.hidden = true; fallback.hidden = false;
+        sideImg.removeAttribute('src'); sideImg.hidden = true; sideFallback.hidden = false;
       }
     }
 
     async function loadProfile(user) {
       $('profileName').textContent = user.user_metadata?.display_name || 'Пользователь PulseUp';
+      $('sidebarName').textContent = user.user_metadata?.display_name || 'Мой аккаунт';
       $('profileUsername').textContent = '@username не задан';
       $('profileBio').textContent = 'Добавь информацию о себе';
       $('profileDisplayName').value = user.user_metadata?.display_name || '';
@@ -548,6 +596,7 @@
       }
       const profile = data || {};
       $('profileName').textContent = profile.display_name || user.user_metadata?.display_name || 'Пользователь PulseUp';
+      $('sidebarName').textContent = profile.display_name || user.user_metadata?.display_name || 'Мой аккаунт';
       $('profileUsername').textContent = profile.username ? '@' + profile.username : '@username не задан';
       $('profileBio').textContent = profile.bio || 'Добавь информацию о себе';
       $('profileDisplayName').value = profile.display_name || user.user_metadata?.display_name || '';
@@ -598,6 +647,7 @@
         if (authError) throw authError;
         profileAvatarUrl = avatarUrl;
         $('profileName').textContent = displayName;
+        $('sidebarName').textContent = displayName;
         $('profileUsername').textContent = username ? '@' + username : '@username не задан';
         $('profileBio').textContent = bio || 'Добавь информацию о себе';
         setProfileAvatar(avatarUrl);
