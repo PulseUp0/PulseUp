@@ -304,7 +304,114 @@
       .messages { scroll-behavior: auto; }
     }
 
+    /* Mobile-only layout fixes: preserve desktop layout. */
+    @media screen and (max-width: 760px) {
+      html, body { width: 100%; max-width: 100%; overflow-x: clip; }
+      body { min-height: 100%; padding-bottom: 0 !important; }
+      .shell { width: 100%; max-width: 100%; min-width: 0; margin: 0; padding: 8px 8px calc(92px + env(safe-area-inset-bottom)); }
+      header { min-width: 0; gap: 9px; padding: 8px 2px 14px; }
+      header h1 { font-size: 21px; }
+      .app-layout { display: grid; grid-template-columns: minmax(0, 1fr) !important; width: 100%; min-width: 0; gap: 10px; }
+      .app-sidebar, .app-main, .app-main > *, .card, #chatView, #postsView, #searchView, #friendsView, #profileView { width: 100%; max-width: 100%; min-width: 0; }
+      .app-main { padding: 0 0 calc(92px + env(safe-area-inset-bottom)) !important; }
+      .app-main > .card, .card { padding: 14px; margin-top: 10px; border-radius: 18px; }
+      .mobile-bottom-nav {
+        display: grid !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 4px;
+        position: fixed; left: 0; right: 0; bottom: 0; width: 100%;
+        padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+        box-sizing: border-box; z-index: 1000;
+      }
+      .mobile-nav-button { width: 100%; min-width: 0; min-height: 48px; padding: 5px 1px; font-size: clamp(10px, 2.8vw, 12px); white-space: normal; overflow-wrap: anywhere; }
+      .mobile-nav-button span { max-width: 100%; }
+      .profile-card { display: grid; grid-template-columns: 64px minmax(0, 1fr); align-items: start; width: 100%; min-width: 0; gap: 12px; }
+      .profile-card > * { min-width: 0; }
+      .profile-avatar { width: 64px; height: 64px; max-width: 100%; }
+      .profile-editor, .profile-fields, .profile-actions { width: 100%; min-width: 0; }
+      .profile-fields { display: grid; grid-template-columns: minmax(0, 1fr) !important; gap: 12px; }
+      .profile-fields > *, .profile-fields .full { width: 100%; min-width: 0; grid-column: 1 / -1; }
+      input, textarea, select, button { max-width: 100%; }
+      input:not([type="checkbox"]):not([type="radio"]), textarea, select { width: 100%; min-width: 0; font-size: 16px; }
+      .profile-actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+      .profile-actions button, .person-actions button { width: 100%; min-height: 44px; }
+      .person-card { flex-wrap: wrap; width: 100%; min-width: 0; }
+      .person-info { flex: 1 1 calc(100% - 64px); }
+      .person-actions { width: 100%; }
+      .post-card, .post-list, .people-results { width: 100%; min-width: 0; }
+      .post-photo { display: block; width: 100%; max-width: 100%; height: auto; object-fit: contain; }
+      #chat { width: 100%; max-width: 100%; min-width: 0; margin-top: 8px; padding: 10px; }
+      .messages { min-width: 0; width: 100%; height: min(52dvh, 480px); min-height: 180px; }
+      .composer { position: relative; bottom: auto; display: flex; flex-wrap: wrap; gap: 6px; width: 100%; min-width: 0; }
+      .composer input, .composer textarea { flex: 1 1 140px; min-width: 0; }
+      .composer button { flex: 0 0 auto; min-width: 44px; min-height: 44px; }
+    }
+    @media screen and (max-width: 380px) {
+      .shell { padding-left: 6px; padding-right: 6px; }
+      .app-main > .card, .card { padding: 11px; }
+      .profile-card { grid-template-columns: 52px minmax(0, 1fr); gap: 9px; }
+      .profile-avatar { width: 52px; height: 52px; }
+      .mobile-nav-button { min-height: 46px; }
+    }
+
   </style>
+
+
+<style id="pulseup-mobile-fullscreen-fix">
+/* Mobile-only canvas/layout corrections; desktop remains unchanged. */
+@media screen and (max-width:760px) {
+  html, body { width:100%; min-width:0; margin:0; padding:0; overflow-x:hidden; }
+  body { min-height:100dvh; }
+  .shell { width:100%; max-width:none !important; margin:0 !important; padding: max(12px, env(safe-area-inset-top)) 0 calc(100px + env(safe-area-inset-bottom)) !important; }
+  header, .app-layout, footer { width:100%; max-width:none; margin-left:0; margin-right:0; }
+  header { padding:12px 16px 16px; }
+  .app-layout { display:block !important; padding:0 12px; min-width:0; }
+  .app-sidebar { width:100%; min-width:0; }
+  .app-main, #chatView, #profileView, #postsView, #searchView, #friendsView,
+  .panel, .card, .profile-card, .profile-posts, .post-list, .people-results {
+    width:100%; max-width:none; min-width:0;
+  }
+  .app-main { padding:0; }
+  .profile-card { display:flex; flex-wrap:wrap; align-items:center; gap:14px; }
+  .profile-card > *, .profile-card .grow { min-width:0; max-width:100%; }
+  .profile-fields, .form-grid { grid-template-columns:minmax(0,1fr) !important; }
+  input, textarea, select, button { max-width:100%; }
+  input, textarea, select { width:100%; min-width:0; }
+  button { white-space:normal; overflow-wrap:anywhere; }
+  .mobile-bottom-nav {
+    position:fixed !important; z-index:9999 !important;
+    left:0 !important; right:0 !important; bottom:0 !important;
+    width:100% !important; max-width:none !important;
+    display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    gap:4px !important; margin:0 !important;
+    padding:8px 8px calc(8px + env(safe-area-inset-bottom)) !important;
+    box-sizing:border-box !important;
+    background:rgba(13,9,27,.97) !important;
+    border-top:1px solid rgba(164,116,255,.3);
+    backdrop-filter:blur(18px);
+  }
+  .mobile-nav-button {
+    width:100% !important; min-width:0 !important; max-width:none !important;
+    min-height:62px; margin:0 !important; padding:7px 2px !important;
+    display:flex !important; flex-direction:column !important;
+    align-items:center !important; justify-content:center !important;
+    gap:4px !important; border-radius:14px !important;
+    font-size:clamp(11px,3.2vw,14px) !important; line-height:1.15;
+    text-align:center !important; overflow-wrap:anywhere;
+  }
+  .mobile-nav-button span:first-child { font-size:22px; line-height:1.1; }
+  footer { padding:8px 12px; margin:10px 0 0 !important; text-align:center; }
+  #chatView { padding-bottom:12px; }
+  #sendForm { display:flex; flex-wrap:nowrap; gap:8px; min-width:0; }
+  #messageInput { flex:1 1 auto; width:1%; min-width:0; }
+}
+@media screen and (max-width:380px) {
+  .shell { padding-bottom:calc(94px + env(safe-area-inset-bottom)) !important; }
+  .app-layout { padding-left:8px; padding-right:8px; }
+  .mobile-bottom-nav { gap:2px !important; padding-left:4px !important; padding-right:4px !important; }
+  .mobile-nav-button { font-size:11px !important; }
+}
+</style>
 
 </head>
 
