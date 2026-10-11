@@ -481,6 +481,18 @@
   #searchView .person-card img, #searchView .person-avatar { width:38px; height:38px; min-width:38px; }
   #searchView .person-actions { grid-template-columns:minmax(0,1fr); }
 }
+
+/* Compact VK-style conversation list */
+.conversation-list{display:flex;flex-direction:column;gap:2px;margin:12px 0 16px;max-height:min(58vh,620px);overflow-y:auto;border-radius:14px}
+.conversation-row{display:flex;align-items:center;gap:12px;width:100%;min-width:0;padding:10px 12px;border:0;border-radius:12px;background:transparent;color:inherit;text-align:left;cursor:pointer;transition:background .15s}
+.conversation-row:hover,.conversation-row:focus-visible{background:rgba(255,255,255,.07);outline:none}
+.conversation-row.active{background:rgba(139,92,246,.18);box-shadow:inset 3px 0 #9b72ff}
+.conversation-avatar{width:46px;height:46px;flex:0 0 46px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#8b5cf6,#43308a);font-size:18px;font-weight:700;color:#fff}
+.conversation-row-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.conversation-row-title{font-weight:650;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conversation-row-subtitle{font-size:12px;opacity:.68;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conversation-row-meta{font-size:11px;opacity:.55;flex:0 0 auto;align-self:flex-start}
+@media(max-width:600px){.conversation-list{max-height:none;overflow:visible;margin:8px -4px 14px}.conversation-row{padding:9px 8px;gap:10px}.conversation-avatar{width:44px;height:44px;flex-basis:44px}.conversation-row-title{font-size:14px}.conversation-row-subtitle{font-size:12px}.conversation-tools{gap:6px!important}.conversation-tools button{flex:1 1 calc(50% - 6px);min-width:0;font-size:12px;padding:9px 7px}}
 </style>
 
 </head>
@@ -588,12 +600,13 @@
       </div>
 
       <div class="conversation-tools" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0">
-        <select id="conversationSelect" aria-label="Выбрать чат" style="flex:1;min-width:150px;padding:10px;border-radius:12px;background:#15132a;color:#fff;border:1px solid var(--border)"><option value="">Выбери чат…</option></select>
+        <select id="conversationSelect" aria-label="Выбрать чат" style="display:none"><option value="">Выбери чат…</option></select>
         <button type="button" class="secondary" id="newDirectChat">＋ Личный чат</button>
         <button type="button" class="secondary" id="newGroupChat">＋ Создать группу</button>
         <button type="button" class="secondary" id="enableNotifications" title="Включить звуковые уведомления">🔔 Уведомления</button>
       </div>
       <div class="muted" style="font-size:12px;margin-bottom:8px">Общего чата нет. Создай личную переписку или группу; для группы укажи username участников через запятую.</div>
+      <div id="conversationList" class="conversation-list" aria-label="Список переписок"></div>
       <div class="status" id="connection">Подключение к чату…</div>
 
       <div class="messages" id="messages" aria-live="polite"></div>
@@ -1389,10 +1402,44 @@
       const select = $('conversationSelect'); select.replaceChildren(new Option('Выбери чат…', ''));
       conversations.forEach(c => select.add(new Option((c.type === 'direct' ? '👤 ' : '👥 ') + c.title, c.id)));
       select.value = currentConversationId || '';
+      renderConversationList();
+    }
+
+    function renderConversationList() {
+      const list = $('conversationList');
+      if (!list) return;
+      list.replaceChildren();
+      if (!conversations.length) {
+        const empty = document.createElement('div');
+        empty.className = 'muted';
+        empty.style.cssText = 'padding:18px 12px;text-align:center';
+        empty.textContent = 'Здесь появятся твои переписки. Начни личный чат или создай группу.';
+        list.append(empty);
+        return;
+      }
+      conversations.forEach(c => {
+        const row = document.createElement('button');
+        row.type = 'button';
+        row.className = 'conversation-row' + (c.id === currentConversationId ? ' active' : '');
+        row.setAttribute('aria-label', 'Открыть чат ' + (c.title || 'Без названия'));
+        const avatar = document.createElement('span');
+        avatar.className = 'conversation-avatar';
+        avatar.textContent = c.type === 'direct' ? '👤' : '👥';
+        const copy = document.createElement('span'); copy.className = 'conversation-row-copy';
+        const title = document.createElement('span'); title.className = 'conversation-row-title'; title.textContent = c.title || 'Без названия';
+        const subtitle = document.createElement('span'); subtitle.className = 'conversation-row-subtitle'; subtitle.textContent = c.type === 'direct' ? 'Личная переписка' : 'Групповой чат';
+        copy.append(title, subtitle);
+        const meta = document.createElement('span'); meta.className = 'conversation-row-meta';
+        meta.textContent = c.created_at ? new Date(c.created_at).toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit'}) : '';
+        row.append(avatar, copy, meta);
+        row.addEventListener('click', () => switchConversation(c.id));
+        list.append(row);
+      });
     }
 
     async function switchConversation(id) {
       currentConversationId = id || null;
+      renderConversationList();
       const conv = conversations.find(c => c.id === currentConversationId);
       $('chatView').querySelector('.topline h2').textContent = conv ? conv.title : '💬 Сообщения';
       $('chatView').querySelector('.topline .muted').textContent = conv ? (conv.type === 'direct' ? 'Личная переписка' : 'Групповой чат') : 'Выбери чат сверху или создай новый';
