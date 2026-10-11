@@ -317,7 +317,7 @@
       .app-main > .card, .card { padding: 14px; margin-top: 10px; border-radius: 18px; }
       .mobile-bottom-nav {
         display: grid !important;
-        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
         gap: 4px;
         position: fixed; left: 0; right: 0; bottom: 0; width: 100%;
         padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
@@ -382,7 +382,7 @@
     position:fixed !important; z-index:9999 !important;
     left:0 !important; right:0 !important; bottom:0 !important;
     width:100% !important; max-width:none !important;
-    display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    display:grid !important; grid-template-columns:repeat(5,minmax(0,1fr)) !important;
     gap:4px !important; margin:0 !important;
     padding:8px 8px calc(8px + env(safe-area-inset-bottom)) !important;
     box-sizing:border-box !important;
@@ -413,6 +413,16 @@
 }
 </style>
 
+<style id="pulseup-final-mobile-nav-fix">
+@media screen and (max-width:760px) {
+  .mobile-bottom-nav { display:grid !important; grid-template-columns:repeat(5,minmax(0,1fr)) !important; position:fixed !important; left:0 !important; right:0 !important; bottom:0 !important; width:100% !important; z-index:99999 !important; box-sizing:border-box !important; padding:7px 5px calc(7px + env(safe-area-inset-bottom)) !important; background:rgba(14,10,27,.97) !important; border-top:1px solid rgba(183,145,255,.35) !important; }
+  .mobile-nav-button { display:flex !important; min-width:0 !important; width:100% !important; min-height:50px !important; padding:4px 1px !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; gap:3px !important; font-size:clamp(9px,2.5vw,12px) !important; line-height:1.1 !important; }
+  .mobile-nav-button span { display:block; max-width:100%; overflow-wrap:anywhere; }
+  .shell { padding-bottom:calc(100px + env(safe-area-inset-bottom)) !important; }
+  .app-main { padding-bottom:calc(16px + env(safe-area-inset-bottom)) !important; }
+}
+@media screen and (min-width:761px) { .mobile-bottom-nav { display:none !important; } }
+</style>
 </head>
 
 <body>
@@ -550,6 +560,7 @@
       </section>
       <section id="friendsView" class="card hidden" aria-label="Друзья"><div class="topline"><div class="grow"><h2>👥 Друзья</h2><div class="muted">Находи людей и начинай личные чаты</div></div></div><p class="muted">Используй поиск, чтобы найти пользователя по имени или дате рождения. Нажми «Написать», чтобы открыть личный чат.</p><button class="primary" id="openPeopleSearch" type="button">🔎 Найти людей</button></section>
       <nav class="mobile-bottom-nav" aria-label="Основная навигация">
+        <button type="button" class="mobile-nav-button" id="mobileNavChat"><span aria-hidden="true">💬</span><span>Чат</span></button>
         <button type="button" class="mobile-nav-button active" id="mobileNavPosts"><span aria-hidden="true">📰</span><span>Посты</span></button>
         <button type="button" class="mobile-nav-button" id="mobileNavSearch"><span aria-hidden="true">🔎</span><span>Поиск</span></button>
         <button type="button" class="mobile-nav-button" id="mobileNavFriends"><span aria-hidden="true">👥</span><span>Друзья</span></button>
@@ -757,13 +768,14 @@
       const views = {chat:'chatView', posts:'postsView', search:'searchView', friends:'friendsView', profile:'profileView'};
       Object.entries(views).forEach(([key,id]) => $(id).classList.toggle('hidden', key !== view));
       ['navChat','navPosts','navSearch','navFriends','navProfile'].forEach((id,i)=>$(id).classList.toggle('active',['chat','posts','search','friends','profile'][i]===view));
-      ['mobileNavPosts','mobileNavSearch','mobileNavFriends','mobileNavProfile'].forEach((id,i)=>$(id).classList.toggle('active',['posts','search','friends','profile'][i]===view));
+      ['mobileNavChat','mobileNavPosts','mobileNavSearch','mobileNavFriends','mobileNavProfile'].forEach((id,i)=>$(id).classList.toggle('active',['chat','posts','search','friends','profile'][i]===view));
       if (view === 'profile' && currentUser) loadProfile(currentUser);
       if (view === 'posts' || view === 'profile') loadPosts();
     }
     $('navChat').onclick = () => showAppView('chat');
     $('navPosts').onclick = () => showAppView('posts'); $('navSearch').onclick = () => showAppView('search'); $('navFriends').onclick = () => showAppView('friends');
     $('navProfile').onclick = () => showAppView('profile');
+    $('mobileNavChat').onclick = () => showAppView('chat');
     $('mobileNavPosts').onclick = () => showAppView('posts'); $('mobileNavSearch').onclick = () => showAppView('search');
     $('mobileNavFriends').onclick = () => showAppView('friends'); $('mobileNavProfile').onclick = () => showAppView('profile');
     $('openPeopleSearch').onclick = () => showAppView('search');
