@@ -137,6 +137,8 @@
     .secondary { background: var(--bubble); color: var(--text); border: 1px solid var(--border); box-shadow: none; }
     .actions { display: flex; gap: 8px; flex-wrap: wrap; }
     .hidden { display: none !important; }
+    /* Keep native hidden state effective even when avatar classes set display:grid. */
+    [hidden] { display: none !important; }
     .status { font-size: 13px; color: var(--muted); margin-top: 12px; overflow-wrap: anywhere; }
     #authStatus:not(:empty) { padding: 10px 12px; background: rgba(123,83,224,.10); border: 1px solid var(--border); border-radius: 11px; }
     .form-note { margin-top: 13px; text-align: center; color: #827997; font-size: 11px; }
@@ -200,9 +202,104 @@
       .messages { height: 52vh; min-height: 220px; }
       .composer button { padding: 10px 12px; }
     }
+    /* Более плавный и цельный интерфейс */
+    :root { scroll-behavior: smooth; }
+    .card, .app-sidebar, .profile-card, .profile-editor, .auth-form-panel {
+      transition: background-color .22s ease, border-color .22s ease, box-shadow .22s ease, transform .22s ease, opacity .22s ease;
+    }
+    .card { border-radius: 24px; }
+    .app-layout { gap: 16px; }
+    .app-sidebar { box-shadow: 0 14px 42px rgba(0,0,0,.16); }
+    .nav-button { transition: color .2s ease, background .2s ease, border-color .2s ease, transform .2s ease; }
+    .nav-button:hover { transform: translateX(2px); background: rgba(135,91,235,.12); }
+    .profile-avatar, .sidebar-avatar { overflow:hidden; object-fit:cover; transition: opacity .2s ease, transform .2s ease, border-color .2s ease; }
+    .profile-avatar:not([hidden]) { animation: avatar-in .24s ease both; }
+    .sidebar-avatar:not([hidden]) { animation: avatar-in .24s ease both; }
+    @keyframes avatar-in { from { opacity:.35; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
+    .profile-card { box-shadow: 0 12px 34px rgba(0,0,0,.12); }
+    .profile-editor { animation: panel-in .2s ease both; }
+    @keyframes panel-in { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+    .messages { scroll-behavior:smooth; scrollbar-width:thin; scrollbar-color:rgba(155,92,255,.45) transparent; }
+    .message { transition: transform .16s ease, border-color .16s ease; }
+    .message:hover { transform: translateY(-1px); }
+    input, textarea, button { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible { outline:2px solid rgba(174,132,255,.85); outline-offset:2px; }
+    @media (max-width:760px) {
+      .app-layout { gap:10px; }
+      .app-sidebar { border-radius:17px; }
+      .app-main > .card { padding:17px; }
+      .nav-button:hover { transform:translateY(-1px); }
+    }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
     }
+
+    /* Responsive polish: desktop sidebar, compact mobile navigation, no profile panel above chat. */
+    .app-layout { align-items: start; }
+    .app-sidebar { min-width: 0; }
+    .app-main, #chatView, #profileView { min-width: 0; }
+    .profile-card { min-width: 0; }
+    .profile-card > .grow { min-width: 0; }
+    .profile-name, #profileUsername, #profileBio { overflow-wrap: anywhere; }
+    .profile-avatar, .sidebar-avatar { flex-shrink: 0; }
+    .mobile-bottom-nav { display: none; }
+    @media (max-width: 760px) {
+      body { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
+      .shell { width: 100%; padding: 10px; }
+      #chat { margin-top: 12px; padding: 12px; border-radius: 20px; }
+      .app-layout { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+      .app-sidebar {
+        position: relative; z-index: 3;
+        display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+        gap: 7px; padding: 8px 10px; border-radius: 16px;
+        backdrop-filter: blur(18px); background: rgba(15, 11, 28, .94);
+      }
+      .sidebar-brand { width: auto; margin: 0 3px 0; font-size: 16px; }
+      .app-sidebar .nav-button, .app-sidebar .sidebar-user { display: none !important; }
+      .app-sidebar #logout { width: auto !important; min-height: 38px; flex: initial; margin: 0 !important; padding: 7px 11px; white-space: nowrap; }
+      .mobile-bottom-nav {
+        position: fixed; display: grid; grid-template-columns: repeat(3, minmax(0,1fr));
+        left: 0; right: 0; bottom: 0; z-index: 50;
+        padding: 7px 10px calc(7px + env(safe-area-inset-bottom));
+        border-top: 1px solid rgba(183,145,255,.24);
+        background: rgba(14,10,27,.94); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+        box-shadow: 0 -10px 35px rgba(0,0,0,.28);
+      }
+      .mobile-nav-button {
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+        min-width: 0; min-height: 53px; padding: 5px 2px; border: 1px solid transparent;
+        border-radius: 14px; background: transparent; color: var(--muted); font-size: 11px; font-weight: 650;
+      }
+      .mobile-nav-button span:first-child { font-size: 20px; line-height: 1.1; }
+      .mobile-nav-button.active { color: #fff; background: linear-gradient(120deg, rgba(126,67,235,.28), rgba(63,100,229,.2)); border-color: rgba(170,132,255,.22); }
+      .mobile-nav-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .app-main > .card { padding: 14px; border-radius: 18px; }
+      #chatView .topline { gap: 8px; }
+      #chatView h2, #profileView h2 { font-size: 20px; }
+      .messages { height: min(58dvh, 520px); min-height: 200px; padding: 14px 0; }
+      .message { max-width: 92%; padding: 10px 12px; }
+      .composer { position: sticky; bottom: 6px; z-index: 2; padding: 5px 0; background: rgba(15, 11, 28, .9); backdrop-filter: blur(12px); }
+      .composer input { min-width: 0; }
+      .composer button { min-width: 46px; min-height: 44px; }
+      .profile-card { grid-template-columns: 68px minmax(0,1fr); gap: 12px; padding: 13px; }
+      .profile-avatar { width: 68px; height: 68px; font-size: 25px; }
+      .profile-editor { padding: 12px; }
+      .profile-editor input, .profile-editor textarea { font-size: 16px; }
+      .profile-actions { display: grid; grid-template-columns: 1fr; }
+      .profile-actions button { width: 100%; min-height: 42px; }
+    }
+    @media (max-width: 380px) {
+      .shell { padding: 7px; }
+      #chat { padding: 8px; }
+      .nav-button { font-size: 12px; }
+      .profile-card { grid-template-columns: 56px minmax(0,1fr); gap: 10px; }
+      .profile-avatar { width: 56px; height: 56px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      :root { scroll-behavior: auto; }
+      .messages { scroll-behavior: auto; }
+    }
+
   </style>
 
 </head>
@@ -305,6 +402,12 @@
 
       </div>
 
+      <div class="conversation-tools" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0">
+        <select id="conversationSelect" aria-label="Выбрать чат" style="flex:1;min-width:150px;padding:10px;border-radius:12px;background:#15132a;color:#fff;border:1px solid var(--border)"><option value="">Общий чат</option></select>
+        <button type="button" class="secondary" id="newDirectChat">＋ Личный чат</button>
+        <button type="button" class="secondary" id="newGroupChat">＋ Группа</button>
+      </div>
+      <div class="muted" style="font-size:12px;margin-bottom:8px">Личный чат — по username. Для группы укажи username участников через запятую.</div>
       <div class="status" id="connection">Подключение к чату…</div>
 
       <div class="messages" id="messages" aria-live="polite"></div>
@@ -322,6 +425,19 @@
       <div class="status" id="chatStatus" role="status"></div>
 
           </div>
+      <section id="friendsView" class="card hidden" aria-label="Друзья">
+        <div class="topline"><div class="grow"><h2>👥 Друзья</h2><div class="muted">Твои контакты в PulseUp</div></div></div>
+        <div class="friends-empty" style="margin-top:18px;padding:22px;border:1px solid var(--border);border-radius:18px;background:rgba(8,7,18,.28)">
+          <div style="font-size:34px;margin-bottom:8px">🫂</div>
+          <strong>Тут будут твои друзья</strong>
+          <div class="muted" style="margin-top:6px">Раздел пока без списка контактов — навигация уже готова, а поиск и добавление друзей можно подключить следующим шагом.</div>
+        </div>
+      </section>
+      <nav class="mobile-bottom-nav" aria-label="Основная навигация">
+        <button type="button" class="mobile-nav-button active" id="mobileNavChat"><span aria-hidden="true">💬</span><span>Сообщения</span></button>
+        <button type="button" class="mobile-nav-button" id="mobileNavFriends"><span aria-hidden="true">👥</span><span>Друзья</span></button>
+        <button type="button" class="mobile-nav-button" id="mobileNavProfile"><span aria-hidden="true">👤</span><span>Профиль</span></button>
+      </nav>
       <section id="profileView" class="card hidden" aria-label="Профиль пользователя">
         <div class="topline"><div class="grow"><h2>Мой профиль</h2><div class="muted">Твои данные в PulseUp</div></div></div>
       <section class="profile-card" aria-label="Профиль пользователя">
@@ -394,6 +510,8 @@
 
     let oldestLoaded = null;
     let profileAvatarUrl = null;
+    let currentConversationId = null;
+    let conversations = [];
 
 
 
@@ -445,14 +563,23 @@
 
     function showAppView(view) {
       const isProfile = view === 'profile';
-      $('chatView').classList.toggle('hidden', isProfile);
+      const isFriends = view === 'friends';
+      const isChat = !isProfile && !isFriends;
+      $('chatView').classList.toggle('hidden', !isChat);
+      $('friendsView').classList.toggle('hidden', !isFriends);
       $('profileView').classList.toggle('hidden', !isProfile);
-      $('navChat').classList.toggle('active', !isProfile);
+      $('navChat').classList.toggle('active', isChat);
       $('navProfile').classList.toggle('active', isProfile);
+      $('mobileNavChat').classList.toggle('active', isChat);
+      $('mobileNavFriends').classList.toggle('active', isFriends);
+      $('mobileNavProfile').classList.toggle('active', isProfile);
       if (isProfile && currentUser) loadProfile(currentUser);
     }
     $('navChat').onclick = () => showAppView('chat');
     $('navProfile').onclick = () => showAppView('profile');
+    $('mobileNavChat').onclick = () => showAppView('chat');
+    $('mobileNavFriends').onclick = () => showAppView('friends');
+    $('mobileNavProfile').onclick = () => showAppView('profile');
 
     function showChat(user) {
 
@@ -536,48 +663,61 @@
 
 
     async function loadMessages() {
-
-      const { data, error } = await supabase
-
-        .from('messages')
-
-        .select('id,sender_id,sender_name,content,created_at')
-
-        .order('id', { ascending: false })
-
-        .limit(100);
-
-
-
+      let query = supabase.from('messages')
+        .select('id,sender_id,sender_name,content,created_at,conversation_id')
+        .order('id', { ascending: false }).limit(100);
+      query = currentConversationId ? query.eq('conversation_id', currentConversationId) : query.is('conversation_id', null);
+      const { data, error } = await query;
       if (error) throw error;
-
-
-
       $('messages').replaceChildren();
-
       for (const msg of (data || []).reverse()) addMessage(msg);
-
       oldestLoaded = data?.length ? data[data.length - 1].id : null;
-
       $('messages').scrollTop = $('messages').scrollHeight;
-
     }
-
-
 
     function setProfileAvatar(url) {
-      const img = $('profileAvatar');
-      const fallback = $('profileAvatarFallback');
-      const sideImg = $('sidebarAvatar');
-      const sideFallback = $('sidebarAvatarFallback');
-      if (url) {
-        img.src = url; img.hidden = false; fallback.hidden = true;
-        sideImg.src = url; sideImg.hidden = false; sideFallback.hidden = true;
-      } else {
-        img.removeAttribute('src'); img.hidden = true; fallback.hidden = false;
-        sideImg.removeAttribute('src'); sideImg.hidden = true; sideFallback.hidden = false;
+      const pairs = [
+        [$('profileAvatar'), $('profileAvatarFallback')],
+        [$('sidebarAvatar'), $('sidebarAvatarFallback')]
+      ];
+      for (const [img, fallback] of pairs) {
+        img.onerror = () => {
+          img.hidden = true;
+          fallback.hidden = false;
+        };
+        if (url) {
+          fallback.hidden = true;
+          img.hidden = false;
+          img.alt = 'Фото профиля';
+          // Public URLs are stored in Supabase. A failed URL falls back gracefully.
+          img.src = url;
+        } else {
+          img.removeAttribute('src');
+          img.hidden = true;
+          fallback.hidden = false;
+        }
       }
     }
+
+    let localAvatarPreviewUrl = null;
+    $('profilePhotoInput').addEventListener('change', () => {
+      const file = $('profilePhotoInput').files?.[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        status('profileStatus', 'Выбери файл изображения.');
+        $('profilePhotoInput').value = '';
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        status('profileStatus', 'Фото должно быть не больше 5 МБ.');
+        $('profilePhotoInput').value = '';
+        return;
+      }
+      if (localAvatarPreviewUrl) URL.revokeObjectURL(localAvatarPreviewUrl);
+      localAvatarPreviewUrl = URL.createObjectURL(file);
+      setProfileAvatar(localAvatarPreviewUrl);
+      status('profileStatus', 'Предпросмотр фото. Нажми «Сохранить профиль», чтобы загрузить его.');
+    });
 
     async function loadProfile(user) {
       $('profileName').textContent = user.user_metadata?.display_name || 'Пользователь PulseUp';
@@ -589,6 +729,8 @@
       $('profileBioInput').value = '';
       setProfileAvatar(null);
       profileAvatarUrl = null;
+      if (localAvatarPreviewUrl) { URL.revokeObjectURL(localAvatarPreviewUrl); localAvatarPreviewUrl = null; }
+      $('profilePhotoInput').value = '';
       const { data, error } = await supabase.from('profiles')
         .select('id,display_name,username,bio,avatar_url').eq('id', user.id).maybeSingle();
       if (error) {
@@ -653,6 +795,7 @@
         $('profileBio').textContent = bio || 'Добавь информацию о себе';
         setProfileAvatar(avatarUrl);
         $('profilePhotoInput').value = '';
+        if (localAvatarPreviewUrl) { URL.revokeObjectURL(localAvatarPreviewUrl); localAvatarPreviewUrl = null; }
         $('profileEditor').classList.add('hidden');
         status('profileStatus', 'Профиль сохранён!');
       } catch (error) {
@@ -662,160 +805,90 @@
       }
     });
 
+    async function refreshConversations() {
+      const { data, error } = await supabase.from('conversation_members')
+        .select('conversation_id, conversations(id,title,type,created_at)').eq('user_id', currentUser.id);
+      if (error) { status('connection', 'Для личных и групповых чатов выполни SQL-файл настройки в Supabase.'); return; }
+      conversations = (data || []).map(row => row.conversations).filter(Boolean);
+      const select = $('conversationSelect'); select.replaceChildren(new Option('Общий чат', ''));
+      conversations.forEach(c => select.add(new Option((c.type === 'direct' ? '👤 ' : '👥 ') + c.title, c.id)));
+      select.value = currentConversationId || '';
+    }
+
+    async function switchConversation(id) {
+      currentConversationId = id || null;
+      const conv = conversations.find(c => c.id === currentConversationId);
+      $('chatView').querySelector('.topline h2').textContent = conv ? conv.title : '💬 Общий чат';
+      $('chatView').querySelector('.topline .muted').textContent = conv ? (conv.type === 'direct' ? 'Личная переписка' : 'Групповой чат') : 'Сообщения видны всем участникам чата';
+      $('messages').replaceChildren();
+      try { await loadMessages(); } catch (e) { status('connection', 'Не удалось загрузить чат: ' + e.message); }
+      if (channel) await supabase.removeChannel(channel);
+      channel = supabase.channel('pulseup-chat-' + (currentConversationId || 'public') + '-' + currentUser.id)
+        .on('postgres_changes', { event:'INSERT', schema:'public', table:'messages' }, payload => {
+          if ((payload.new.conversation_id || null) !== currentConversationId) return;
+          addMessage(payload.new); $('messages').scrollTop = $('messages').scrollHeight;
+        }).subscribe(state => {
+          if (state === 'SUBSCRIBED') status('connection', '● Онлайн · обновления в реальном времени');
+          else if (state === 'CHANNEL_ERROR') status('connection', 'Ошибка realtime. Проверь настройки Supabase.');
+        });
+    }
+
+    async function createConversation(type) {
+      const raw = prompt(type === 'direct' ? 'Username пользователя (без @):' : 'Название группы:');
+      if (!raw || !raw.trim()) return;
+      try {
+        let title = raw.trim(), memberIds = [currentUser.id];
+        if (type === 'direct') {
+          const handle = title.replace(/^@/, '').toLowerCase();
+          const { data: profile, error } = await supabase.from('profiles').select('id,username,display_name').ilike('username', handle).maybeSingle();
+          if (error) throw error;
+          if (!profile) throw new Error('Username не найден. Пользователь должен заполнить профиль.');
+          if (profile.id === currentUser.id) throw new Error('Нельзя начать чат с самим собой.');
+          memberIds.push(profile.id); title = profile.display_name || '@' + profile.username;
+          const { data: existing, error: exErr } = await supabase.from('conversation_members').select('conversation_id,conversations!inner(id,type,title)').eq('user_id', currentUser.id);
+          if (exErr) throw exErr;
+          for (const row of existing || []) {
+            if (row.conversations?.type !== 'direct') continue;
+            const { data: members } = await supabase.from('conversation_members').select('user_id').eq('conversation_id', row.conversation_id).neq('user_id', currentUser.id);
+            if ((members || []).some(m => m.user_id === profile.id)) { await refreshConversations(); $('conversationSelect').value = row.conversation_id; await switchConversation(row.conversation_id); return; }
+          }
+        } else {
+          const groupName = title;
+          const rawUsers = prompt('Username участников через запятую (без @):') || '';
+          for (const username of rawUsers.split(',').map(v => v.trim().replace(/^@/, '').toLowerCase()).filter(Boolean)) {
+            const { data: profile, error } = await supabase.from('profiles').select('id').ilike('username', username).maybeSingle();
+            if (error) throw error;
+            if (profile && !memberIds.includes(profile.id)) memberIds.push(profile.id);
+          }
+          if (memberIds.length < 2) throw new Error('Добавь хотя бы одного участника с заполненным username.');
+          title = groupName;
+        }
+        const { data: conv, error: cErr } = await supabase.from('conversations').insert({ title, type, created_by: currentUser.id }).select('id,title,type').single();
+        if (cErr) throw cErr;
+        const { error: mErr } = await supabase.from('conversation_members').insert(memberIds.map(user_id => ({ conversation_id: conv.id, user_id })));
+        if (mErr) throw mErr;
+        await refreshConversations(); $('conversationSelect').value = conv.id; await switchConversation(conv.id);
+      } catch (e) { status('chatStatus', 'Не удалось создать чат: ' + e.message); }
+    }
+    $('conversationSelect').addEventListener('change', e => switchConversation(e.target.value));
+    $('newDirectChat').addEventListener('click', () => createConversation('direct'));
+    $('newGroupChat').addEventListener('click', () => createConversation('group'));
+
     async function connectChat(user) {
 
       showChat(user);
 
-      status('connection', 'Загружаем сообщения…');
-
-
-
-      try {
-
-        await loadMessages();
-
-        status('connection', '● Подключено к PulseUp');
-
-      } catch (error) {
-
-        status('connection', 'Не удалось загрузить сообщения: ' + error.message);
-
-      }
-
-
-
-      if (channel) await supabase.removeChannel(channel);
-
-
-
-      channel = supabase.channel('pulseup-public-chat')
-
-        .on('postgres_changes', {
-
-          event: 'INSERT', schema: 'public', table: 'messages'
-
-        }, payload => {
-
-          addMessage(payload.new);
-
-          $('messages').scrollTop = $('messages').scrollHeight;
-
-        })
-
-        .subscribe(state => {
-
-          if (state === 'SUBSCRIBED') {
-
-            status('connection', '● Онлайн · обновления в реальном времени');
-
-          } else if (state === 'CHANNEL_ERROR') {
-
-            status('connection', 'Проблема соединения. Обнови страницу.');
-
-          }
-
-        });
-
+      await refreshConversations();
+      await switchConversation(currentConversationId);
     }
 
-
-
-    $('authForm').addEventListener('submit', async event => {
-
-      event.preventDefault();
-
-      if (!supabase) return;
-
-      const button = $('authSubmit');
-
-      button.disabled = true;
-
-      status('authStatus', 'Подожди…');
-
-
-
-      try {
-
-        const email = $('email').value.trim();
-
-        const password = $('password').value;
-
-        if (registration) {
-
-          const displayName = $('displayName').value.trim() || 'User';
-
-          const { data, error } = await supabase.auth.signUp({
-
-            email, password,
-
-            options: { data: { display_name: displayName } }
-
-          });
-
-          if (error) throw error;
-
-
-
-          if (data.session) {
-
-            await connectChat(data.user);
-
-            status('chatStatus', 'Аккаунт создан!');
-
-          } else {
-
-            status('authStatus',
-
-              'Проверь почту и подтверди регистрацию, затем войди.');
-
-          }
-
-        } else {
-
-          const { data, error } = await supabase.auth.signInWithPassword({
-
-            email, password
-
-          });
-
-          if (error) throw error;
-
-          await connectChat(data.user);
-
-        }
-
-      } catch (error) {
-
-        status('authStatus', error.message || 'Не удалось выполнить вход.');
-
-      } finally {
-
-        button.disabled = false;
-
-      }
-
-    });
-
-
-
     $('sendForm').addEventListener('submit', async event => {
-
       event.preventDefault();
-
       if (!currentUser || sending) return;
-
-
-
       const input = $('messageInput');
-
       const content = input.value.trim();
-
       if (!content) return;
-
-
-
       sending = true;
-
       $('sendButton').disabled = true;
 
 
@@ -835,9 +908,8 @@
           sender_id: currentUser.id,
 
           sender_name: senderName,
-
-          content
-
+          content,
+          conversation_id: currentConversationId
         });
 
 
