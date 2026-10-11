@@ -795,7 +795,7 @@
     }
     $('peopleSearchForm').addEventListener('submit',e=>{e.preventDefault();searchPeople();});
     $('clearPeopleSearch').onclick=()=>{$('peopleQuery').value='';$('peopleBirthday').value='';$('peopleResults').innerHTML='<p class="muted">Введи имя или дату рождения.</p>';status('peopleSearchStatus','');};
-    async function createDirectForProfile(profile){try{const {data:existing,error}=await supabase.from('conversation_members').select('conversation_id,conversations!inner(id,type,title)').eq('user_id',currentUser.id);if(error)throw error;for(const row of existing||[]){if(row.conversations?.type!=='direct')continue;const {data:members}=await supabase.from('conversation_members').select('user_id').eq('conversation_id',row.conversation_id);if((members||[]).some(m=>m.user_id===profile.id)){currentConversationId=row.conversation_id;await refreshConversations();await switchConversation(row.conversation_id);showAppView('chat');return;}}const {data:conv,error:ce}=await supabase.from('conversations').insert({title:profile.display_name||profile.username,type:'direct',created_by:currentUser.id}).select('id').single();if(ce)throw ce;const {error:me}=await supabase.from('conversation_members').insert([{conversation_id:conv.id,user_id:currentUser.id},{conversation_id:conv.id,user_id:profile.id}]);if(me)throw me;await refreshConversations();await switchConversation(conv.id);showAppView('chat');}catch(e){alert('Не удалось открыть личный чат: '+e.message);}}
+    async function createDirectForProfile(profile){try{const {data:existing,error}=await supabase.from('conversation_members').select('conversation_id,conversations!inner(id,type,title)').eq('user_id',currentUser.id);if(error)throw error;for(const row of existing||[]){if(row.conversations?.type!=='direct')continue;const {data:members}=await supabase.from('conversation_members').select('user_id').eq('conversation_id',row.conversation_id);if((members||[]).some(m=>m.user_id===profile.id)){currentConversationId=row.conversation_id;await refreshConversations();await switchConversation(row.conversation_id);showAppView('chat');return;}}const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();if(authError)throw authError;if(!authUser)throw new Error('Сессия истекла. Выйди из аккаунта и войди снова.');if(authUser.id!==currentUser.id)currentUser=authUser;const chatCreatorId=authUser.id;const {data:conv,error:ce}=await supabase.from('conversations').insert({title:profile.display_name||profile.username,type:'direct',created_by:chatCreatorId}).select('id').single();if(ce)throw ce;const {error:me}=await supabase.from('conversation_members').insert([{conversation_id:conv.id,user_id:chatCreatorId},{conversation_id:conv.id,user_id:profile.id}]);if(me)throw me;await refreshConversations();await switchConversation(conv.id);showAppView('chat');}catch(e){alert('Не удалось открыть личный чат: '+e.message);}}
     async function loadPosts(){try{const {data,error}=await supabase.from('posts').select('id,content,created_at,author_id,image_url').order('created_at',{ascending:false}).limit(50);if(error)throw error;const list=$('postsList');list.replaceChildren();const profileList=$('profilePostsList');if(profileList)profileList.replaceChildren();if(!data?.length){list.innerHTML='<p class="muted">Пока нет публикаций. Будь первым!</p>';if(profileList)profileList.innerHTML='<p class="muted">Пока нет публикаций.</p>';return;}const ids=[...new Set(data.map(p=>p.author_id))];const {data:authors}=await supabase.from('profiles').select('id,display_name,username').in('id',ids);const authorMap=new Map((authors||[]).map(a=>[a.id,a]));data.forEach(p=>{const author=authorMap.get(p.author_id);const card=document.createElement('article');card.className='post-card';const meta=document.createElement('div');meta.className='post-meta';meta.textContent=(author?.display_name||author?.username||'Пользователь')+' · '+new Date(p.created_at).toLocaleString('ru-RU');const body=document.createElement('div');body.className='post-body';body.textContent=p.content||'';card.append(meta);if(p.content)card.append(body);if(p.image_url){const img=document.createElement('img');img.className='post-photo';img.src=p.image_url;img.alt='Фото публикации';card.append(img);}list.append(card);if(profileList && p.author_id===currentUser?.id)profileList.append(card.cloneNode(true));});}catch(e){$('postsList').innerHTML='<p class="muted">Не удалось загрузить ленту. Выполни SQL-файл настройки постов. '+e.message+'</p>';}}
     $('postForm').addEventListener('submit',async e=>{e.preventDefault();const content=$('postText').value.trim();const file=$('postPhotoInput').files?.[0];if((!content&&!file)||!currentUser)return;status('postStatus','Публикуем…');try{let image_url=null;if(file){if(!file.type.startsWith('image/'))throw new Error('Выбери файл изображения.');if(file.size>8*1024*1024)throw new Error('Фото должно быть до 8 МБ.');const ext=(file.name.split('.').pop()||'jpg').replace(/[^a-z0-9]/gi,'').toLowerCase()||'jpg';const path=`${currentUser.id}/${Date.now()}.${ext}`;const {error:upErr}=await supabase.storage.from('post-media').upload(path,file,{upsert:false,contentType:file.type});if(upErr)throw upErr;image_url=supabase.storage.from('post-media').getPublicUrl(path).data.publicUrl;}const {error}=await supabase.from('posts').insert({author_id:currentUser.id,content,image_url});if(error)throw error;$('postText').value='';$('postPhotoInput').value='';status('postStatus','Опубликовано!');await loadPosts();}catch(err){status('postStatus','Не удалось опубликовать: '+err.message);}});
 
@@ -1073,19 +1073,24 @@
       const raw = prompt(type === 'direct' ? 'Username пользователя (без @):' : 'Название группы:');
       if (!raw || !raw.trim()) return;
       try {
-        let title = raw.trim(), memberIds = [currentUser.id];
+        const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+        if (authError) throw authError;
+        if (!authUser) throw new Error('Сессия истекла. Выйди из аккаунта и войди снова.');
+        currentUser = authUser;
+        const chatCreatorId = authUser.id;
+        let title = raw.trim(), memberIds = [chatCreatorId];
         if (type === 'direct') {
           const handle = title.replace(/^@/, '').toLowerCase();
           const { data: profile, error } = await supabase.from('profiles').select('id,username,display_name').ilike('username', handle).maybeSingle();
           if (error) throw error;
           if (!profile) throw new Error('Username не найден. Пользователь должен заполнить профиль.');
-          if (profile.id === currentUser.id) throw new Error('Нельзя начать чат с самим собой.');
+          if (profile.id === chatCreatorId) throw new Error('Нельзя начать чат с самим собой.');
           memberIds.push(profile.id); title = profile.display_name || '@' + profile.username;
-          const { data: existing, error: exErr } = await supabase.from('conversation_members').select('conversation_id,conversations!inner(id,type,title)').eq('user_id', currentUser.id);
+          const { data: existing, error: exErr } = await supabase.from('conversation_members').select('conversation_id,conversations!inner(id,type,title)').eq('user_id', chatCreatorId);
           if (exErr) throw exErr;
           for (const row of existing || []) {
             if (row.conversations?.type !== 'direct') continue;
-            const { data: members } = await supabase.from('conversation_members').select('user_id').eq('conversation_id', row.conversation_id).neq('user_id', currentUser.id);
+            const { data: members } = await supabase.from('conversation_members').select('user_id').eq('conversation_id', row.conversation_id).neq('user_id', chatCreatorId);
             if ((members || []).some(m => m.user_id === profile.id)) { await refreshConversations(); $('conversationSelect').value = row.conversation_id; await switchConversation(row.conversation_id); return; }
           }
         } else {
@@ -1099,7 +1104,7 @@
           if (memberIds.length < 2) throw new Error('Добавь хотя бы одного участника с заполненным username.');
           title = groupName;
         }
-        const { data: conv, error: cErr } = await supabase.from('conversations').insert({ title, type, created_by: currentUser.id }).select('id,title,type').single();
+        const { data: conv, error: cErr } = await supabase.from('conversations').insert({ title, type, created_by: chatCreatorId }).select('id,title,type').single();
         if (cErr) throw cErr;
         const { error: mErr } = await supabase.from('conversation_members').insert(memberIds.map(user_id => ({ conversation_id: conv.id, user_id })));
         if (mErr) throw mErr;
