@@ -676,6 +676,80 @@
 
     $('registerTab').onclick = () => setRegistration(true);
 
+    // Обработчик формы входа/регистрации.
+    $('authForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!supabase) {
+        status('authStatus', 'Не удалось подключиться к Supabase. Обнови страницу и попробуй снова.');
+        return;
+      }
+
+      const email = $('email').value.trim();
+      const password = $('password').value;
+      const displayName = $('displayName').value.trim();
+      const button = $('authSubmit');
+
+      if (!email || !password) {
+        status('authStatus', 'Введи электронную почту и пароль.');
+        return;
+      }
+      if (registration && !displayName) {
+        status('authStatus', 'Укажи имя для нового аккаунта.');
+        $('displayName').focus();
+        return;
+      }
+
+      button.disabled = true;
+      status('authStatus', registration ? 'Создаём аккаунт…' : 'Входим в PulseUp…');
+
+      try {
+        if (registration) {
+          const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: { display_name: displayName },
+              emailRedirectTo: window.location.origin + window.location.pathname
+            }
+          });
+          if (error) throw error;
+
+          if (data.session && data.user) {
+            const { error: profileError } = await supabase.from('profiles').upsert({
+              id: data.user.id,
+              display_name: displayName,
+              username: null,
+              bio: '',
+              updated_at: new Date().toISOString()
+            }, { onConflict: 'id' });
+            if (profileError) console.warn('Не удалось создать профиль автоматически:', profileError.message);
+            await connectChat(data.user);
+          } else {
+            status('authStatus', 'Аккаунт создан. Проверь почту и подтверди адрес, затем вернись сюда и войди.');
+          }
+        } else {
+          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+          if (!data.user) throw new Error('Supabase не вернул пользователя. Попробуй ещё раз.');
+          await connectChat(data.user);
+        }
+      } catch (error) {
+        const message = String(error?.message || 'Неизвестная ошибка');
+        if (/invalid login credentials/i.test(message)) {
+          status('authStatus', 'Неверная почта или пароль. Проверь данные либо зарегистрируй новый аккаунт.');
+        } else if (/email not confirmed/i.test(message)) {
+          status('authStatus', 'Сначала подтверди электронную почту по ссылке из письма.');
+        } else if (/user already registered/i.test(message)) {
+          status('authStatus', 'Аккаунт с этой почтой уже существует. Переключись на «Войти».');
+        } else {
+          status('authStatus', 'Не удалось выполнить вход: ' + message);
+        }
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+
 
 
 
