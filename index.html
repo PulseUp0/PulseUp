@@ -354,6 +354,34 @@
       .mobile-nav-button { min-height: 46px; }
     }
 
+  
+    /* PulseUp compact VK-like music layout */
+    #musicView{padding:18px;background:linear-gradient(145deg,rgba(17,15,39,.98),rgba(10,12,29,.98));border:1px solid rgba(150,112,255,.18)}
+    #musicView>.topline h2{font-size:23px;margin:0;letter-spacing:-.3px}
+    #musicView>.topline .muted{display:none}
+    #musicAddToggle{box-shadow:0 0 22px rgba(132,77,255,.24)}
+    #musicView .music-columns{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px;align-items:start}
+    #musicView .music-pane{min-width:0;border:1px solid rgba(150,130,220,.17);border-radius:15px;background:rgba(9,11,29,.48);overflow:hidden}
+    #musicView .music-pane-head{padding:14px 16px;border-bottom:1px solid rgba(150,130,220,.14);display:flex;align-items:center;justify-content:space-between;gap:8px}
+    #musicView .music-pane-head h3{font-size:16px;margin:0;font-weight:650}
+    #musicView .music-pane-body{padding:5px 10px 9px}
+    #musicView #musicLibraryList{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;margin-top:0!important}
+    #musicView .music-track-row{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:9px;align-items:center;min-width:0;padding:8px 2px;border-bottom:1px solid rgba(150,130,220,.10)}
+    #musicView .music-cover{width:40px;height:40px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(145deg,#8a45ff,#24234e);font-size:18px;overflow:hidden}
+    #musicView .music-track-info{min-width:0;cursor:pointer}
+    #musicView .music-track-title{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0 0 3px}
+    #musicView .music-track-meta{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#9696c0}
+    #musicView .music-track-actions{display:flex;align-items:center;gap:4px}
+    #musicView .music-icon-button{width:30px;height:30px;min-width:30px;padding:0;border:0;background:transparent;color:#b9a7ff;border-radius:8px;font-size:19px;display:grid;place-items:center}
+    #musicView .music-icon-button:hover{background:rgba(133,83,255,.17)}
+    #musicView .music-tools{display:flex;gap:8px;align-items:center;margin:12px 0;flex-wrap:wrap}
+    #musicView .music-tools input{flex:1;min-width:180px}
+    #musicView .music-tools select{max-width:170px}
+    #musicView .music-pane .muted.empty{padding:12px;font-size:13px}
+    #musicView #musicPlaylistsList .post-card{padding:10px;margin-bottom:7px}
+    #musicView #musicNowPlaying{background:rgba(24,20,54,.9);border-color:rgba(150,112,255,.25)}
+    @media(max-width:760px){#musicView .music-columns{grid-template-columns:1fr}#musicView #musicLibraryList{grid-template-columns:1fr}#musicView{padding:12px}#musicView .music-track-row{grid-template-columns:38px minmax(0,1fr) auto}}
+
   </style>
 
 
@@ -560,7 +588,7 @@
         <div id="peopleResults" class="people-results"><p class="muted">Начни вводить имя или username — результаты появятся автоматически.</p></div>
       </section>
       <section id="musicView" class="card hidden" aria-label="Музыка PulseUp">
-        <div class="topline" style="align-items:center"><div class="grow"><h2>🎵 Музыка</h2><div class="muted">Твоя коллекция и новые треки сообщества</div></div><button id="musicAddToggle" class="primary" type="button" aria-label="Добавить музыку" title="Добавить музыку" style="width:44px;height:44px;min-width:44px;padding:0;border-radius:50%;font-size:26px;line-height:1">＋</button></div>
+        <div class="topline" style="align-items:center"><div class="grow"><h2>♫ Музыка</h2></div><button id="musicAddToggle" class="primary" type="button" aria-label="Добавить музыку" title="Добавить музыку" style="width:44px;height:44px;min-width:44px;padding:0;border-radius:50%;font-size:26px;line-height:1">＋</button></div>
         <div class="profile-actions" role="tablist" aria-label="Разделы музыки" style="margin:14px 0 16px;gap:8px"><button id="musicTabMine" class="primary" type="button" role="tab" aria-selected="true">Моя музыка</button><button id="musicTabNew" class="secondary" type="button" role="tab" aria-selected="false">Новинки</button></div>
         <form id="musicUploadForm" class="profile-editor hidden">
           <div class="profile-fields">
@@ -573,13 +601,10 @@
           <div class="muted" style="font-size:12px">Загружай только аудио, на распространение которого у тебя есть права. Файлы доступны для прослушивания другим пользователям.</div>
           <div class="status" id="musicUploadStatus" role="status"></div>
         </form>
-        <div class="profile-editor" style="margin-top:18px">
-          <div class="profile-fields"><div><label for="musicLibraryQuery">Поиск в библиотеке</label><input id="musicLibraryQuery" maxlength="120" placeholder="Название, исполнитель или жанр" /></div><div><label for="musicSort">Сортировка</label><select id="musicSort"><option value="new">Сначала новые</option><option value="popular">Популярные</option><option value="mine">Мои треки</option><option value="favorites">Избранное</option></select></div></div>
-          <div class="profile-actions"><button class="primary" id="musicReloadButton" type="button">Показать треки</button></div>
-          <div id="musicLibraryStatus" class="status" role="status"></div>
-        </div>
+        <div class="music-tools"><input id="musicLibraryQuery" maxlength="120" aria-label="Поиск в библиотеке" placeholder="⌕ Поиск музыки…" /><select id="musicSort" aria-label="Сортировка"><option value="new">Сначала новые</option><option value="popular">Популярные</option><option value="mine">Мои треки</option><option value="favorites">Моя музыка</option></select><button class="secondary" id="musicReloadButton" type="button" title="Обновить">↻</button></div>
+        <div id="musicLibraryStatus" class="status" role="status"></div>
         <div id="musicNowPlaying" class="card hidden" style="padding:12px;margin-top:16px"><div class="topline"><div class="grow"><h3 id="musicNowTitle">Сейчас играет</h3><div id="musicNowArtist" class="muted"></div></div><button class="secondary" id="musicStopButton" type="button">Остановить</button></div><audio id="musicAudioPlayer" controls preload="none" style="width:100%;margin-top:10px"></audio></div>
-        <div id="musicLibraryList" class="post-list" style="margin-top:14px"><p class="muted">Загружаем музыкальную библиотеку…</p></div>
+        <div class="music-columns"><section class="music-pane"><div class="music-pane-head"><h3>♙ Моя музыка</h3></div><div class="music-pane-body"><div id="musicMineList" class="post-list"><p class="muted">Загружаем…</p></div></div></section><section class="music-pane"><div class="music-pane-head"><h3>✧ Новинки</h3></div><div class="music-pane-body"><div id="musicLibraryList" class="post-list"><p class="muted">Загружаем…</p></div></div></section></div>
         <div class="profile-editor" style="margin-top:18px"><h3>🎶 Мои плейлисты</h3><form id="musicPlaylistForm"><label for="musicPlaylistTitle">Название нового плейлиста</label><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="musicPlaylistTitle" maxlength="100" required placeholder="Например, Ночной вайб" style="flex:1;min-width:180px"/><button class="primary" type="submit">Создать</button></div></form><div id="musicPlaylistsList" class="post-list" style="margin-top:10px"></div></div>
       </section>
       <section id="friendsView" class="card hidden" aria-label="Друзья"><div class="topline"><div class="grow"><h2>👥 Друзья</h2><div class="muted">Находи людей и начинай личные чаты</div></div></div><p class="muted">Используй поиск, чтобы найти пользователя по имени или дате рождения. Нажми «Написать», чтобы открыть личный чат.</p><button class="primary" id="openPeopleSearch" type="button">🔎 Найти людей</button></section>
@@ -860,12 +885,13 @@
     async function loadMusicLibrary() {
       if (!supabase || !currentUser) return;
       const list = $('musicLibraryList');
+      const mineList = $('musicMineList');
       status('musicLibraryStatus','Загружаем треки…');
       try {
         const sort = $('musicSort').value;
         const query = $('musicLibraryQuery').value.trim();
         let request = supabase.from('music_tracks').select('id,uploader_id,title,artist,genre,storage_path,mime_type,file_size,created_at').limit(100);
-        if (musicSection === 'mine' || sort === 'mine') request = request.eq('uploader_id',currentUser.id);
+        if (sort === 'mine') request = request.eq('uploader_id',currentUser.id);
         if (query) request = request.or(`title.ilike.%${query.replace(/[,%()]/g,' ')}%,artist.ilike.%${query.replace(/[,%()]/g,' ')}%,genre.ilike.%${query.replace(/[,%()]/g,' ')}%`);
         request = request.order('created_at',{ascending:false});
         const {data:tracks,error} = await request; if (error) throw error;
@@ -879,24 +905,31 @@
         }
         if (sort === 'popular') (tracks||[]).sort((a,b)=>likes.filter(x=>x.track_id===b.id).length-likes.filter(x=>x.track_id===a.id).length);
         if (sort === 'favorites') tracks.splice(0,tracks.length,...tracks.filter(t=>favorites.has(t.id)));
-        list.replaceChildren();
-        if (!tracks?.length) { list.innerHTML='<p class="muted">Треков пока нет. Добавь первый!</p>'; status('musicLibraryStatus',''); return; }
+        list.replaceChildren(); mineList.replaceChildren();
+        if (!tracks?.length) { list.innerHTML='<p class="muted empty">Пока нет новых треков.</p>'; mineList.innerHTML='<p class="muted empty">Добавь свою первую музыку кнопкой ＋.</p>'; status('musicLibraryStatus',''); return; }
         const uploaderIds=[...new Set(tracks.map(t=>t.uploader_id))];
         const {data:profiles}=await supabase.from('profiles').select('id,display_name,username').in('id',uploaderIds);
         const profileMap=new Map((profiles||[]).map(x=>[x.id,x]));
+        const myTracks = tracks.filter(t=>t.uploader_id===currentUser.id);
         for (const track of tracks) {
-          const card=document.createElement('article'); card.className='post-card';
-          const title=document.createElement('h3'); title.textContent=track.title; title.style.margin='0 0 5px';
-          const author=profileMap.get(track.uploader_id); const meta=document.createElement('div'); meta.className='muted'; meta.textContent=[track.artist||'Исполнитель не указан',track.genre,author?.display_name||author?.username||'Пользователь'].filter(Boolean).join(' · ');
-          const count=likes.filter(x=>x.track_id===track.id).length; const actions=document.createElement('div'); actions.className='profile-actions';
-          const play=document.createElement('button'); play.type='button'; play.className='primary'; play.textContent='▶ Слушать'; play.addEventListener('click',()=>playMusicTrack(track));
-          const like=document.createElement('button'); like.type='button'; like.className='secondary'; like.textContent=(liked.has(track.id)?'♥':'♡')+' Лайк ('+count+')'; like.addEventListener('click',async()=>{like.disabled=true;try{if(liked.has(track.id)){const {error}=await supabase.from('music_track_likes').delete().eq('track_id',track.id).eq('user_id',currentUser.id);if(error)throw error;}else{const {error}=await supabase.from('music_track_likes').insert({track_id:track.id,user_id:currentUser.id});if(error)throw error;}await loadMusicLibrary();}catch(e){status('musicLibraryStatus','Не удалось изменить лайк: '+e.message);}finally{like.disabled=false;}});
-          const fav=document.createElement('button'); fav.type='button'; fav.className='secondary'; fav.textContent=favorites.has(track.id)?'★ В избранном':'☆ В избранное'; fav.addEventListener('click',async()=>{fav.disabled=true;try{if(favorites.has(track.id)){const {error}=await supabase.from('music_favorites').delete().eq('track_id',track.id).eq('user_id',currentUser.id);if(error)throw error;}else{const {error}=await supabase.from('music_favorites').insert({track_id:track.id,user_id:currentUser.id});if(error)throw error;}await loadMusicLibrary();}catch(e){status('musicLibraryStatus','Не удалось изменить избранное: '+e.message);}finally{fav.disabled=false;}});
-          const addToPlaylist=document.createElement('button'); addToPlaylist.type='button'; addToPlaylist.className='secondary'; addToPlaylist.textContent='＋ В плейлист'; addToPlaylist.addEventListener('click',async()=>{try{if(!cachedMusicPlaylists.length)await loadMusicPlaylists();if(!cachedMusicPlaylists.length){status('musicLibraryStatus','Сначала создай плейлист внизу страницы.');return;}const choices=cachedMusicPlaylists.map((p,i)=>`${i+1}. ${p.title}`).join('\n');const answer=prompt('В какой плейлист добавить трек? Введи номер:\n'+choices,'1');if(answer===null)return;const idx=Number(answer)-1;const selected=cachedMusicPlaylists[idx];if(!selected){status('musicLibraryStatus','Неверный номер плейлиста.');return;}const {error}=await supabase.from('music_playlist_tracks').insert({playlist_id:selected.id,track_id:track.id,added_by:currentUser.id});if(error){if(error.code==='23505')status('musicLibraryStatus','Этот трек уже есть в плейлисте.');else throw error;}else status('musicLibraryStatus','Трек добавлен в «'+selected.title+'».');}catch(e){status('musicLibraryStatus','Не удалось добавить в плейлист: '+e.message);}});
-          actions.append(play,like,fav,addToPlaylist);
-          if(track.uploader_id===currentUser.id){const del=document.createElement('button');del.type='button';del.className='secondary';del.textContent='Удалить';del.addEventListener('click',async()=>{if(!confirm('Удалить этот трек из библиотеки?'))return;try{const {error}=await supabase.from('music_tracks').delete().eq('id',track.id);if(error)throw error;const {error:storageError}=await supabase.storage.from(MUSIC_BUCKET).remove([track.storage_path]);if(storageError)console.warn('Storage cleanup:',storageError.message);await loadMusicLibrary();}catch(e){status('musicLibraryStatus','Не удалось удалить трек: '+e.message);}});actions.append(del);}
-          card.append(title,meta,actions); list.append(card);
+          const card=document.createElement('article'); card.className='music-track-row';
+          const cover=document.createElement('div'); cover.className='music-cover'; cover.textContent='♫';
+          const info=document.createElement('div'); info.className='music-track-info'; info.title='Нажми, чтобы слушать';
+          const title=document.createElement('div'); title.className='music-track-title'; title.textContent=track.title;
+          const author=profileMap.get(track.uploader_id); const meta=document.createElement('div'); meta.className='music-track-meta'; meta.textContent=[track.artist||author?.display_name||author?.username||'Исполнитель не указан'].filter(Boolean).join(' · ');
+          info.append(title,meta); info.addEventListener('click',()=>playMusicTrack(track));
+          const actions=document.createElement('div'); actions.className='music-track-actions';
+          const play=document.createElement('button'); play.type='button'; play.className='music-icon-button'; play.title='Слушать'; play.setAttribute('aria-label','Слушать '+track.title); play.textContent='▶'; play.addEventListener('click',()=>playMusicTrack(track));
+          const fav=document.createElement('button'); fav.type='button'; fav.className='music-icon-button'; fav.title=favorites.has(track.id)?'Убрать из моей музыки':'Добавить в мою музыку'; fav.setAttribute('aria-label',fav.title); fav.textContent=favorites.has(track.id)?'✓':'＋'; fav.addEventListener('click',async()=>{fav.disabled=true;try{if(favorites.has(track.id)){const {error}=await supabase.from('music_favorites').delete().eq('track_id',track.id).eq('user_id',currentUser.id);if(error)throw error;}else{const {error}=await supabase.from('music_favorites').insert({track_id:track.id,user_id:currentUser.id});if(error)throw error;}await loadMusicLibrary();}catch(e){status('musicLibraryStatus','Не удалось обновить мою музыку: '+e.message);}finally{fav.disabled=false;}});
+          const addToPlaylist=document.createElement('button'); addToPlaylist.type='button'; addToPlaylist.className='music-icon-button'; addToPlaylist.title='Добавить в плейлист'; addToPlaylist.setAttribute('aria-label','Добавить в плейлист'); addToPlaylist.textContent='☷'; addToPlaylist.addEventListener('click',async()=>{try{if(!cachedMusicPlaylists.length)await loadMusicPlaylists();if(!cachedMusicPlaylists.length){status('musicLibraryStatus','Сначала создай плейлист ниже.');return;}const choices=cachedMusicPlaylists.map((p,i)=>`${i+1}. ${p.title}`).join('\n');const answer=prompt('В какой плейлист добавить трек? Введи номер:\n'+choices,'1');if(answer===null)return;const selected=cachedMusicPlaylists[Number(answer)-1];if(!selected){status('musicLibraryStatus','Неверный номер плейлиста.');return;}const {error}=await supabase.from('music_playlist_tracks').insert({playlist_id:selected.id,track_id:track.id,added_by:currentUser.id});if(error){if(error.code==='23505')status('musicLibraryStatus','Этот трек уже есть в плейлисте.');else throw error;}else status('musicLibraryStatus','Трек добавлен в плейлист.');}catch(e){status('musicLibraryStatus','Не удалось добавить в плейлист: '+e.message);}});
+          actions.append(play,fav,addToPlaylist); card.append(cover,info,actions); list.append(card);
         }
+        for (const track of myTracks) {
+          const clone=track; const row=document.createElement('article'); row.className='music-track-row'; const cover=document.createElement('div'); cover.className='music-cover'; cover.textContent='♫';
+          const info=document.createElement('div'); info.className='music-track-info'; const title=document.createElement('div'); title.className='music-track-title'; title.textContent=clone.title; const meta=document.createElement('div'); meta.className='music-track-meta'; meta.textContent=clone.artist||'Исполнитель не указан'; info.append(title,meta); info.addEventListener('click',()=>playMusicTrack(clone));
+          const play=document.createElement('button'); play.type='button'; play.className='music-icon-button'; play.title='Слушать'; play.textContent='▶'; play.addEventListener('click',()=>playMusicTrack(clone)); row.append(cover,info,play); mineList.append(row);
+        }
+        if(!myTracks.length) mineList.innerHTML='<p class="muted empty">Твои загруженные треки появятся здесь.</p>';
         status('musicLibraryStatus',`${tracks.length} трек(ов) · ${likes.length} лайков`);
       } catch(error) { list.innerHTML='<p class="muted">Не удалось загрузить библиотеку. Проверь, что SQL-настройка музыкального раздела выполнена. '+escapeMusicText(error.message)+'</p>'; status('musicLibraryStatus',''); }
     }
