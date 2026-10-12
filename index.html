@@ -802,6 +802,25 @@ input, textarea, select, .input, .text-input {
   @media (max-width: 760px) { #messages .message-read-status { font-size: 10px; margin-top: 3px; } }
 </style>
 
+<style id="pulseup-typing-indicator-style">
+  .typing-indicator {
+    min-height: 20px; padding: 0 4px 5px; margin-top: -2px;
+    color: #cbb0ff; font-size: 12px; line-height: 1.35;
+    text-shadow: 0 0 10px rgba(166, 100, 255, .28);
+  }
+  .typing-indicator[hidden] { display: none !important; }
+  .typing-indicator:not([hidden])::after {
+    content: " ···"; letter-spacing: 2px; color: #e1c7ff;
+    animation: pulseup-typing-dots 1s ease-in-out infinite;
+  }
+  @keyframes pulseup-typing-dots {
+    0%, 100% { opacity: .35; } 50% { opacity: 1; }
+  }
+  #chatView:not(.conversation-open) #typingIndicator { display:none !important; }
+  @media (max-width:760px) { .typing-indicator { padding-left: 3px; font-size: 12px; } }
+  @media (prefers-reduced-motion: reduce) { .typing-indicator:not([hidden])::after { animation:none; } }
+</style>
+
 </head>
 
 <body>
@@ -960,6 +979,7 @@ input, textarea, select, .input, .text-input {
       <div class="status" id="connection">Подключение к чату…</div>
 
       <div class="messages" id="messages" aria-live="polite"></div>
+      <div id="typingIndicator" class="typing-indicator" role="status" aria-live="polite" hidden></div>
 
       <form id="sendForm" class="composer">
 
@@ -1087,6 +1107,13 @@ input, textarea, select, .input, .text-input {
     let currentUser = null;
 
     let channel = null;
+    let typingChannel = null;
+    let typingChannelReady = false;
+    let localTypingActive = false;
+    let localTypingStopTimer = null;
+    const remoteTypingTimers = new Map();
+    const remoteTypers = new Map();
+    let lastTypingBroadcastAt = 0;
 
     let registration = false;
 
@@ -1635,9 +1662,119 @@ input, textarea, select, .input, .text-input {
 
 
 
+    function renderRemoteTypingIndicator() {
+      const indicator = $('typingIndicator');
+      if (!indicator) return;
+      const names = [...remoteTypers.values()].filter(Boolean);
+      if (!names.length) {
+        indicator.hidden = true;
+        indicator.textContent = '';
+        return;
+      }
+      const conversation = conversations.find(c => c.id === currentConversationId);
+      if (conversation?.type === 'group') {
+        if (names.length === 1) indicator.textContent = names[0] + ' печатает';
+        else if (names.length === 2) indicator.textContent = names[0] + ' и ' + names[1] + ' печатают';
+        else indicator.textContent = names.slice(0, 2).join(', ') + ' и ещё ' + (names.length - 2) + ' печатают';
+      } else {
+        indicator.textContent = names[0] + ' печатает';
+      }
+      indicator.hidden = false;
+    }
+
+    function removeRemoteTyper(userId) {
+      const timer = remoteTypingTimers.get(userId);
+      if (timer) clearTimeout(timer);
+      remoteTypingTimers.delete(userId);
+      remoteTypers.delete(userId);
+      renderRemoteTypingIndicator();
+    }
+
+    function clearRemoteTypingIndicator() {
+      for (const timer of remoteTypingTimers.values()) clearTimeout(timer);
+      remoteTypingTimers.clear();
+      remoteTypers.clear();
+      const indicator = $('typingIndicator');
+      if (indicator) { indicator.hidden = true; indicator.textContent = ''; }
+    }
+
+    function sendTypingBroadcast(isTyping) {
+      if (!typingChannel || !typingChannelReady || !currentUser || !currentConversationId) return;
+      const senderName = String(currentUser.user_metadata?.display_name || currentUser.email?.split('@')[0] || 'Собеседник').trim().slice(0, 40) || 'Собеседник';
+      try {
+        typingChannel.send({
+          type: 'broadcast', event: 'typing',
+          payload: { user_id: currentUser.id, user_name: senderName, is_typing: Boolean(isTyping) }
+        }).catch(() => {});
+      } catch (_) { /* Typing is a convenience feature; never interrupt chat if realtime is unavailable. */ }
+    }
+
+    function stopLocalTyping(broadcast = true) {
+      if (localTypingStopTimer) clearTimeout(localTypingStopTimer);
+      localTypingStopTimer = null;
+      if (localTypingActive) {
+        localTypingActive = false;
+        if (broadcast) sendTypingBroadcast(false);
+      }
+    }
+
+    function handleMessageInputTyping() {
+      const conversation = conversations.find(c => c.id === currentConversationId);
+      if (!currentConversationId || !['direct', 'group'].includes(conversation?.type) || !typingChannel || !typingChannelReady) {
+        stopLocalTyping();
+        return;
+      }
+      if (!$('messageInput').value.trim()) { stopLocalTyping(); return; }
+      const now = Date.now();
+      // Emit periodically while the person is typing so the other side's indicator stays alive.
+      if (!localTypingActive || now - lastTypingBroadcastAt >= 1100) {
+        localTypingActive = true;
+        lastTypingBroadcastAt = now;
+        sendTypingBroadcast(true);
+      }
+      if (localTypingStopTimer) clearTimeout(localTypingStopTimer);
+      localTypingStopTimer = setTimeout(() => stopLocalTyping(), 1700);
+    }
+
+    async function resetTypingChannel() {
+      stopLocalTyping();
+      typingChannelReady = false;
+      clearRemoteTypingIndicator();
+      const oldChannel = typingChannel;
+      typingChannel = null;
+      if (oldChannel && supabase) {
+        try { await supabase.removeChannel(oldChannel); } catch (_) {}
+      }
+    }
+
+    async function setupTypingChannel(conversationId, conversation) {
+      await resetTypingChannel();
+      if (!supabase || !currentUser || !conversationId || !['direct', 'group'].includes(conversation?.type)) return;
+      // Each conversation has a shared ephemeral channel, so group members can see who is typing.
+      typingChannel = supabase.channel('pulseup-typing-' + conversationId, { config: { broadcast: { self: false, ack: false } } })
+        .on('broadcast', { event: 'typing' }, ({ payload }) => {
+          if (!payload || !payload.user_id || payload.user_id === currentUser?.id || conversationId !== currentConversationId) return;
+          const userId = String(payload.user_id);
+          if (payload.is_typing) {
+            const name = String(payload.user_name || 'Участник').trim().slice(0, 40) || 'Участник';
+            remoteTypers.set(userId, name);
+            const previousTimer = remoteTypingTimers.get(userId);
+            if (previousTimer) clearTimeout(previousTimer);
+            remoteTypingTimers.set(userId, setTimeout(() => removeRemoteTyper(userId), 2600));
+            renderRemoteTypingIndicator();
+          } else {
+            removeRemoteTyper(userId);
+          }
+        })
+        .subscribe(state => {
+          typingChannelReady = state === 'SUBSCRIBED';
+        });
+    }
+
     function showAuth() {
 
       stopPresenceTracking();
+      resetTypingChannel();
       currentUser = null;
       document.body.classList.remove('pulseup-authenticated');
 
@@ -1989,6 +2126,7 @@ input, textarea, select, .input, .text-input {
       }
     }
     $('backToConversationList')?.addEventListener('click', async () => {
+      await resetTypingChannel();
       currentConversationId = null;
       $('chatView').classList.remove('conversation-open');
       $('backToConversationList').style.display = 'none';
@@ -2239,6 +2377,7 @@ input, textarea, select, .input, .text-input {
             });
             if (error) throw error;
             if (currentConversationId === c.id) {
+              await resetTypingChannel();
               currentConversationId = null;
               if (channel) { await supabase.removeChannel(channel); channel = null; }
               $('messages').replaceChildren(); $('messageInput').disabled = true; $('sendButton').disabled = true;
@@ -2252,6 +2391,7 @@ input, textarea, select, .input, .text-input {
     }
 
     async function switchConversation(id) {
+      await resetTypingChannel();
       currentConversationId = id || null;
       const chatView = $('chatView');
       chatView.classList.toggle('conversation-open', !!currentConversationId);
@@ -2280,6 +2420,7 @@ input, textarea, select, .input, .text-input {
       $('recordVoiceButton').disabled = !currentConversationId;
       if (!currentConversationId) { if (channel) await supabase.removeChannel(channel); channel = null; status('connection', 'Создай личный чат или группу, чтобы начать переписку.'); return; }
       try { await loadMessages(); await markConversationRead(currentConversationId); } catch (e) { status('connection', 'Не удалось загрузить чат: ' + e.message); }
+      await setupTypingChannel(currentConversationId, conv);
       if (channel) await supabase.removeChannel(channel);
       channel = supabase.channel('pulseup-chat-' + currentConversationId + '-' + currentUser.id)
         .on('postgres_changes', { event:'INSERT', schema:'public', table:'messages' }, payload => {
@@ -2563,12 +2704,17 @@ input, textarea, select, .input, .text-input {
     let mediaRecorder=null, voiceChunks=[];
     $('recordVoiceButton').onclick=async()=>{const btn=$('recordVoiceButton');if(mediaRecorder?.state==='recording'){btn.disabled=true;mediaRecorder.stop();btn.textContent='🎙️';btn.title='Записать голосовое';return;}try{if(!currentConversationId)throw new Error('Сначала открой нужный чат.');if(location.protocol!=='https:'&&location.hostname!=='localhost'&&location.protocol!=='file:')throw new Error('Для микрофона открой сайт по HTTPS.');if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder)throw new Error('Запись голосовых не поддерживается этим браузером. Открой сайт по HTTPS и разреши микрофон.');const stream=await navigator.mediaDevices.getUserMedia({audio:true});const options=['audio/webm;codecs=opus','audio/ogg;codecs=opus','audio/mp4'].find(t=>MediaRecorder.isTypeSupported?.(t));mediaRecorder=options?new MediaRecorder(stream,{mimeType:options}):new MediaRecorder(stream);const recorder=mediaRecorder;voiceChunks=[];recorder.ondataavailable=e=>{if(e.data?.size)voiceChunks.push(e.data);};recorder.onerror=()=>status('chatStatus','Ошибка записи голосового. Попробуй ещё раз.');recorder.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());btn.disabled=false;const mime=recorder.mimeType||voiceChunks[0]?.type||'audio/webm';const blob=new Blob(voiceChunks,{type:mime});if(blob.size){const ext=mime.includes('mp4')?'m4a':mime.includes('ogg')?'ogg':'webm';const file=new File([blob],`voice-${Date.now()}.${ext}`,{type:mime});try{status('chatStatus','Отправляем голосовое…');await uploadChatFile(file,'audio');status('chatStatus','Голосовое отправлено');}catch(e){status('chatStatus','Не удалось отправить голосовое: '+e.message);}}};recorder.start(250);btn.textContent='⏹️';btn.title='Остановить запись и отправить';status('chatStatus','Запись… Нажми ⏹️, чтобы отправить.');}catch(e){status('chatStatus',e.message||'Нет доступа к микрофону. Разреши его в браузере.');}};
 
+    $('messageInput').addEventListener('input', handleMessageInputTyping);
+    $('messageInput').addEventListener('blur', () => stopLocalTyping());
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stopLocalTyping(); });
+
     $('sendForm').addEventListener('submit', async event => {
       event.preventDefault();
       if (!currentUser || sending) return;
       const input = $('messageInput');
       const content = input.value.trim();
       if (!content) return;
+      stopLocalTyping();
       sending = true;
       $('sendButton').disabled = true;
 
