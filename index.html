@@ -961,15 +961,6 @@ input, textarea, select, .input, .text-input {
         </div>
       </section>
       <div id="imageLightbox" class="image-lightbox hidden" role="dialog" aria-modal="true" aria-label="Просмотр изображения"><button type="button" id="closeImageLightbox" aria-label="Закрыть">×</button><img id="lightboxImage" alt="Изображение"></div>
-      
-      <nav class="mobile-bottom-nav" aria-label="Основная навигация">
-        <button type="button" class="mobile-nav-button" id="mobileNavChat"><span aria-hidden="true">💬</span><span>Чат <span class="unread-badge mobile-unread-badge hidden" id="mobileUnreadMessagesBadge">0</span></span></button>
-        <button type="button" class="mobile-nav-button active" id="mobileNavPosts"><span aria-hidden="true">📰</span><span>Посты</span></button>
-        <button type="button" class="mobile-nav-button" id="mobileNavSearch"><span aria-hidden="true">🔎</span><span>Поиск</span></button>
-        <button type="button" class="mobile-nav-button" id="mobileNavFriends"><span aria-hidden="true">👥</span><span>Друзья</span></button>
-        <button type="button" class="mobile-nav-button" id="mobileNavMusic"><span aria-hidden="true">🎵</span><span>Музыка</span></button>
-        <button type="button" class="mobile-nav-button" id="mobileNavProfile"><span aria-hidden="true">👤</span><span>Профиль</span></button>
-      </nav>
       <section id="profileView" class="card hidden" aria-label="Профиль пользователя">
         <div class="topline"><div class="grow"><h2>Мой профиль</h2><div class="muted">Твои данные в PulseUp</div></div></div>
       <section class="profile-card" aria-label="Профиль пользователя">
@@ -1006,6 +997,16 @@ input, textarea, select, .input, .text-input {
     </p>
 
   </main>
+
+  <nav class="mobile-bottom-nav" aria-label="Основная навигация">
+        <button type="button" class="mobile-nav-button" id="mobileNavChat"><span aria-hidden="true">💬</span><span>Чат <span class="unread-badge mobile-unread-badge hidden" id="mobileUnreadMessagesBadge">0</span></span></button>
+        <button type="button" class="mobile-nav-button active" id="mobileNavPosts"><span aria-hidden="true">📰</span><span>Посты</span></button>
+        <button type="button" class="mobile-nav-button" id="mobileNavSearch"><span aria-hidden="true">🔎</span><span>Поиск</span></button>
+        <button type="button" class="mobile-nav-button" id="mobileNavFriends"><span aria-hidden="true">👥</span><span>Друзья</span></button>
+        <button type="button" class="mobile-nav-button" id="mobileNavMusic"><span aria-hidden="true">🎵</span><span>Музыка</span></button>
+        <button type="button" class="mobile-nav-button" id="mobileNavProfile"><span aria-hidden="true">👤</span><span>Профиль</span></button>
+      </nav>
+
 
 
 
@@ -1571,6 +1572,7 @@ input, textarea, select, .input, .text-input {
       authBox.classList.add('hidden');
 
       chatBox.classList.remove('hidden');
+      document.body.classList.add('pulseup-authenticated');
       showAppView('chat');
       loadProfile(user);
 
@@ -1581,6 +1583,7 @@ input, textarea, select, .input, .text-input {
     function showAuth() {
 
       currentUser = null;
+      document.body.classList.remove('pulseup-authenticated');
 
       chatBox.classList.add('hidden');
 
@@ -3164,4 +3167,74 @@ body > * { position:relative; z-index:1; }
       #sitePhotoViewer img { max-width: 96vw; max-height: 84dvh; }
     }
 
+</style>
+
+
+<style id="pulseup-mobile-bottom-nav-stability-fix">
+/* The mobile bar is a direct child of body, not inside the blurred .card/app shell.
+   This avoids backdrop-filter ancestors changing the containing block for position:fixed. */
+.mobile-bottom-nav { display:none !important; }
+@media screen and (max-width:760px) {
+  body:not(.pulseup-authenticated) .mobile-bottom-nav { display:none !important; }
+  body.pulseup-authenticated .mobile-bottom-nav {
+    display:grid !important;
+    position:fixed !important;
+    inset-inline:0 !important;
+    bottom:0 !important;
+    left:0 !important;
+    right:0 !important;
+    width:auto !important;
+    max-width:none !important;
+    min-width:0 !important;
+    margin:0 !important;
+    transform:none !important;
+    grid-template-columns:repeat(6,minmax(0,1fr)) !important;
+    align-items:stretch !important;
+    gap:4px !important;
+    box-sizing:border-box !important;
+    padding:7px max(6px, env(safe-area-inset-right, 0px)) calc(7px + env(safe-area-inset-bottom, 0px)) max(6px, env(safe-area-inset-left, 0px)) !important;
+    z-index:2147483000 !important;
+    background:rgba(14,8,31,.96) !important;
+    border-top:1px solid rgba(183,145,255,.35) !important;
+    box-shadow:0 -8px 28px rgba(65,20,130,.2) !important;
+    -webkit-backdrop-filter:blur(18px) saturate(145%) !important;
+    backdrop-filter:blur(18px) saturate(145%) !important;
+    isolation:isolate;
+  }
+  body.pulseup-authenticated .mobile-nav-button {
+    position:relative !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:3px !important;
+    width:100% !important;
+    min-width:0 !important;
+    min-height:48px !important;
+    margin:0 !important;
+    padding:4px 1px !important;
+    box-sizing:border-box !important;
+    border-radius:12px !important;
+    font-size:clamp(9px,2.65vw,11px) !important;
+    line-height:1.1 !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+  }
+  body.pulseup-authenticated .mobile-nav-button span:first-child { font-size:20px !important; line-height:1.1 !important; }
+  body.pulseup-authenticated .mobile-nav-button span:not(:first-child) { max-width:100%; overflow:hidden; text-overflow:ellipsis; }
+  body.pulseup-authenticated .mobile-nav-button.active {
+    background:rgba(133,65,255,.20) !important;
+    border:1px solid rgba(191,139,255,.38) !important;
+    box-shadow:0 0 14px rgba(135,55,255,.18), inset 0 0 10px rgba(150,80,255,.07) !important;
+  }
+  body.pulseup-authenticated .mobile-unread-badge { position:absolute !important; transform:translate(12px,-12px) !important; }
+  body.pulseup-authenticated .shell { padding-bottom:calc(100px + env(safe-area-inset-bottom, 0px)) !important; }
+}
+@media screen and (max-width:380px) {
+  body.pulseup-authenticated .mobile-bottom-nav { gap:2px !important; padding-left:4px !important; padding-right:4px !important; }
+  body.pulseup-authenticated .mobile-nav-button span:first-child { font-size:18px !important; }
+}
+@media screen and (min-width:761px) { .mobile-bottom-nav { display:none !important; } }
 </style>
