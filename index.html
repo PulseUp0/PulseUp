@@ -792,6 +792,16 @@ input, textarea, select, .input, .text-input {
   .message-edit-buttons{display:flex;justify-content:flex-end;gap:6px;margin-top:6px}
   @media(max-width:760px){.message-actions{opacity:1;gap:5px}.message-action-button{min-height:32px;padding:6px 9px;font-size:12px}.message-edit-form{min-width:0;width:100%}}
 </style>
+
+<style id="pulseup-direct-message-read-status">
+  #messages .message-read-status {
+    margin: 4px 3px 0; text-align: right; font-size: 11px; line-height: 1.2;
+    color: rgba(211, 201, 235, .68); letter-spacing: .01em;
+  }
+  #messages .message-read-status.is-read { color: #bfa0ff; text-shadow: 0 0 9px rgba(160, 105, 255, .22); }
+  @media (max-width: 760px) { #messages .message-read-status { font-size: 10px; margin-top: 3px; } }
+</style>
+
 </head>
 
 <body>
@@ -1702,8 +1712,18 @@ input, textarea, select, .input, .text-input {
         audio.style.cssText = 'display:block;max-width:100%;width:280px;margin-top:8px'; item.append(audio);
       }
 
-      // В личных переписках редактировать и удалять можно только собственные сообщения.
+      // В личных переписках показываем статус отправки/прочтения собственных сообщений.
       const activeConversation = conversations.find(c => c.id === currentConversationId);
+      if (msg.sender_id === currentUser?.id && activeConversation?.type === 'direct') {
+        const readStatus = document.createElement('div');
+        readStatus.className = 'message-read-status';
+        readStatus.dataset.readStatusFor = String(msg.id);
+        readStatus.dataset.messageCreatedAt = msg.created_at || '';
+        readStatus.textContent = '✓ Отправлено';
+        readStatus.setAttribute('aria-live', 'polite');
+        item.append(readStatus);
+      }
+      // В личных переписках редактировать и удалять можно только собственные сообщения.
       if (msg.sender_id === currentUser?.id && activeConversation?.type === 'direct') {
         const tools = document.createElement('div');
         tools.className = 'message-actions';
@@ -1779,6 +1799,7 @@ input, textarea, select, .input, .text-input {
       $('messages').replaceChildren();
       for (const msg of (data || []).reverse()) addMessage(msg);
       oldestLoaded = data?.length ? data[data.length - 1].id : null;
+      await refreshDirectReadStatuses();
       $('messages').scrollTop = $('messages').scrollHeight;
     }
 
@@ -2041,6 +2062,36 @@ input, textarea, select, .input, .text-input {
       updateUnreadMessagesBadge();
     }
 
+    // Для личного чата статус «Прочитано» определяется временем последнего открытия собеседником этой переписки.
+    async function refreshDirectReadStatuses() {
+      if (!supabase || !currentUser || !currentConversationId) return;
+      const conversation = conversations.find(c => String(c.id) === String(currentConversationId));
+      if (conversation?.type !== 'direct') return;
+      const statuses = [...document.querySelectorAll('#messages .message-read-status')];
+      if (!statuses.length) return;
+      try {
+        const { data, error } = await supabase.from('conversation_reads')
+          .select('user_id,last_read_at')
+          .eq('conversation_id', currentConversationId)
+          .neq('user_id', currentUser.id);
+        if (error) throw error;
+        const latestReadAt = (data || [])
+          .map(row => row.last_read_at ? new Date(row.last_read_at).getTime() : 0)
+          .filter(Number.isFinite)
+          .reduce((latest, stamp) => Math.max(latest, stamp), 0);
+        statuses.forEach(element => {
+          const createdAt = new Date(element.dataset.messageCreatedAt || '').getTime();
+          const isRead = latestReadAt > 0 && Number.isFinite(createdAt) && latestReadAt >= createdAt;
+          element.textContent = isRead ? '✓✓ Прочитано' : '✓ Отправлено';
+          element.classList.toggle('is-read', isRead);
+          element.setAttribute('aria-label', isRead ? 'Сообщение прочитано собеседником' : 'Сообщение отправлено, ожидает прочтения');
+        });
+      } catch (e) {
+        // Без SQL-настройки оставляем ненавязчивую отметку отправки и не ломаем чат.
+        console.warn('Статусы прочтения не активны. Выполни read-status-setup.sql в Supabase.', e.message);
+      }
+    }
+
     async function refreshConversations() {
       const { data, error } = await supabase.from('conversation_members')
         .select('conversation_id, conversations(id,title,type,created_at)').eq('user_id', currentUser.id);
@@ -2262,6 +2313,9 @@ input, textarea, select, .input, .text-input {
           if (!removed?.conversation_id || removed.conversation_id === currentConversationId) {
             try { await loadMessages(); } catch (e) { console.warn('Не удалось обновить переписку:', e.message); }
           }
+        })
+        .on('postgres_changes', { event:'*', schema:'public', table:'conversation_reads', filter:'conversation_id=eq.' + currentConversationId }, async () => {
+          await refreshDirectReadStatuses();
         }).subscribe(state => {
           if (state === 'SUBSCRIBED') status('connection', '● Онлайн · обновления в реальном времени');
           else if (state === 'CHANNEL_ERROR') status('connection', 'Ошибка realtime. Проверь настройки Supabase.');
