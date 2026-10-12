@@ -780,6 +780,18 @@ input, textarea, select, .input, .text-input {
   }
 </style>
 
+
+<style id="pulseup-own-message-actions">
+  .message-actions{display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap;margin-top:8px;opacity:.82}
+  .message-action-button{font:inherit;font-size:11px;line-height:1.2;padding:5px 9px;border:1px solid rgba(172,119,255,.34)!important;border-radius:9px!important;background:rgba(60,28,115,.4)!important;color:#dbc8ff!important;cursor:pointer;box-shadow:none!important;white-space:nowrap}
+  .message-action-button:hover{background:rgba(113,63,205,.35)!important;border-color:rgba(195,154,255,.7)!important}
+  .message-action-button.is-save{color:#d5ffe8!important;border-color:rgba(83,230,165,.35)!important}
+  .message-action-button.is-delete{color:#ffb4cb!important;border-color:rgba(255,115,160,.3)!important}
+  .message-edit-form{margin-top:9px;min-width:min(280px,75vw)}
+  .message-edit-form textarea{width:100%;max-width:100%;resize:vertical;min-height:68px;color:var(--text);background:rgba(12,7,29,.82)!important;border:1px solid rgba(172,119,255,.45)!important;border-radius:12px!important;padding:9px 10px;font:inherit;font-size:14px;}
+  .message-edit-buttons{display:flex;justify-content:flex-end;gap:6px;margin-top:6px}
+  @media(max-width:760px){.message-actions{opacity:1;gap:5px}.message-action-button{min-height:32px;padding:6px 9px;font-size:12px}.message-edit-form{min-width:0;width:100%}}
+</style>
 </head>
 
 <body>
@@ -1662,7 +1674,7 @@ input, textarea, select, .input, .text-input {
 
         date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 
-      }`;
+      }${msg.edited_at ? ' · изменено' : ''}`;
 
 
 
@@ -1689,6 +1701,67 @@ input, textarea, select, .input, .text-input {
         const audio = document.createElement('audio'); audio.controls = true; audio.preload = 'metadata'; audio.src = msg.attachment_url;
         audio.style.cssText = 'display:block;max-width:100%;width:280px;margin-top:8px'; item.append(audio);
       }
+
+      // В личных переписках редактировать и удалять можно только собственные сообщения.
+      const activeConversation = conversations.find(c => c.id === currentConversationId);
+      if (msg.sender_id === currentUser?.id && activeConversation?.type === 'direct') {
+        const tools = document.createElement('div');
+        tools.className = 'message-actions';
+        if (!msg.attachment_url) {
+          const editButton = document.createElement('button');
+          editButton.type = 'button'; editButton.className = 'message-action-button';
+          editButton.textContent = 'Изменить';
+          editButton.setAttribute('aria-label', 'Редактировать сообщение');
+          const editor = document.createElement('div');
+          editor.className = 'message-edit-form hidden';
+          const textarea = document.createElement('textarea');
+          textarea.maxLength = 2000; textarea.rows = 3; textarea.value = msg.content || '';
+          textarea.setAttribute('aria-label', 'Текст сообщения');
+          const editorButtons = document.createElement('div'); editorButtons.className = 'message-edit-buttons';
+          const saveButton = document.createElement('button'); saveButton.type = 'button'; saveButton.className = 'message-action-button is-save'; saveButton.textContent = 'Сохранить';
+          const cancelButton = document.createElement('button'); cancelButton.type = 'button'; cancelButton.className = 'message-action-button'; cancelButton.textContent = 'Отмена';
+          editorButtons.append(saveButton, cancelButton); editor.append(textarea, editorButtons);
+          editButton.addEventListener('click', () => { editor.classList.toggle('hidden'); if (!editor.classList.contains('hidden')) { textarea.value = msg.content || ''; textarea.focus(); } });
+          cancelButton.addEventListener('click', () => { textarea.value = msg.content || ''; editor.classList.add('hidden'); });
+          saveButton.addEventListener('click', async () => {
+            const nextContent = textarea.value.trim();
+            if (!nextContent) { textarea.focus(); return status('chatStatus', 'Сообщение не может быть пустым.'); }
+            if (nextContent.length > 2000) return status('chatStatus', 'Сообщение не должно превышать 2000 символов.');
+            saveButton.disabled = true;
+            try {
+              const { data, error } = await supabase.from('messages')
+                .update({ content: nextContent, edited_at: new Date().toISOString() })
+                .eq('id', msg.id).eq('sender_id', currentUser.id).eq('conversation_id', currentConversationId)
+                .select('id').maybeSingle();
+              if (error) throw error;
+              if (!data) throw new Error('Сообщение нельзя изменить. Проверь SQL-политики в Supabase.');
+              msg.content = nextContent; msg.edited_at = new Date().toISOString();
+              await loadMessages(); await refreshConversations();
+              status('chatStatus', 'Сообщение изменено.');
+            } catch (err) { status('chatStatus', 'Не удалось изменить сообщение: ' + (err.message || err)); }
+            finally { saveButton.disabled = false; }
+          });
+          tools.append(editButton); item.append(editor);
+        }
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button'; deleteButton.className = 'message-action-button is-delete';
+        deleteButton.textContent = 'Удалить'; deleteButton.setAttribute('aria-label', 'Удалить сообщение');
+        deleteButton.addEventListener('click', async () => {
+          if (!confirm('Удалить это сообщение у обоих участников? Действие нельзя отменить.')) return;
+          deleteButton.disabled = true;
+          try {
+            const { data, error } = await supabase.from('messages').delete()
+              .eq('id', msg.id).eq('sender_id', currentUser.id).eq('conversation_id', currentConversationId)
+              .select('id').maybeSingle();
+            if (error) throw error;
+            if (!data) throw new Error('Сообщение нельзя удалить. Проверь SQL-политики в Supabase.');
+            await loadMessages(); await refreshConversations();
+            status('chatStatus', 'Сообщение удалено у обоих участников.');
+          } catch (err) { status('chatStatus', 'Не удалось удалить сообщение: ' + (err.message || err)); }
+          finally { deleteButton.disabled = false; }
+        });
+        tools.append(deleteButton); item.append(tools);
+      }
       list.append(item);
 
     }
@@ -1697,7 +1770,7 @@ input, textarea, select, .input, .text-input {
 
     async function loadMessages() {
       let query = supabase.from('messages')
-        .select('id,sender_id,sender_name,content,created_at,conversation_id,attachment_url,attachment_type')
+        .select('id,sender_id,sender_name,content,created_at,edited_at,conversation_id,attachment_url,attachment_type')
         .order('id', { ascending: false }).limit(100);
       if (!currentConversationId) { $('messages').replaceChildren(); oldestLoaded = null; return; }
       query = query.eq('conversation_id', currentConversationId);
@@ -2174,6 +2247,20 @@ input, textarea, select, .input, .text-input {
           if (incoming.sender_id !== currentUser.id) {
             notifyIncomingMessage(incoming);
             markConversationRead(currentConversationId);
+          }
+        })
+        .on('postgres_changes', { event:'UPDATE', schema:'public', table:'messages' }, async payload => {
+          const changed = payload.new;
+          await refreshConversations();
+          if (changed?.conversation_id === currentConversationId) {
+            try { await loadMessages(); } catch (e) { console.warn('Не удалось обновить сообщение:', e.message); }
+          }
+        })
+        .on('postgres_changes', { event:'DELETE', schema:'public', table:'messages' }, async payload => {
+          const removed = payload.old;
+          await refreshConversations();
+          if (!removed?.conversation_id || removed.conversation_id === currentConversationId) {
+            try { await loadMessages(); } catch (e) { console.warn('Не удалось обновить переписку:', e.message); }
           }
         }).subscribe(state => {
           if (state === 'SUBSCRIBED') status('connection', '● Онлайн · обновления в реальном времени');
@@ -3474,4 +3561,28 @@ body > * { position:relative; z-index:1; }
   body.pulseup-authenticated .mobile-nav-button span:first-child { font-size:18px !important; }
 }
 @media screen and (min-width:761px) { .mobile-bottom-nav { display:none !important; } }
+</style>
+
+<style id="pulseup-own-message-actions-final-override">
+  /* Stronger selectors keep controls visible over the existing message-bubble reset rules. */
+  #messages .message .message-actions { display:flex !important; justify-content:flex-end !important; gap:6px !important; flex-wrap:wrap !important; margin-top:8px !important; opacity:1 !important; }
+  #messages .message .message-actions .message-action-button {
+    display:inline-flex !important; align-items:center !important; justify-content:center !important;
+    min-height:30px !important; padding:5px 9px !important; font:inherit !important; font-size:11px !important; line-height:1.2 !important;
+    color:#dbc8ff !important; background:rgba(60,28,115,.72) !important; background-color:rgba(60,28,115,.72) !important;
+    border:1px solid rgba(172,119,255,.55) !important; border-radius:9px !important; box-shadow:0 0 10px rgba(136,67,255,.12) !important;
+    cursor:pointer !important; white-space:nowrap !important;
+  }
+  #messages .message .message-actions .message-action-button.is-save { color:#d5ffe8 !important; border-color:rgba(83,230,165,.48) !important; }
+  #messages .message .message-actions .message-action-button.is-delete { color:#ffb4cb !important; border-color:rgba(255,115,160,.48) !important; }
+  #messages .message .message-edit-form textarea {
+    display:block !important; width:100% !important; min-height:68px !important; padding:9px 10px !important; resize:vertical !important;
+    color:var(--text) !important; background:rgba(12,7,29,.94) !important; background-color:rgba(12,7,29,.94) !important;
+    border:1px solid rgba(172,119,255,.6) !important; border-radius:12px !important; font:inherit !important; font-size:14px !important;
+  }
+  #messages .message .message-edit-form .message-edit-buttons { display:flex !important; justify-content:flex-end !important; gap:6px !important; margin-top:6px !important; }
+  @media(max-width:760px) {
+    #messages .message .message-actions .message-action-button { min-height:34px !important; padding:6px 10px !important; font-size:12px !important; }
+    #messages .message .message-edit-form { width:100% !important; min-width:0 !important; }
+  }
 </style>
