@@ -541,8 +541,10 @@ img.post-image, .post img, .post-media img, .post-image {
 .conversation-row-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
 .conversation-row-title{font-weight:650;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .conversation-row-subtitle{font-size:12px;opacity:.68;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conversation-row-preview{display:block;min-width:0;max-width:100%;font-size:12px;line-height:1.35;color:#e0d7f1;opacity:.86;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conversation-row-preview.is-empty{opacity:.48}
 .conversation-row-meta{font-size:11px;opacity:.55;flex:0 0 auto;align-self:flex-start}
-@media(max-width:600px){.conversation-list{max-height:none;overflow:visible;margin:8px -4px 14px}.conversation-item{gap:5px}.conversation-row{padding:9px 6px;gap:10px}.conversation-delete{width:36px;height:36px;flex-basis:36px}.conversation-avatar{width:44px;height:44px;flex-basis:44px}.conversation-row-title{font-size:14px}.conversation-row-subtitle{font-size:12px}.conversation-tools{gap:6px!important}.conversation-tools button{flex:1 1 calc(50% - 6px);min-width:0;font-size:12px;padding:9px 7px}}
+@media(max-width:600px){.conversation-list{max-height:none;overflow:visible;margin:8px -4px 14px}.conversation-item{gap:5px}.conversation-row{padding:9px 6px;gap:10px}.conversation-delete{width:36px;height:36px;flex-basis:36px}.conversation-avatar{width:44px;height:44px;flex-basis:44px}.conversation-row-title{font-size:14px}.conversation-row-subtitle{font-size:11px}.conversation-row-preview{font-size:12px}.conversation-tools{gap:6px!important}.conversation-tools button{flex:1 1 calc(50% - 6px);min-width:0;font-size:12px;padding:9px 7px}}
 </style>
 
 
@@ -752,6 +754,32 @@ input, textarea, select, .input, .text-input {
   @media(prefers-reduced-motion:reduce) { .gender-select-button,.gender-select-chevron,.gender-option { transition:none !important; } }
 </style>
 
+
+<style id="pulseup-online-presence-style">
+  .presence-line {
+    display:flex; align-items:center; gap:6px; min-width:0;
+    font-size:11px; line-height:1.4; color:#a9a0c2;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .presence-line::before {
+    content:""; width:6px; height:6px; flex:0 0 6px;
+    border-radius:50%; background:rgba(176,164,204,.55);
+  }
+  .presence-line.is-online { color:#8bf1c0; }
+  .presence-line.is-online::before {
+    background:#57e6a5; box-shadow:0 0 8px rgba(87,230,165,.8);
+  }
+  .presence-line.is-offline { color:#aaa0c1; }
+  .presence-line.is-offline::before { background:#8f83aa; }
+  .presence-line.is-unknown { color:#887d9e; }
+  .presence-line.is-unknown::before { background:#776989; }
+  #publicProfilePresence { margin:4px 0 8px; }
+  @media(max-width:760px) {
+    .presence-line { font-size:11px; }
+    .conversation-row-subtitle.presence-line { max-width:100%; }
+  }
+</style>
+
 </head>
 
 <body>
@@ -956,7 +984,7 @@ input, textarea, select, .input, .text-input {
       <section id="friendsView" class="card hidden" aria-label="Друзья"><div class="topline"><div class="grow"><h2>👥 Друзья</h2><div class="muted">Находи людей и начинай личные чаты</div></div></div><p class="muted">Используй поиск, чтобы найти пользователя по имени или дате рождения. Нажми «Написать», чтобы открыть личный чат.</p><button class="primary" id="openPeopleSearch" type="button">🔎 Найти людей</button><h3 style="margin-top:18px">Мои друзья</h3><div id="friendsList" class="people-results"><p class="muted">Загружаем друзей…</p></div></section>
       <section id="publicProfileModal" class="public-profile-modal hidden" role="dialog" aria-modal="true" aria-label="Профиль пользователя">
         <div class="public-profile-panel"><button type="button" id="closePublicProfile" class="secondary public-profile-close" aria-label="Закрыть профиль">×</button>
-          <div class="public-profile-head"><img id="publicProfileAvatar" alt="Фото профиля"/><div><h2 id="publicProfileName">Профиль</h2><div id="publicProfileUsername" class="muted"></div><p id="publicProfileBio" class="muted"></p><div class="profile-actions"><button type="button" id="publicProfileFriend" class="primary">＋ Добавить в друзья</button><button type="button" id="publicProfileMessage" class="secondary">Написать</button></div></div></div>
+          <div class="public-profile-head"><img id="publicProfileAvatar" alt="Фото профиля"/><div><h2 id="publicProfileName">Профиль</h2><div id="publicProfileUsername" class="muted"></div><div id="publicProfilePresence" class="presence-line is-unknown" aria-live="polite">Статус пока неизвестен</div><p id="publicProfileBio" class="muted"></p><div class="profile-actions"><button type="button" id="publicProfileFriend" class="primary">＋ Добавить в друзья</button><button type="button" id="publicProfileMessage" class="secondary">Написать</button></div></div></div>
           <h3>Публикации</h3><div id="publicProfilePosts" class="post-list"></div><h3>Музыка</h3><div id="publicProfileMusic" class="post-list"></div>
         </div>
       </section>
@@ -1410,7 +1438,9 @@ input, textarea, select, .input, .text-input {
       const modal=$('publicProfileModal'); modal.classList.remove('hidden');
       $('publicProfileName').textContent=profile.display_name||'Пользователь';
       $('publicProfileUsername').textContent=profile.username?'@'+profile.username:'';
+      paintPresence($('publicProfilePresence'), profile.last_seen_at, profile.id===currentUser?.id);
       $('publicProfileBio').textContent=profile.bio||'Пока ничего не рассказал о себе.';
+      void refreshPresenceStatus();
       $('publicProfileAvatar').src=profile.avatar_url||'';
       $('publicProfileAvatar').style.visibility=profile.avatar_url?'visible':'hidden';
       $('publicProfilePosts').innerHTML='<p class="muted">Загружаем публикации…</p>';
@@ -1503,6 +1533,9 @@ input, textarea, select, .input, .text-input {
           const handle = document.createElement('div');
           handle.className = 'muted';
           handle.textContent = p.username ? '@' + p.username : '';
+          const presence = document.createElement('div');
+          presence.dataset.presenceUserId = p.id;
+          paintPresence(presence, p.last_seen_at, p.id === currentUser?.id);
           const bio = document.createElement('div');
           bio.className = 'muted';
           bio.textContent = p.bio || '';
@@ -1517,7 +1550,7 @@ input, textarea, select, .input, .text-input {
           const add = document.createElement('button'); add.className='secondary'; add.type='button'; add.textContent='＋ В друзья'; add.onclick=()=>addFriend(p);
           const profileBtn = document.createElement('button'); profileBtn.className='secondary'; profileBtn.type='button'; profileBtn.textContent='Профиль'; profileBtn.onclick=()=>openPublicProfile(p);
           actions.append(msg, add, profileBtn);
-          info.append(name, handle, bio, actions);
+          info.append(name, handle, presence, bio, actions);
           card.append(avatar, info);
           $('peopleResults').append(card);
         });
@@ -1562,7 +1595,7 @@ input, textarea, select, .input, .text-input {
     $('postForm').addEventListener('submit',async e=>{e.preventDefault();const content=$('postText').value.trim();const file=$('postPhotoInput').files?.[0];if((!content&&!file)||!currentUser)return;status('postStatus','Публикуем…');try{let image_url=null;if(file){if(!file.type.startsWith('image/'))throw new Error('Выбери файл изображения.');if(file.size>8*1024*1024)throw new Error('Фото должно быть до 8 МБ.');const ext=(file.name.split('.').pop()||'jpg').replace(/[^a-z0-9]/gi,'').toLowerCase()||'jpg';const path=`${currentUser.id}/${Date.now()}.${ext}`;const {error:upErr}=await supabase.storage.from('post-media').upload(path,file,{upsert:false,contentType:file.type});if(upErr)throw upErr;image_url=supabase.storage.from('post-media').getPublicUrl(path).data.publicUrl;}const {error}=await supabase.from('posts').insert({author_id:currentUser.id,content,image_url});if(error)throw error;$('postText').value='';$('postPhotoInput').value='';status('postStatus','Опубликовано!');$('postForm').classList.add('hidden');await loadPosts();}catch(err){status('postStatus','Не удалось опубликовать: '+err.message);}});
 
 
-    async function loadFriendsList(){const list=$('friendsList');if(!list||!currentUser||!supabase)return;list.innerHTML='<p class="muted">Загружаем друзей…</p>';try{const {data:links,error}=await supabase.from('follows').select('following_id').eq('follower_id',currentUser.id).order('created_at',{ascending:false});if(error)throw error;const ids=(links||[]).map(x=>x.following_id).filter(id=>id!==currentUser.id);if(!ids.length){list.innerHTML='<p class="muted">Пока нет друзей. Найди людей через поиск.</p>';return;}const {data:profiles,error:pe}=await supabase.from('profiles').select('id,display_name,username,bio,avatar_url').in('id',ids);if(pe)throw pe;list.replaceChildren();(profiles||[]).forEach(p=>{const card=document.createElement('article');card.className='person-card';const avatar=document.createElement('div');avatar.className='person-avatar';avatar.textContent='💜';if(p.avatar_url){const img=document.createElement('img');img.src=p.avatar_url;img.alt='';avatar.replaceChildren(img);}avatar.onclick=()=>openPublicProfile(p);const info=document.createElement('div');info.className='person-info';const name=document.createElement('div');name.className='post-author';name.textContent=p.display_name||p.username||'Пользователь';name.onclick=()=>openPublicProfile(p);const handle=document.createElement('div');handle.className='muted';handle.textContent=p.username?'@'+p.username:'';const actions=document.createElement('div');actions.className='person-actions';const message=document.createElement('button');message.className='primary';message.textContent='Написать';message.onclick=()=>createDirectForProfile(p);const view=document.createElement('button');view.className='secondary';view.textContent='Профиль';view.onclick=()=>openPublicProfile(p);actions.append(message,view);info.append(name,handle,actions);card.append(avatar,info);list.append(card);});}catch(e){list.innerHTML='<p class="muted">Не удалось загрузить друзей. Проверь таблицу follows и права доступа: '+e.message+'</p>';}}
+    async function loadFriendsList(){const list=$('friendsList');if(!list||!currentUser||!supabase)return;list.innerHTML='<p class="muted">Загружаем друзей…</p>';try{const {data:links,error}=await supabase.from('follows').select('following_id').eq('follower_id',currentUser.id).order('created_at',{ascending:false});if(error)throw error;const ids=(links||[]).map(x=>x.following_id).filter(id=>id!==currentUser.id);if(!ids.length){list.innerHTML='<p class="muted">Пока нет друзей. Найди людей через поиск.</p>';return;}const {data:profiles,error:pe}=await supabase.from('profiles').select('id,display_name,username,bio,avatar_url').in('id',ids);if(pe)throw pe;list.replaceChildren();(profiles||[]).forEach(p=>{const card=document.createElement('article');card.className='person-card';const avatar=document.createElement('div');avatar.className='person-avatar';avatar.textContent='💜';if(p.avatar_url){const img=document.createElement('img');img.src=p.avatar_url;img.alt='';avatar.replaceChildren(img);}avatar.onclick=()=>openPublicProfile(p);const info=document.createElement('div');info.className='person-info';const name=document.createElement('div');name.className='post-author';name.textContent=p.display_name||p.username||'Пользователь';name.onclick=()=>openPublicProfile(p);const handle=document.createElement('div');handle.className='muted';handle.textContent=p.username?'@'+p.username:'';const presence=document.createElement('div');presence.dataset.presenceUserId=p.id;paintPresence(presence,p.last_seen_at,p.id===currentUser?.id);const actions=document.createElement('div');actions.className='person-actions';const message=document.createElement('button');message.className='primary';message.textContent='Написать';message.onclick=()=>createDirectForProfile(p);const view=document.createElement('button');view.className='secondary';view.textContent='Профиль';view.onclick=()=>openPublicProfile(p);actions.append(message,view);info.append(name,handle,presence,actions);card.append(avatar,info);list.append(card);});}catch(e){list.innerHTML='<p class="muted">Не удалось загрузить друзей. Проверь таблицу follows и права доступа: '+e.message+'</p>';}}
 
     function showChat(user) {
 
@@ -1582,6 +1615,7 @@ input, textarea, select, .input, .text-input {
 
     function showAuth() {
 
+      stopPresenceTracking();
       currentUser = null;
       document.body.classList.remove('pulseup-authenticated');
 
@@ -1959,11 +1993,56 @@ input, textarea, select, .input, .text-input {
           });
         }
       } catch (avatarError) { console.warn('Не удалось загрузить аватарки чатов:', avatarError.message); }
+      // Load the newest message for each conversation for a compact chat-list preview.
+      // No timestamp is rendered in the list; message times remain visible inside the open chat.
+      try {
+        const latestMessages = await Promise.all(conversations.map(async conversation => {
+          const { data, error } = await supabase.from('messages')
+            .select('id,sender_id,sender_name,content,created_at,attachment_url,attachment_type')
+            .eq('conversation_id', conversation.id)
+            .order('created_at', { ascending: false })
+            .order('id', { ascending: false })
+            .limit(1);
+          if (error) throw error;
+          return [conversation.id, data?.[0] || null];
+        }));
+        const latestByConversation = new Map(latestMessages);
+        conversations.forEach(conversation => {
+          conversation.last_message = latestByConversation.get(conversation.id) || null;
+        });
+      } catch (previewError) {
+        console.warn('Не удалось загрузить предпросмотр последних сообщений:', previewError.message);
+        conversations.forEach(conversation => {
+          if (!Object.prototype.hasOwnProperty.call(conversation, 'last_message')) conversation.last_message = null;
+        });
+      }
+
       const select = $('conversationSelect'); select.replaceChildren(new Option('Выбери чат…', ''));
       conversations.forEach(c => select.add(new Option((c.type === 'direct' ? '👤 ' : '👥 ') + c.title, c.id)));
       select.value = currentConversationId || '';
       renderConversationList();
       updateUnreadMessagesBadge();
+    }
+
+    function conversationPreviewText(conversation) {
+      const message = conversation?.last_message;
+      if (!message) return 'Пока нет сообщений';
+      let preview = String(message.content || '').trim();
+      const attachmentLabels = { image: '📷 Фото', video: '🎬 Видео', audio: '🎙️ Голосовое сообщение' };
+      if (message.attachment_type && attachmentLabels[message.attachment_type]) {
+        preview = attachmentLabels[message.attachment_type];
+      } else if (!preview && message.attachment_url) {
+        preview = '📎 Вложение';
+      } else if (!preview) {
+        preview = 'Сообщение';
+      }
+      if (conversation.type === 'group') {
+        const sender = message.sender_id === currentUser?.id ? 'Вы' : (message.sender_name || 'Участник');
+        preview = `${sender}: ${preview}`;
+      } else if (message.sender_id === currentUser?.id) {
+        preview = `Вы: ${preview}`;
+      }
+      return preview.replace(/\s+/g, ' ');
     }
 
     function renderConversationList() {
@@ -2008,11 +2087,20 @@ input, textarea, select, .input, .text-input {
         }
         const copy = document.createElement('span'); copy.className = 'conversation-row-copy';
         const title = document.createElement('span'); title.className = 'conversation-row-title'; title.textContent = c.title || 'Без названия';
-        const subtitle = document.createElement('span'); subtitle.className = 'conversation-row-subtitle'; subtitle.textContent = c.type === 'direct' ? 'Личная переписка' : 'Групповой чат';
-        copy.append(title, subtitle);
-        const meta = document.createElement('span'); meta.className = 'conversation-row-meta';
-        meta.textContent = c.created_at ? new Date(c.created_at).toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit'}) : '';
-        row.append(avatar, copy, meta); row.addEventListener('click', () => switchConversation(c.id));
+        const preview = document.createElement('span');
+        preview.className = 'conversation-row-preview' + (c.last_message ? '' : ' is-empty');
+        preview.textContent = conversationPreviewText(c);
+        preview.title = preview.textContent;
+        const subtitle = document.createElement('span'); subtitle.className = 'conversation-row-subtitle';
+        if (c.type === 'direct' && c.avatar_profile) {
+          subtitle.dataset.presenceUserId = c.avatar_profile.id;
+          paintPresence(subtitle, c.avatar_profile.last_seen_at, c.avatar_profile.id === currentUser?.id);
+        } else {
+          subtitle.textContent = c.type === 'direct' ? 'Личная переписка' : 'Групповой чат';
+        }
+        // Keep the last-message preview under the title. No message time is shown in this list.
+        copy.append(title, preview, subtitle);
+        row.append(avatar, copy); row.addEventListener('click', () => switchConversation(c.id));
         const del = document.createElement('button'); del.type = 'button'; del.className = 'pu-icon-button conversation-delete';
         del.title = 'Удалить диалог у обоих участников'; del.setAttribute('aria-label', 'Удалить диалог у обоих участников');
         del.innerHTML = '<svg class="pu-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2m-11 0 1 14h12l1-14M10 10v6m4-6v6"/></svg>';
@@ -2071,9 +2159,22 @@ input, textarea, select, .input, .text-input {
       if (channel) await supabase.removeChannel(channel);
       channel = supabase.channel('pulseup-chat-' + currentConversationId + '-' + currentUser.id)
         .on('postgres_changes', { event:'INSERT', schema:'public', table:'messages' }, payload => {
-          if (payload.new.conversation_id !== currentConversationId) return;
-          addMessage(payload.new); $('messages').scrollTop = $('messages').scrollHeight;
-          if (payload.new.sender_id !== currentUser.id) { notifyIncomingMessage(payload.new); if (payload.new.conversation_id === currentConversationId) markConversationRead(currentConversationId); else updateUnreadMessagesBadge(); }
+          const incoming = payload.new;
+          // Update the chat-list preview without showing a timestamp beside it.
+          const changedConversation = conversations.find(conversation => conversation.id === incoming.conversation_id);
+          if (changedConversation) {
+            changedConversation.last_message = incoming;
+            renderConversationList();
+          }
+          if (incoming.conversation_id !== currentConversationId) {
+            if (incoming.sender_id !== currentUser.id) updateUnreadMessagesBadge();
+            return;
+          }
+          addMessage(incoming); $('messages').scrollTop = $('messages').scrollHeight;
+          if (incoming.sender_id !== currentUser.id) {
+            notifyIncomingMessage(incoming);
+            markConversationRead(currentConversationId);
+          }
         }).subscribe(state => {
           if (state === 'SUBSCRIBED') status('connection', '● Онлайн · обновления в реальном времени');
           else if (state === 'CHANNEL_ERROR') status('connection', 'Ошибка realtime. Проверь настройки Supabase.');
@@ -2137,11 +2238,147 @@ input, textarea, select, .input, .text-input {
     ['newDirectChat','newGroupChat','enableNotifications'].forEach(id => $(id).addEventListener('click',()=>{ $('chatMoreMenu').classList.add('hidden'); $('chatMoreButton').setAttribute('aria-expanded','false'); }));
 
 
+
+    // Presence: persist the latest active timestamp in profiles.last_seen_at.
+    // A user is considered online when their heartbeat is under two minutes old.
+    const PRESENCE_ONLINE_WINDOW_MS = 2 * 60 * 1000;
+    let presenceHeartbeatTimer = null;
+    let presenceWritePending = false;
+    let lastPresenceWriteAt = 0;
+    let presenceSchemaWarningShown = false;
+
+    function presenceState(lastSeenAt, isSelf = false) {
+      if (isSelf) return { online: true, text: 'Ты в сети' };
+      if (!lastSeenAt) return { online: false, text: 'Статус пока неизвестен' };
+      const date = new Date(lastSeenAt);
+      if (!Number.isFinite(date.getTime())) return { online: false, text: 'Статус пока неизвестен' };
+      const elapsed = Date.now() - date.getTime();
+      if (elapsed <= PRESENCE_ONLINE_WINDOW_MS) return { online: true, text: 'В сети' };
+      const time = date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+      const now = new Date();
+      const sameDay = date.getFullYear() === now.getFullYear() &&
+        date.getMonth() === now.getMonth() && date.getDate() === now.getDate();
+      const yesterday = new Date(now);
+      yesterday.setDate(now.getDate() - 1);
+      const isYesterday = date.getFullYear() === yesterday.getFullYear() &&
+        date.getMonth() === yesterday.getMonth() && date.getDate() === yesterday.getDate();
+      if (sameDay) return { online: false, text: `Был(а) сегодня в ${time}` };
+      if (isYesterday) return { online: false, text: `Был(а) вчера в ${time}` };
+      const dateText = date.toLocaleDateString('ru-RU', {
+        day: '2-digit', month: 'short',
+        ...(date.getFullYear() !== now.getFullYear() ? { year: 'numeric' } : {})
+      });
+      return { online: false, text: `Был(а) ${dateText} в ${time}` };
+    }
+
+    function paintPresence(element, lastSeenAt, isSelf = false) {
+      if (!element) return;
+      const state = presenceState(lastSeenAt, isSelf);
+      element.classList.add('presence-line');
+      element.classList.toggle('is-online', state.online);
+      element.classList.toggle('is-offline', !state.online && !!lastSeenAt);
+      element.classList.toggle('is-unknown', !lastSeenAt);
+      element.textContent = state.text;
+    }
+
+    async function writePresence(force = false) {
+      if (!supabase || !currentUser || document.visibilityState === 'hidden') return;
+      const now = Date.now();
+      if (!force && now - lastPresenceWriteAt < 35000) return;
+      if (presenceWritePending) return;
+      presenceWritePending = true;
+      try {
+        const { error } = await supabase.from('profiles')
+          .update({ last_seen_at: new Date(now).toISOString() })
+          .eq('id', currentUser.id);
+        if (error) throw error;
+        lastPresenceWriteAt = now;
+        presenceSchemaWarningShown = false;
+      } catch (error) {
+        if (!presenceSchemaWarningShown) {
+          console.warn('Статус онлайн не активен: выполни presence_setup.sql в Supabase.', error.message);
+          presenceSchemaWarningShown = true;
+        }
+      } finally {
+        presenceWritePending = false;
+      }
+    }
+
+    async function refreshPresenceStatus() {
+      if (!supabase || !currentUser) return;
+      const ids = new Set();
+      conversations.forEach(conversation => {
+        if (conversation.avatar_profile?.id && conversation.avatar_profile.id !== currentUser.id) {
+          ids.add(conversation.avatar_profile.id);
+        }
+      });
+      document.querySelectorAll('[data-presence-user-id]').forEach(element => {
+        const id = element.dataset.presenceUserId;
+        if (id && id !== currentUser.id) ids.add(id);
+      });
+      if (viewedProfile?.id && viewedProfile.id !== currentUser.id) ids.add(viewedProfile.id);
+      if (!ids.size) return;
+
+      try {
+        const { data, error } = await supabase.from('profiles')
+          .select('id,last_seen_at').in('id', [...ids]);
+        if (error) throw error;
+        const timestamps = new Map((data || []).map(row => [row.id, row.last_seen_at]));
+        conversations.forEach(conversation => {
+          if (conversation.avatar_profile && timestamps.has(conversation.avatar_profile.id)) {
+            conversation.avatar_profile.last_seen_at = timestamps.get(conversation.avatar_profile.id);
+          }
+        });
+        renderConversationList();
+        document.querySelectorAll('[data-presence-user-id]').forEach(element => {
+          const id = element.dataset.presenceUserId;
+          paintPresence(element, timestamps.get(id), id === currentUser.id);
+        });
+        if (viewedProfile && timestamps.has(viewedProfile.id)) {
+          viewedProfile.last_seen_at = timestamps.get(viewedProfile.id);
+          paintPresence($('publicProfilePresence'), viewedProfile.last_seen_at, viewedProfile.id === currentUser.id);
+        }
+      } catch (error) {
+        if (!presenceSchemaWarningShown) {
+          console.warn('Не удалось загрузить время последней активности. Выполни presence_setup.sql в Supabase.', error.message);
+          presenceSchemaWarningShown = true;
+        }
+      }
+    }
+
+    function startPresenceTracking() {
+      if (presenceHeartbeatTimer) clearInterval(presenceHeartbeatTimer);
+      lastPresenceWriteAt = 0;
+      void writePresence(true);
+      presenceHeartbeatTimer = setInterval(() => {
+        if (document.visibilityState !== 'hidden') {
+          void writePresence();
+          void refreshPresenceStatus();
+        }
+      }, 45000);
+    }
+
+    function stopPresenceTracking() {
+      if (presenceHeartbeatTimer) clearInterval(presenceHeartbeatTimer);
+      presenceHeartbeatTimer = null;
+      lastPresenceWriteAt = 0;
+      presenceWritePending = false;
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && currentUser) {
+        void writePresence(true);
+        void refreshPresenceStatus();
+      }
+    });
+
     async function connectChat(user) {
 
       showChat(user);
+      startPresenceTracking();
 
       await refreshConversations();
+      await refreshPresenceStatus();
       await switchConversation(currentConversationId && conversations.some(c => c.id === currentConversationId) ? currentConversationId : null);
     }
 
