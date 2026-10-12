@@ -976,7 +976,7 @@ input, textarea, select, .input, .text-input {
       </div>
       <div class="muted" style="font-size:12px;margin-bottom:8px">Общего чата нет. Создай личную переписку или группу; для группы выбери участников из списка друзей.</div>
       <div id="conversationList" class="conversation-list" aria-label="Список переписок"></div>
-      <div class="status" id="connection">Подключение к чату…</div>
+      <div class="status" id="connection" aria-live="polite">Выбери личный чат — здесь появится статус собеседника.</div>
 
       <div class="messages" id="messages" aria-live="polite"></div>
       <div id="typingIndicator" class="typing-indicator" role="status" aria-live="polite" hidden></div>
@@ -1126,7 +1126,15 @@ input, textarea, select, .input, .text-input {
 
 
 
-    function status(id, text) { $(id).textContent = text; }
+    function status(id, text) {
+      const element = $(id);
+      if (!element) return;
+      if (id === 'connection') {
+        element.classList.remove('presence-line', 'is-online', 'is-offline', 'is-unknown');
+        element.removeAttribute('title');
+      }
+      element.textContent = text;
+    }
 
 
 
@@ -2399,6 +2407,7 @@ input, textarea, select, .input, .text-input {
       if (backButton) backButton.style.display = currentConversationId ? 'inline-flex' : 'none';
       renderConversationList();
       const conv = conversations.find(c => c.id === currentConversationId);
+      updateConnectionPresence();
       const chatTitle = $('chatView').querySelector('.topline h2');
       chatTitle.textContent = conv ? conv.title : '💬 Сообщения';
       chatTitle.style.cursor = conv?.type === 'direct' && conv.avatar_profile ? 'pointer' : 'default';
@@ -2458,7 +2467,7 @@ input, textarea, select, .input, .text-input {
         .on('postgres_changes', { event:'*', schema:'public', table:'conversation_reads', filter:'conversation_id=eq.' + currentConversationId }, async () => {
           await refreshDirectReadStatuses();
         }).subscribe(state => {
-          if (state === 'SUBSCRIBED') status('connection', '● Онлайн · обновления в реальном времени');
+          if (state === 'SUBSCRIBED') updateConnectionPresence();
           else if (state === 'CHANNEL_ERROR') status('connection', 'Ошибка realtime. Проверь настройки Supabase.');
         });
     }
@@ -2563,6 +2572,32 @@ input, textarea, select, .input, .text-input {
       element.textContent = state.text;
     }
 
+    // The connection line doubles as the active direct-chat user's live presence,
+    // rather than claiming that the person is online just because Realtime connected.
+    function updateConnectionPresence() {
+      const element = $('connection');
+      if (!element) return;
+      const conversation = conversations.find(c => String(c.id) === String(currentConversationId));
+
+      if (!currentConversationId || !conversation) {
+        element.classList.remove('presence-line', 'is-online', 'is-offline', 'is-unknown');
+        element.removeAttribute('title');
+        element.textContent = 'Выбери личный чат — здесь появится статус собеседника.';
+        return;
+      }
+
+      if (conversation.type === 'direct' && conversation.avatar_profile?.id) {
+        paintPresence(element, conversation.avatar_profile.last_seen_at, conversation.avatar_profile.id === currentUser?.id);
+        element.title = 'Реальный статус и время последней активности собеседника';
+        return;
+      }
+
+      // In group chats a single member's activity must not be presented as the group's status.
+      element.classList.remove('presence-line', 'is-online', 'is-offline', 'is-unknown');
+      element.removeAttribute('title');
+      element.textContent = 'Групповой чат · обновления в реальном времени';
+    }
+
     async function writePresence(force = false) {
       if (!supabase || !currentUser || document.visibilityState === 'hidden') return;
       const now = Date.now();
@@ -2612,6 +2647,7 @@ input, textarea, select, .input, .text-input {
           }
         });
         renderConversationList();
+        updateConnectionPresence();
         document.querySelectorAll('[data-presence-user-id]').forEach(element => {
           const id = element.dataset.presenceUserId;
           paintPresence(element, timestamps.get(id), id === currentUser.id);
