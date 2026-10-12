@@ -674,6 +674,84 @@ input, textarea, select, .input, .text-input {
   .gender-avatar-preview strong{display:block;font-size:13px;margin-bottom:3px}
   .gender-avatar-preview .muted{font-size:11px;line-height:1.4}
 </style>
+
+<style id="pulseup-neon-gender-select">
+  #genderWrap > label { margin-bottom: 8px; }
+  .gender-optional { color:#9e8bbf; font-size:11px; font-weight:500; margin-left:5px; }
+  #genderSelect {
+    width:100%; min-height:48px; box-sizing:border-box; padding:13px 44px 13px 14px;
+    color:#f8f2ff !important; color-scheme:dark;
+    background-color:rgba(13,7,31,.95) !important;
+    background-image:
+      linear-gradient(115deg,rgba(145,65,255,.17),rgba(62,91,231,.10)),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23d8b8ff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+    background-repeat:no-repeat,no-repeat !important;
+    background-position:center,right 14px center !important;
+    background-size:100% 100%,16px 16px !important;
+    border:1px solid rgba(180,119,255,.72) !important;
+    border-radius:15px !important; outline:none;
+    box-shadow:0 0 0 1px rgba(136,70,255,.12),0 0 18px rgba(135,58,255,.12),inset 0 1px 0 rgba(255,255,255,.04) !important;
+    appearance:none; -webkit-appearance:none; cursor:pointer;
+    transition:border-color .18s ease,box-shadow .18s ease,background-color .18s ease;
+  }
+  #genderSelect:hover { border-color:rgba(203,157,255,.95) !important; box-shadow:0 0 0 1px rgba(163,92,255,.22),0 0 24px rgba(135,58,255,.2) !important; }
+  #genderSelect:focus { border-color:#b98aff !important; box-shadow:0 0 0 3px rgba(146,79,255,.2),0 0 24px rgba(140,69,255,.26) !important; }
+  #genderSelect option { background-color:#180d32 !important; color:#f7f0ff !important; }
+  #genderSelect option:checked { background-color:#6230a6 !important; color:#fff !important; }
+  .gender-avatar-preview {
+    position:relative; overflow:hidden; margin-top:12px !important; padding:12px !important;
+    border:1px solid rgba(170,108,255,.48) !important;
+    background:linear-gradient(115deg,rgba(75,30,136,.32),rgba(28,35,91,.24)) !important;
+    box-shadow:inset 0 0 22px rgba(145,70,255,.07),0 0 18px rgba(106,48,205,.10);
+  }
+  .gender-avatar-preview img { width:62px !important; height:62px !important; flex-basis:62px !important; object-fit:cover; border:1px solid rgba(201,158,255,.8) !important; box-shadow:0 0 18px rgba(148,61,255,.34) !important; }
+  .gender-avatar-preview strong { color:#f1e5ff; }
+  @media(max-width:760px) { #genderSelect { min-height:48px; } .gender-avatar-preview { padding:10px !important; } }
+
+  /* Custom neon picker replaces the operating-system gray option popup. */
+  #genderWrap { position:relative; }
+  .gender-picker { position:relative; z-index:30; }
+  .gender-native-select { position:absolute !important; width:1px !important; height:1px !important; padding:0 !important; margin:-1px !important; overflow:hidden !important; clip:rect(0,0,0,0) !important; white-space:nowrap !important; border:0 !important; opacity:0 !important; pointer-events:none !important; }
+  .gender-select-button {
+    width:100%; min-height:54px; display:grid; grid-template-columns:38px minmax(0,1fr) 18px; align-items:center; gap:11px;
+    padding:8px 14px; border:1px solid rgba(179,112,255,.82); border-radius:15px;
+    color:#faf5ff; text-align:left; font:inherit; font-size:14px; font-weight:650;
+    background:linear-gradient(110deg,rgba(38,16,73,.96),rgba(13,13,45,.98));
+    box-shadow:0 0 0 1px rgba(138,70,255,.15),0 0 18px rgba(133,53,255,.20),inset 0 1px 0 rgba(255,255,255,.07);
+    transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease;
+  }
+  .gender-select-button:hover,.gender-select-button[aria-expanded="true"] { border-color:#d1a4ff; box-shadow:0 0 0 1px rgba(181,122,255,.28),0 0 27px rgba(148,62,255,.30),inset 0 1px 0 rgba(255,255,255,.08); }
+  .gender-select-button:focus-visible { outline:2px solid #d7b5ff; outline-offset:3px; }
+  .gender-trigger-avatar { width:36px;height:36px;display:block;object-fit:cover;border-radius:50%;border:1px solid rgba(198,151,255,.85);box-shadow:0 0 13px rgba(139,62,255,.35); }
+  .gender-select-button-text { overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+  .gender-select-chevron { width:18px;height:18px;fill:none;stroke:#d9bdff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s ease; }
+  .gender-select-button[aria-expanded="true"] .gender-select-chevron { transform:rotate(180deg); }
+  .gender-option-list {
+    position:absolute; left:0; right:0; top:calc(100% + 7px); z-index:999;
+    padding:6px; border:1px solid rgba(173,105,255,.72); border-radius:16px;
+    background:linear-gradient(145deg,rgba(25,11,51,.99),rgba(9,10,35,.99));
+    box-shadow:0 16px 38px rgba(0,0,0,.55),0 0 26px rgba(132,50,255,.25),inset 0 1px 0 rgba(255,255,255,.06);
+    -webkit-backdrop-filter:blur(22px) saturate(150%); backdrop-filter:blur(22px) saturate(150%);
+  }
+  .gender-option-list[hidden] { display:none !important; }
+  .gender-option {
+    display:grid; width:100%; grid-template-columns:42px minmax(0,1fr) 18px; align-items:center; gap:10px;
+    min-height:58px; padding:7px 9px; margin:2px 0; border:1px solid transparent; border-radius:11px;
+    color:#f7f0ff; background:transparent; text-align:left; font:inherit; cursor:pointer;
+    transition:background .16s ease,border-color .16s ease,box-shadow .16s ease;
+  }
+  .gender-option:hover,.gender-option:focus-visible { background:linear-gradient(100deg,rgba(144,60,255,.22),rgba(60,91,235,.16));border-color:rgba(176,118,255,.42);outline:none; }
+  .gender-option[aria-selected="true"] { background:linear-gradient(105deg,rgba(135,55,241,.32),rgba(62,88,222,.20));border-color:rgba(193,142,255,.54);box-shadow:inset 0 0 16px rgba(142,67,255,.08); }
+  .gender-option img { width:40px;height:40px;display:block;object-fit:cover;border-radius:50%;border:1px solid rgba(190,135,255,.75);box-shadow:0 0 13px rgba(148,61,255,.20); }
+  .gender-option-copy { display:flex;flex-direction:column;gap:2px;min-width:0; }
+  .gender-option-copy strong { font-size:13px;font-weight:750;line-height:1.25; }
+  .gender-option-copy small { color:#a99bc8;font-size:11px;line-height:1.3; }
+  .gender-option-check { opacity:0;color:#e2c8ff;font-size:17px;font-weight:900;text-align:center;text-shadow:0 0 9px #a85bff; }
+  .gender-option[aria-selected="true"] .gender-option-check { opacity:1; }
+  @media(max-width:760px) { .gender-option-list { max-height:min(48vh,340px); overflow-y:auto; } }
+  @media(prefers-reduced-motion:reduce) { .gender-select-button,.gender-select-chevron,.gender-option { transition:none !important; } }
+</style>
+
 </head>
 
 <body>
@@ -727,16 +805,40 @@ input, textarea, select, .input, .text-input {
             <input id="displayName" maxlength="40" autocomplete="nickname" placeholder="Твоё имя в PulseUp" />
           </div>
           <div id="genderWrap" class="hidden">
-            <label for="genderSelect">Пол</label>
-            <select id="genderSelect" autocomplete="sex" aria-label="Выбери пол">
-              <option value="">Выбери пол</option>
-              <option value="male">Мужской</option>
-              <option value="female">Женский</option>
-            </select>
-            <div id="genderAvatarPreview" class="gender-avatar-preview hidden" aria-live="polite">
-              <img id="genderAvatarPreviewImage" alt="Предпросмотр стандартной аватарки" />
+            <label for="genderSelectButton">Пол <span class="gender-optional">необязательно</span></label>
+            <div id="genderPicker" class="gender-picker">
+              <button id="genderSelectButton" class="gender-select-button" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="genderOptionList">
+                <img id="genderTriggerAvatar" class="gender-trigger-avatar" src="avatar-neutral.png" alt="" />
+                <span id="genderSelectButtonText" class="gender-select-button-text">Выбери вариант · можно пропустить</span>
+                <svg class="gender-select-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+              </button>
+              <div id="genderOptionList" class="gender-option-list" role="listbox" aria-label="Выбор аватарки" hidden>
+                <button type="button" class="gender-option" role="option" data-gender="" aria-selected="true">
+                  <img src="avatar-neutral.png" alt="" />
+                  <span class="gender-option-copy"><strong>Без выбора пола</strong><small>Космический знак вопроса</small></span>
+                  <span class="gender-option-check" aria-hidden="true">✓</span>
+                </button>
+                <button type="button" class="gender-option" role="option" data-gender="male" aria-selected="false">
+                  <img src="avatar-male.png" alt="" />
+                  <span class="gender-option-copy"><strong>Мужской</strong><small>Неоновая мужская аватарка</small></span>
+                  <span class="gender-option-check" aria-hidden="true">✓</span>
+                </button>
+                <button type="button" class="gender-option" role="option" data-gender="female" aria-selected="false">
+                  <img src="avatar-female.png" alt="" />
+                  <span class="gender-option-copy"><strong>Женский</strong><small>Неоновая женская аватарка</small></span>
+                  <span class="gender-option-check" aria-hidden="true">✓</span>
+                </button>
+              </div>
+              <select id="genderSelect" class="gender-native-select" autocomplete="sex" aria-hidden="true" tabindex="-1">
+                <option value="" selected>Выбери вариант · можно пропустить</option>
+                <option value="male">Мужской</option>
+                <option value="female">Женский</option>
+              </select>
+            </div>
+            <div id="genderAvatarPreview" class="gender-avatar-preview" aria-live="polite">
+              <img id="genderAvatarPreviewImage" src="avatar-neutral.png" alt="Предпросмотр стандартной аватарки" />
               <div>
-                <strong id="genderAvatarPreviewLabel">Стандартная аватарка</strong>
+                <strong id="genderAvatarPreviewLabel">Универсальная аватарка PulseUp</strong>
                 <div class="muted">Её можно заменить своей фотографией в профиле позже.</div>
               </div>
             </div>
@@ -965,32 +1067,93 @@ input, textarea, select, .input, .text-input {
     // These two image files must be deployed beside index.html on GitHub Pages.
     const DEFAULT_AVATARS = {
       male: new URL('avatar-male.png', window.location.href).href,
-      female: new URL('avatar-female.png', window.location.href).href
+      female: new URL('avatar-female.png', window.location.href).href,
+      neutral: new URL('avatar-neutral.png', window.location.href).href
     };
 
     function defaultAvatarUrl(gender) {
-      return DEFAULT_AVATARS[gender] || null;
+      // If gender is not specified, use the universal neon PulseUp avatar.
+      return DEFAULT_AVATARS[gender] || DEFAULT_AVATARS.neutral;
+    }
+
+    function closeGenderPicker(restoreFocus = false) {
+      $('genderOptionList').hidden = true;
+      $('genderSelectButton').setAttribute('aria-expanded', 'false');
+      if (restoreFocus) $('genderSelectButton').focus();
+    }
+
+    function syncGenderPicker(gender = $('genderSelect').value) {
+      const labels = { '': 'Выбери вариант · можно пропустить', male: 'Мужской', female: 'Женский' };
+      $('genderSelectButtonText').textContent = labels[gender] || labels[''];
+      $('genderTriggerAvatar').src = defaultAvatarUrl(gender);
+      $('genderTriggerAvatar').onerror = () => { $('genderTriggerAvatar').src = DEFAULT_AVATARS.neutral; };
+      document.querySelectorAll('#genderOptionList .gender-option').forEach(option => {
+        option.setAttribute('aria-selected', option.dataset.gender === gender ? 'true' : 'false');
+      });
     }
 
     function updateGenderAvatarPreview() {
       const gender = $('genderSelect').value;
       const preview = $('genderAvatarPreview');
-      const url = defaultAvatarUrl(gender);
-      if (!url) {
-        preview.classList.add('hidden');
-        $('genderAvatarPreviewImage').removeAttribute('src');
-        return;
-      }
       const image = $('genderAvatarPreviewImage');
-      image.onerror = () => preview.classList.add('hidden');
-      image.src = url;
+      image.onerror = () => { $('genderAvatarPreviewLabel').textContent = 'Аватар PulseUp по умолчанию'; };
+      image.src = defaultAvatarUrl(gender);
       $('genderAvatarPreviewLabel').textContent = gender === 'female'
         ? 'Стандартная женская аватарка'
-        : 'Стандартная мужская аватарка';
+        : gender === 'male'
+          ? 'Стандартная мужская аватарка'
+          : 'Универсальная аватарка PulseUp · знак вопроса';
+      syncGenderPicker(gender);
       preview.classList.remove('hidden');
     }
 
+    $('genderSelectButton').addEventListener('click', () => {
+      const list = $('genderOptionList');
+      const opening = list.hidden;
+      list.hidden = !opening;
+      $('genderSelectButton').setAttribute('aria-expanded', opening ? 'true' : 'false');
+      if (opening) {
+        const selected = list.querySelector('[aria-selected="true"]');
+        if (selected) selected.focus({ preventScroll: true });
+      }
+    });
+
+    document.querySelectorAll('#genderOptionList .gender-option').forEach(option => {
+      option.addEventListener('click', () => {
+        $('genderSelect').value = option.dataset.gender;
+        $('genderSelect').dispatchEvent(new Event('change', { bubbles: true }));
+        closeGenderPicker();
+        $('genderSelectButton').focus({ preventScroll: true });
+      });
+      option.addEventListener('keydown', event => {
+        const options = [...document.querySelectorAll('#genderOptionList .gender-option')];
+        const index = options.indexOf(option);
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+          event.preventDefault();
+          options[(index + (event.key === 'ArrowDown' ? 1 : options.length - 1)) % options.length].focus();
+        } else if (event.key === 'Escape') {
+          event.preventDefault();
+          closeGenderPicker(true);
+        }
+      });
+    });
+
+    document.addEventListener('click', event => {
+      if (!$('genderPicker').contains(event.target)) closeGenderPicker();
+    });
+    $('genderSelectButton').addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        $('genderOptionList').hidden = false;
+        $('genderSelectButton').setAttribute('aria-expanded', 'true');
+        const selected = $('genderOptionList').querySelector('[aria-selected="true"]');
+        if (selected) selected.focus();
+      } else if (event.key === 'Escape') {
+        closeGenderPicker();
+      }
+    });
     $('genderSelect').addEventListener('change', updateGenderAvatarPreview);
+    syncGenderPicker('');
 
     function setRegistration(value) {
 
@@ -999,7 +1162,7 @@ input, textarea, select, .input, .text-input {
       $('nameWrap').classList.toggle('hidden', !value);
       $('displayName').required = value;
       $('genderWrap').classList.toggle('hidden', !value);
-      $('genderSelect').required = value;
+      $('genderSelect').required = false;
       updateGenderAvatarPreview();
 
       $('authSubmit').textContent = value ? 'Создать аккаунт' : 'Войти';
@@ -1045,12 +1208,6 @@ input, textarea, select, .input, .text-input {
         $('displayName').focus();
         return;
       }
-      if (registration && !gender) {
-        status('authStatus', 'Выбери пол для нового аккаунта.');
-        $('genderSelect').focus();
-        return;
-      }
-
       button.disabled = true;
       status('authStatus', registration ? 'Создаём аккаунт…' : 'Входим в PulseUp…');
 
@@ -1060,7 +1217,7 @@ input, textarea, select, .input, .text-input {
             email,
             password,
             options: {
-              data: { display_name: displayName, gender },
+              data: { display_name: displayName, gender: gender || null },
               emailRedirectTo: window.location.origin + window.location.pathname
             }
           });
