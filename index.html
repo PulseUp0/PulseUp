@@ -119,6 +119,12 @@
       transition: border-color .2s, box-shadow .2s, background .2s;
     }
     input::placeholder { color: #746b8c; }
+    select {
+      width: 100%; min-width: 0; color: var(--text); background: var(--field);
+      border: 1px solid rgba(173,153,219,.2); border-radius: 13px; padding: 13px 14px; outline: none;
+      transition: border-color .2s, box-shadow .2s, background .2s;
+    }
+    select:focus { border-color: #9b70ff; box-shadow: 0 0 0 3px rgba(141,89,255,.13); background: rgba(14,10,26,.9); }
     input:focus { border-color: #9b70ff; box-shadow: 0 0 0 3px rgba(141,89,255,.13); background: rgba(14,10,26,.9); }
     .password-wrap { position: relative; }
     .password-wrap input { padding-right: 48px; }
@@ -662,6 +668,12 @@ input, textarea, select, .input, .text-input {
   .unread-badge{display:inline-flex;align-items:center;justify-content:center;min-width:21px;height:21px;padding:0 6px;box-sizing:border-box;border-radius:999px;background:linear-gradient(135deg,#b45cff,#713cff);color:#fff;font-size:11px;font-weight:800;line-height:1;box-shadow:0 0 8px rgba(169,83,255,.72),0 0 18px rgba(130,60,255,.34);border:1px solid rgba(224,194,255,.7);vertical-align:middle;}
   .unread-badge.hidden{display:none!important}.mobile-unread-badge{min-width:17px;height:17px;font-size:10px;padding:0 4px;margin-left:3px;}
 </style>
+<style id="pulseup-gender-avatar-preview">
+  .gender-avatar-preview{display:flex;align-items:center;gap:12px;margin-top:12px;padding:10px 12px;border:1px solid rgba(173,104,255,.34);border-radius:15px;background:rgba(18,9,42,.48)}
+  .gender-avatar-preview img{width:58px;height:58px;flex:0 0 58px;display:block;object-fit:cover;border-radius:50%;border:1px solid rgba(190,135,255,.72);box-shadow:0 0 16px rgba(148,61,255,.24)}
+  .gender-avatar-preview strong{display:block;font-size:13px;margin-bottom:3px}
+  .gender-avatar-preview .muted{font-size:11px;line-height:1.4}
+</style>
 </head>
 
 <body>
@@ -713,6 +725,21 @@ input, textarea, select, .input, .text-input {
           <div id="nameWrap" class="hidden">
             <label for="displayName">Как тебя называть?</label>
             <input id="displayName" maxlength="40" autocomplete="nickname" placeholder="Твоё имя в PulseUp" />
+          </div>
+          <div id="genderWrap" class="hidden">
+            <label for="genderSelect">Пол</label>
+            <select id="genderSelect" autocomplete="sex" aria-label="Выбери пол">
+              <option value="">Выбери пол</option>
+              <option value="male">Мужской</option>
+              <option value="female">Женский</option>
+            </select>
+            <div id="genderAvatarPreview" class="gender-avatar-preview hidden" aria-live="polite">
+              <img id="genderAvatarPreviewImage" alt="Предпросмотр стандартной аватарки" />
+              <div>
+                <strong id="genderAvatarPreviewLabel">Стандартная аватарка</strong>
+                <div class="muted">Её можно заменить своей фотографией в профиле позже.</div>
+              </div>
+            </div>
           </div>
           <label for="email">Электронная почта</label>
           <input id="email" type="email" required autocomplete="email" placeholder="you@example.com" />
@@ -935,12 +962,45 @@ input, textarea, select, .input, .text-input {
 
 
 
+    // These two image files must be deployed beside index.html on GitHub Pages.
+    const DEFAULT_AVATARS = {
+      male: new URL('avatar-male.png', window.location.href).href,
+      female: new URL('avatar-female.png', window.location.href).href
+    };
+
+    function defaultAvatarUrl(gender) {
+      return DEFAULT_AVATARS[gender] || null;
+    }
+
+    function updateGenderAvatarPreview() {
+      const gender = $('genderSelect').value;
+      const preview = $('genderAvatarPreview');
+      const url = defaultAvatarUrl(gender);
+      if (!url) {
+        preview.classList.add('hidden');
+        $('genderAvatarPreviewImage').removeAttribute('src');
+        return;
+      }
+      const image = $('genderAvatarPreviewImage');
+      image.onerror = () => preview.classList.add('hidden');
+      image.src = url;
+      $('genderAvatarPreviewLabel').textContent = gender === 'female'
+        ? 'Стандартная женская аватарка'
+        : 'Стандартная мужская аватарка';
+      preview.classList.remove('hidden');
+    }
+
+    $('genderSelect').addEventListener('change', updateGenderAvatarPreview);
+
     function setRegistration(value) {
 
       registration = value;
 
       $('nameWrap').classList.toggle('hidden', !value);
       $('displayName').required = value;
+      $('genderWrap').classList.toggle('hidden', !value);
+      $('genderSelect').required = value;
+      updateGenderAvatarPreview();
 
       $('authSubmit').textContent = value ? 'Создать аккаунт' : 'Войти';
 
@@ -973,6 +1033,7 @@ input, textarea, select, .input, .text-input {
       const email = $('email').value.trim();
       const password = $('password').value;
       const displayName = $('displayName').value.trim();
+      const gender = $('genderSelect').value;
       const button = $('authSubmit');
 
       if (!email || !password) {
@@ -982,6 +1043,11 @@ input, textarea, select, .input, .text-input {
       if (registration && !displayName) {
         status('authStatus', 'Укажи имя для нового аккаунта.');
         $('displayName').focus();
+        return;
+      }
+      if (registration && !gender) {
+        status('authStatus', 'Выбери пол для нового аккаунта.');
+        $('genderSelect').focus();
         return;
       }
 
@@ -994,7 +1060,7 @@ input, textarea, select, .input, .text-input {
             email,
             password,
             options: {
-              data: { display_name: displayName },
+              data: { display_name: displayName, gender },
               emailRedirectTo: window.location.origin + window.location.pathname
             }
           });
@@ -1006,6 +1072,7 @@ input, textarea, select, .input, .text-input {
               display_name: displayName,
               username: null,
               bio: '',
+              avatar_url: defaultAvatarUrl(gender),
               updated_at: new Date().toISOString()
             }, { onConflict: 'id' });
             if (profileError) console.warn('Не удалось создать профиль автоматически:', profileError.message);
@@ -1520,6 +1587,33 @@ input, textarea, select, .input, .text-input {
       $('profileBioInput').value = profile.bio || '';
       $('profileBirthdayInput').value = profile.birth_date || '';
       profileAvatarUrl = profile.avatar_url || null;
+      // If the profile has no custom photo yet, assign the avatar chosen at registration.
+      if (!profileAvatarUrl) {
+        const standardAvatarUrl = defaultAvatarUrl(user.user_metadata?.gender);
+        if (standardAvatarUrl) {
+          profileAvatarUrl = standardAvatarUrl;
+          try {
+            if (data) {
+              const { error: avatarSaveError } = await supabase.from('profiles')
+                .update({ avatar_url: standardAvatarUrl, updated_at: new Date().toISOString() })
+                .eq('id', user.id);
+              if (avatarSaveError) console.warn('Не удалось сохранить стандартную аватарку:', avatarSaveError.message);
+            } else {
+              const { error: avatarSaveError } = await supabase.from('profiles').upsert({
+                id: user.id,
+                display_name: user.user_metadata?.display_name || 'Пользователь PulseUp',
+                username: null,
+                bio: '',
+                avatar_url: standardAvatarUrl,
+                updated_at: new Date().toISOString()
+              }, { onConflict: 'id' });
+              if (avatarSaveError) console.warn('Не удалось сохранить стандартную аватарку:', avatarSaveError.message);
+            }
+          } catch (avatarSaveError) {
+            console.warn('Не удалось сохранить стандартную аватарку:', avatarSaveError?.message || avatarSaveError);
+          }
+        }
+      }
       setProfileAvatar(profileAvatarUrl);
       status('profileStatus', '');
     }
@@ -1561,7 +1655,7 @@ input, textarea, select, .input, .text-input {
         const row = { id: currentUser.id, display_name: displayName, username: username || null, bio: bio || '', avatar_url: avatarUrl, birth_date, updated_at: new Date().toISOString() };
         const { error: saveError } = await supabase.from('profiles').upsert(row, { onConflict: 'id' });
         if (saveError) throw saveError;
-        const { error: authError } = await supabase.auth.updateUser({ data: { display_name: displayName } });
+        const { error: authError } = await supabase.auth.updateUser({ data: { ...(currentUser.user_metadata || {}), display_name: displayName } });
         if (authError) throw authError;
         profileAvatarUrl = avatarUrl;
         $('profileName').textContent = displayName;
