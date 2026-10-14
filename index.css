@@ -1,0 +1,141 @@
+/* PulseUp — тема «Вестерос»
+   Подключаемый CSS-файл. Добавьте после основных стилей index.html.
+   Для активации темы на <body> должен быть атрибут data-site-theme="westeros".
+   Файл меняет только оформление, не содержит JavaScript и не затрагивает Supabase.
+*/
+
+body[data-site-theme="westeros"] {
+  --bg: #080b0e;
+  --panel: rgba(8, 11, 13, .94);
+  --panel-solid: #0b0d0f;
+  --text: #eadcc0;
+  --muted: #b5a58a;
+  --accent: #b68b4c;
+  --accent2: #762323;
+  --border: rgba(190, 145, 78, .72);
+  --field: rgba(5, 7, 8, .92);
+  --bubble: rgba(30, 24, 19, .92);
+  --shadow: 0 12px 32px rgba(0,0,0,.55);
+  background-color: #080b0e !important;
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(101, 75, 48, .22), transparent 48%),
+    radial-gradient(ellipse at 100% 55%, rgba(91, 24, 20, .16), transparent 35%),
+    linear-gradient(145deg, #07090b, #17191a 52%, #08090b) !important;
+  color: var(--text) !important;
+  font-family: Georgia, "Times New Roman", serif !important;
+}
+
+body[data-site-theme="westeros"]::before {
+  opacity: .13 !important;
+  background-image: repeating-linear-gradient(135deg, rgba(211,190,151,.035) 0 1px, transparent 1px 5px) !important;
+}
+
+body[data-site-theme="westeros"] .app-header,
+body[data-site-theme="westeros"] header,
+body[data-site-theme="westeros"] .app-shell,
+body[data-site-theme="westeros"] .app-sidebar,
+body[data-site-theme="westeros"] .card,
+body[data-site-theme="westeros"] .profile-card,
+body[data-site-theme="westeros"] .profile-editor,
+body[data-site-theme="westeros"] .person-card,
+body[data-site-theme="westeros"] .post-card,
+body[data-site-theme="westeros"] .music-pane,
+body[data-site-theme="westeros"] .conversation-list,
+body[data-site-theme="westeros"] .public-profile-panel,
+body[data-site-theme="westeros"] .profile-energy-panel,
+body[data-site-theme="westeros"] .post-composer,
+body[data-site-theme="westeros"] .chat-panel,
+body[data-site-theme="westeros"] .messages-panel {
+  background-color: rgba(8, 10, 11, .94) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+  box-shadow: 0 12px 34px rgba(0,0,0,.38), inset 0 0 0 1px rgba(223,190,132,.035) !important;
+}
+
+body[data-site-theme="westeros"] .app-header,
+body[data-site-theme="westeros"] header {
+  background-image: linear-gradient(90deg, rgba(5,7,8,.97), rgba(25,25,23,.85), rgba(5,7,8,.97)) !important;
+  border-style: double !important;
+}
+
+body[data-site-theme="westeros"] .nav-button,
+body[data-site-theme="westeros"] .mobile-nav-button {
+  color: #c8b99d !important;
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+body[data-site-theme="westeros"] .nav-button.active,
+body[data-site-theme="westeros"] .mobile-nav-button.active {
+  color: #fff0d2 !important;
+  background: linear-gradient(100deg, rgba(103,25,22,.92), rgba(35,18,14,.95)) !important;
+  border: 1px solid rgba(195,151,86,.85) !important;
+  box-shadow: inset 0 0 14px rgba(120,27,22,.25) !important;
+}
+
+body[data-site-theme="westeros"] button,
+body[data-site-theme="westeros"] .primary,
+body[data-site-theme="westeros"] .secondary,
+body[data-site-theme="westeros"] .site-theme-open {
+  font-family: Georgia, "Times New Roman", serif !important;
+  color: #f0dfbf !important;
+  border: 1px solid rgba(190,145,78,.78) !important;
+  background: linear-gradient(110deg, #341413, #17110e 55%, #49331d) !important;
+  box-shadow: inset 0 0 0 1px rgba(255,224,166,.04), 0 4px 12px rgba(0,0,0,.25) !important;
+}
+body[data-site-theme="westeros"] button:hover,
+body[data-site-theme="westeros"] .primary:hover,
+body[data-site-theme="westeros"] .secondary:hover {
+  border-color: #e0bc79 !important;
+  filter: brightness(1.12);
+}
+
+body[data-site-theme="westeros"] input,
+body[data-site-theme="westeros"] textarea,
+body[data-site-theme="westeros"] select,
+body[data-site-theme="westeros"] .search-input {
+  background: rgba(5,7,8,.96) !important;
+  color: #f0e3ca !important;
+  border-color: rgba(177,135,74,.62) !important;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,.35) !important;
+}
+body[data-site-theme="westeros"] input::placeholder,
+body[data-site-theme="westeros"] textarea::placeholder { color: #92836d !important; }
+
+body[data-site-theme="westeros"] h1,
+body[data-site-theme="westeros"] h2,
+body[data-site-theme="westeros"] h3,
+body[data-site-theme="westeros"] label,
+body[data-site-theme="westeros"] .sidebar-brand,
+body[data-site-theme="westeros"] .profile-name,
+body[data-site-theme="westeros"] .post-author { color: #f0dfbf !important; }
+body[data-site-theme="westeros"] .muted,
+body[data-site-theme="westeros"] .hero-copy,
+body[data-site-theme="westeros"] .form-note,
+body[data-site-theme="westeros"] .conversation-row-subtitle,
+body[data-site-theme="westeros"] .post-meta { color: #b5a58a !important; }
+
+body[data-site-theme="westeros"] .logo,
+body[data-site-theme="westeros"] .sidebar-avatar,
+body[data-site-theme="westeros"] .avatar {
+  border: 1px solid rgba(202,163,99,.85) !important;
+  box-shadow: 0 0 0 2px rgba(0,0,0,.55), 0 0 12px rgba(166,113,49,.12) !important;
+}
+body[data-site-theme="westeros"] .conversation-row,
+body[data-site-theme="westeros"] .message,
+body[data-site-theme="westeros"] .message-bubble,
+body[data-site-theme="westeros"] .chat-bubble {
+  border-color: rgba(177,135,74,.42) !important;
+}
+body[data-site-theme="westeros"] .site-theme-dialog {
+  background: #0a0c0d !important;
+  border-color: #b68b4c !important;
+}
+body[data-site-theme="westeros"] .site-theme-card[aria-pressed="true"] {
+  background: linear-gradient(100deg, rgba(103,25,22,.55), rgba(37,27,18,.9)) !important;
+  border-color: #d4ad6c !important;
+}
+
+@media (max-width: 760px) {
+  body[data-site-theme="westeros"] .app-sidebar::after { display: none; }
+}
