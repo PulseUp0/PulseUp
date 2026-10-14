@@ -821,6 +821,109 @@ input, textarea, select, .input, .text-input {
   @media (prefers-reduced-motion: reduce) { .typing-indicator:not([hidden])::after { animation:none; } }
 </style>
 
+
+<style id="pulseup-android-app-promo-style">
+  .android-app-promo[hidden]{display:none!important}
+  .android-app-promo{display:flex;align-items:center;gap:13px;position:relative;overflow:hidden;margin:10px 0 16px;padding:14px;border:1px solid rgba(184,132,255,.46);border-radius:18px;background:radial-gradient(ellipse at 8% 0%,rgba(145,68,255,.25),transparent 55%),linear-gradient(115deg,rgba(32,16,63,.92),rgba(12,13,37,.92));box-shadow:0 0 0 1px rgba(131,71,255,.08),0 8px 26px rgba(91,34,175,.18),inset 0 0 24px rgba(150,84,255,.06)}
+  .android-app-promo:before{content:"";position:absolute;right:-35px;top:-58px;width:130px;height:130px;border-radius:50%;border:1px solid rgba(188,130,255,.20);box-shadow:0 0 30px rgba(138,68,255,.12);pointer-events:none}
+  .android-app-promo-icon{display:grid;place-items:center;flex:0 0 50px;width:50px;height:50px;border-radius:15px;border:1px solid rgba(198,154,255,.45);background:linear-gradient(145deg,rgba(137,62,255,.48),rgba(42,32,95,.72));color:#f5eaff;font-size:27px;font-weight:900;text-shadow:0 0 16px rgba(196,144,255,.85);box-shadow:0 0 20px rgba(129,68,255,.18)}
+  .android-app-promo-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;position:relative;z-index:1}
+  .android-app-promo-title{font-size:14px;font-weight:800;color:#f8f1ff;letter-spacing:.01em}
+  .android-app-promo-desc{font-size:12px;line-height:1.45;color:#c1b0df}
+  .android-app-promo-tag{align-self:flex-start;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#d8bdff;border:1px solid rgba(177,125,255,.34);background:rgba(123,63,211,.18);padding:3px 7px;border-radius:99px}
+  .android-app-promo-actions{display:flex;align-items:center;gap:7px;position:relative;z-index:1}
+  .android-app-download{display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap;text-decoration:none;color:#fff!important;font-size:12px;font-weight:800;padding:10px 12px;border-radius:11px;border:1px solid rgba(222,196,255,.32);background:linear-gradient(110deg,#853cf0,#5a5ded);box-shadow:0 5px 17px rgba(99,64,220,.26);transition:filter .18s,transform .18s}
+  .android-app-download:hover{filter:brightness(1.12);transform:translateY(-1px)}
+  .android-app-dismiss{display:grid;place-items:center;width:30px;height:30px;min-width:30px;padding:0;border:1px solid rgba(180,145,220,.2);border-radius:9px;background:rgba(10,7,25,.3);color:#bca9d6;font-size:19px;line-height:1;box-shadow:none}
+  @media(max-width:560px){.android-app-promo{align-items:flex-start;gap:10px;padding:12px}.android-app-promo-icon{width:43px;height:43px;flex-basis:43px;font-size:23px}.android-app-promo-actions{width:100%;margin-left:53px;margin-top:-2px}.android-app-download{flex:1}.android-app-promo{flex-wrap:wrap}.android-app-promo-copy{flex-basis:calc(100% - 56px)}}
+</style>
+
+
+<style id="pulseup-profile-energy">
+  /* Personalizable profile energy: backgrounds, accent glow, and subtle motion. */
+  .profile-energy-panel { margin:16px 0; padding:16px; border-radius:20px; background:rgba(12,8,31,.58); border:1px solid rgba(180,125,255,.28); }
+  .profile-energy-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:14px; }
+  .profile-energy-heading h3 { margin:0 0 3px; font-size:19px; }
+  .profile-energy-heading p { margin:0; }
+  .profile-energy-chip { color:#d8c2ff; font-size:9px; font-weight:800; letter-spacing:.15em; padding:6px 8px; border:1px solid rgba(178,129,255,.25); border-radius:999px; background:rgba(126,75,255,.12); white-space:nowrap; }
+  .profile-energy-preview { position:relative; isolation:isolate; overflow:hidden; min-height:190px; border-radius:18px; border:1px solid rgba(200,157,255,.38); margin-bottom:20px; background:radial-gradient(ellipse at 50% 0%,rgba(126,63,255,.58),transparent 56%),radial-gradient(ellipse at 100% 100%,rgba(30,70,220,.38),transparent 54%),linear-gradient(145deg,#160c31,#08091e 72%) !important; box-shadow:0 12px 38px rgba(15,2,49,.35),0 0 23px color-mix(in srgb,var(--energy-accent,#a56bff) 18%,transparent); }
+  .profile-energy-preview::before { content:""; position:absolute; z-index:-1; inset:-35%; background:radial-gradient(ellipse at 20% 35%,rgba(202,101,255,.28),transparent 34%),radial-gradient(ellipse at 75% 65%,rgba(50,90,255,.2),transparent 36%); opacity:.82; transition:opacity .25s; }
+  .profile-energy-preview[data-energy-motion="true"]::before { animation:profile-energy-drift 11s ease-in-out infinite alternate; }
+  .energy-preview-orbit { position:absolute; width:180px; height:180px; border:1px solid color-mix(in srgb,var(--energy-accent,#a56bff) 60%,transparent); border-radius:50%; right:-18px; top:-62px; box-shadow:0 0 24px color-mix(in srgb,var(--energy-accent,#a56bff) 22%,transparent),inset 0 0 25px rgba(130,72,255,.07); }
+  .energy-preview-orbit::before,.energy-preview-orbit::after { content:""; position:absolute; border:1px solid rgba(213,173,255,.22); border-radius:50%; inset:16px; }
+  .energy-preview-orbit::after { inset:34px; }
+  .energy-preview-content { position:relative; z-index:1; padding:21px; }
+  .energy-preview-avatar-wrap { display:grid; place-items:center; width:64px; height:64px; margin-bottom:10px; border-radius:50%; overflow:hidden; border:2px solid color-mix(in srgb,var(--energy-accent,#a56bff) 82%,white); background:linear-gradient(135deg,#6232ae,#1b3471); color:#fff; font-size:25px; box-shadow:0 0 21px color-mix(in srgb,var(--energy-accent,#a56bff) 38%,transparent); }
+  .energy-preview-avatar-wrap img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+  .profile-energy-preview[data-energy-avatar-glow="false"] .energy-preview-avatar-wrap { box-shadow:none; }
+  .energy-preview-name { font-size:18px; font-weight:850; color:#fff; overflow-wrap:anywhere; text-shadow:0 1px 18px rgba(0,0,0,.4); }
+  .energy-preview-subtitle { display:flex; align-items:center; gap:7px; margin-top:4px; color:#e1d7f7; font-size:12px; }
+  .energy-preview-dot { width:7px; height:7px; border-radius:50%; background:#57e6a5; box-shadow:0 0 9px rgba(87,230,165,.65); }
+  .energy-preview-pills { display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
+  .energy-preview-pills span { padding:5px 9px; border-radius:999px; font-size:11px; color:#f2eaff; background:rgba(7,5,22,.38); border:1px solid rgba(223,199,255,.16); backdrop-filter:blur(8px); }
+  .energy-setting-block { margin-top:18px; }
+  .energy-setting-title { display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+  .energy-setting-title strong { font-size:14px; }
+  .energy-setting-title .muted { font-size:11px; }
+  .energy-background-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; }
+  .energy-background-choice { min-width:0; padding:7px; border:1px solid rgba(183,145,255,.2); border-radius:13px; color:var(--text); background:rgba(9,6,23,.45); display:flex; align-items:center; gap:7px; text-align:left; font-size:12px; font-weight:650; }
+  .energy-background-choice.selected { border-color:#b994ff; box-shadow:0 0 0 1px rgba(185,148,255,.28),0 0 17px rgba(132,68,255,.18); background:rgba(98,46,170,.22); }
+  .energy-background-swatch { display:block; width:39px; height:31px; flex:0 0 39px; border-radius:8px; border:1px solid rgba(255,255,255,.18); }
+  .energy-bg-cosmos { background:radial-gradient(circle at 70% 25%,#c258ff,transparent 25%),linear-gradient(145deg,#461f83,#131c59 58%,#07091d); }
+  .energy-bg-sunset { background:radial-gradient(circle at 70% 25%,#ff9bcb,transparent 25%),linear-gradient(145deg,#57216d,#b34f82 55%,#19265a); }
+  .energy-bg-ocean { background:radial-gradient(circle at 70% 25%,#57e9ff,transparent 25%),linear-gradient(145deg,#075e85,#14235e 60%,#060b22); }
+  .energy-bg-aurora { background:radial-gradient(circle at 70% 25%,#78ffbf,transparent 25%),linear-gradient(145deg,#07564f,#15295e 58%,#070b20); }
+  .energy-bg-neon { background:radial-gradient(circle at 70% 25%,#ff45d4,transparent 25%),linear-gradient(145deg,#561078,#32126e 55%,#09051c); }
+  .energy-bg-void { background:radial-gradient(circle at 70% 25%,#5c6484,transparent 25%),linear-gradient(145deg,#25283c,#101222 62%,#05050b); }
+  .energy-accent-choices { display:flex; gap:10px; flex-wrap:wrap; }
+  .energy-accent-choice { width:38px; height:38px; padding:4px; display:grid; place-items:center; border-radius:50%; background:rgba(8,6,22,.4); border:1px solid rgba(174,144,223,.22); }
+  .energy-accent-choice span { width:24px; height:24px; display:block; border-radius:50%; background:var(--swatch); box-shadow:0 0 13px color-mix(in srgb,var(--swatch) 55%,transparent); }
+  .energy-accent-choice.selected { border-color:#fff; box-shadow:0 0 0 2px rgba(175,123,255,.45); }
+  .energy-effect-options { margin-top:18px; border-top:1px solid rgba(183,145,255,.16); }
+  .energy-toggle-row { display:flex; justify-content:space-between; align-items:center; gap:16px; margin:0; padding:13px 0; border-bottom:1px solid rgba(183,145,255,.13); cursor:pointer; }
+  .energy-toggle-row span { display:flex; flex-direction:column; gap:3px; }
+  .energy-toggle-row strong { font-size:13px; color:#f5edff; }
+  .energy-toggle-row small { font-size:11px; color:var(--muted); font-weight:400; }
+  .energy-toggle-row input { width:42px !important; height:23px; flex:0 0 42px; appearance:none; -webkit-appearance:none; border:1px solid rgba(185,148,255,.36) !important; border-radius:999px !important; background:rgba(62,50,85,.8) !important; padding:2px !important; cursor:pointer; transition:background .18s,border-color .18s; }
+  .energy-toggle-row input::before { content:""; display:block; width:17px; height:17px; border-radius:50%; background:#b9aecb; transition:transform .18s,background .18s; }
+  .energy-toggle-row input:checked { background:linear-gradient(100deg,#8e42ee,#4f71ff) !important; border-color:#ba91ff !important; }
+  .energy-toggle-row input:checked::before { transform:translateX(18px); background:#fff; }
+  .energy-action-row { margin-top:14px; }
+  .profile-energy-surface { --energy-accent:#a56bff; position:relative; isolation:isolate; border-color:color-mix(in srgb,var(--energy-accent) 52%,transparent) !important; }
+  .profile-energy-surface[data-energy-bg="cosmos"] { --energy-accent:#a56bff; background:radial-gradient(ellipse at 85% 5%,rgba(144,63,255,.32),transparent 48%),linear-gradient(145deg,rgba(39,17,78,.88),rgba(7,8,28,.92)) !important; }
+  .profile-energy-surface[data-energy-bg="sunset"] { --energy-accent:#ff65c3; background:radial-gradient(ellipse at 80% 0%,rgba(255,92,174,.28),transparent 48%),linear-gradient(145deg,rgba(75,25,79,.9),rgba(31,14,48,.93) 60%,rgba(11,13,40,.94)) !important; }
+  .profile-energy-surface[data-energy-bg="ocean"] { --energy-accent:#5f8fff; background:radial-gradient(ellipse at 84% 2%,rgba(43,165,255,.27),transparent 50%),linear-gradient(145deg,rgba(11,44,83,.9),rgba(8,12,37,.94)) !important; }
+  .profile-energy-surface[data-energy-bg="aurora"] { --energy-accent:#53e5c0; background:radial-gradient(ellipse at 82% 0%,rgba(65,255,193,.22),transparent 48%),linear-gradient(145deg,rgba(8,58,62,.88),rgba(8,14,37,.94)) !important; }
+  .profile-energy-surface[data-energy-bg="neon"] { --energy-accent:#ff65e1; background:radial-gradient(ellipse at 85% 4%,rgba(255,47,209,.27),transparent 48%),linear-gradient(145deg,rgba(63,15,82,.92),rgba(12,7,36,.95)) !important; }
+  .profile-energy-surface[data-energy-bg="void"] { --energy-accent:#a4acc7; background:radial-gradient(ellipse at 84% 2%,rgba(143,153,187,.17),transparent 45%),linear-gradient(145deg,rgba(31,33,50,.94),rgba(7,8,17,.97)) !important; }
+  .profile-energy-surface[data-energy-accent="violet"] { --energy-accent:#a56bff; }
+  .profile-energy-surface[data-energy-accent="pink"] { --energy-accent:#ff65c3; }
+  .profile-energy-surface[data-energy-accent="blue"] { --energy-accent:#5f8fff; }
+  .profile-energy-surface[data-energy-accent="cyan"] { --energy-accent:#53e5ef; }
+  .profile-energy-surface[data-energy-accent="gold"] { --energy-accent:#ffc56b; }
+  #profileCardSurface { overflow:hidden; }
+  #profileCardSurface[data-energy-motion="true"]::after { content:""; position:absolute; z-index:0; inset:-65%; pointer-events:none; background:radial-gradient(ellipse at 25% 40%,color-mix(in srgb,var(--energy-accent) 16%,transparent),transparent 42%); animation:profile-energy-drift 14s ease-in-out infinite alternate; }
+  #profileCardSurface > * { position:relative; z-index:1; }
+  #profileAvatar.energy-avatar-glow,#profileAvatarFallback.energy-avatar-glow,#publicProfileAvatar.energy-avatar-glow { box-shadow:0 0 0 2px color-mix(in srgb,var(--energy-accent,#a56bff) 74%,transparent),0 0 22px color-mix(in srgb,var(--energy-accent,#a56bff) 43%,transparent) !important; }
+  #profileCardSurface[data-energy-avatar-glow="false"] #profileAvatar.energy-avatar-glow,#profileCardSurface[data-energy-avatar-glow="false"] #profileAvatarFallback.energy-avatar-glow,#publicProfilePanel[data-energy-avatar-glow="false"] #publicProfileAvatar.energy-avatar-glow { box-shadow:none !important; }
+  #publicProfilePanel.profile-energy-surface { border-radius:24px; }
+  #publicProfilePanel .public-profile-head { background:transparent !important; border-bottom:1px solid color-mix(in srgb,var(--energy-accent) 30%,transparent); }
+  #publicProfilePanel #publicProfileAvatar { box-shadow:0 0 0 2px color-mix(in srgb,var(--energy-accent) 66%,transparent),0 0 25px color-mix(in srgb,var(--energy-accent) 36%,transparent); }
+  @keyframes profile-energy-drift { from { transform:translate3d(-2%,0,0) rotate(-5deg); } to { transform:translate3d(3%,2%,0) rotate(6deg); } }
+  @media (max-width:600px) {
+    .profile-energy-panel { padding:12px; border-radius:16px; }
+    .profile-energy-heading h3 { font-size:17px; }
+    .profile-energy-preview { min-height:175px; }
+    .energy-preview-content { padding:16px; }
+    .energy-background-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+    .energy-background-choice { font-size:11px; padding:6px; gap:6px; }
+    .energy-background-swatch { width:34px; height:28px; flex-basis:34px; }
+    .energy-action-row { display:grid; grid-template-columns:1fr; }
+    .energy-action-row button { width:100%; min-height:44px; }
+  }
+  @media (prefers-reduced-motion:reduce) { #profileEnergyPreview[data-energy-motion="true"]::before,#profileCardSurface[data-energy-motion="true"]::after { animation:none !important; } }
+</style>
+
 </head>
 
 <body>
@@ -931,6 +1034,18 @@ input, textarea, select, .input, .text-input {
 
 
     <section class="card hidden" id="chat">
+      <aside class="android-app-promo" id="androidAppPromo" aria-label="Приложение PulseUp для Android" hidden>
+        <div class="android-app-promo-icon" aria-hidden="true">P</div>
+        <div class="android-app-promo-copy">
+          <div class="android-app-promo-title">PulseUp для Android</div>
+          <div class="android-app-promo-desc">Установи PulseUp на телефон — общайся с друзьями из отдельного приложения.</div>
+          <span class="android-app-promo-tag">Бета-версия</span>
+        </div>
+        <div class="android-app-promo-actions">
+          <a class="android-app-download" id="androidAppDownload" href="https://github.com/pulseup0/PulseUp-Android/releases/latest/download/PulseUp.apk" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↓</span> Скачать APK</a>
+          <button class="android-app-dismiss" id="androidAppPromoDismiss" type="button" aria-label="Скрыть объявление" title="Скрыть">×</button>
+        </div>
+      </aside>
       <div class="app-layout">
         <aside class="app-sidebar" aria-label="Навигация PulseUp">
           <div class="sidebar-brand">💜 PulseUp</div>
@@ -984,7 +1099,7 @@ input, textarea, select, .input, .text-input {
       <form id="sendForm" class="composer">
 
         <input id="messageInput" maxlength="2000" placeholder="Напиши сообщение…" autocomplete="off" />
-        <button type="button" id="attachChatPhoto" class="secondary" aria-label="Прикрепить фото или видео" title="Фото или видео">＋</button><input id="chatPhotoInput" type="file" accept="image/*,video/*" hidden />
+        <button type="button" id="attachChatPhoto" class="secondary" aria-label="Прикрепить фото, видео или APK" title="Фото, видео или APK">＋</button><input id="chatPhotoInput" type="file" accept="image/*,video/*,.apk,application/vnd.android.package-archive" hidden />
         <button id="recordVoiceButton" type="button" class="secondary" title="Записать голосовое" aria-label="Записать голосовое">🎙️</button>
         <button id="sendButton" type="submit" aria-label="Отправить">➤</button>
 
@@ -1025,7 +1140,7 @@ input, textarea, select, .input, .text-input {
       </section>
       <section id="friendsView" class="card hidden" aria-label="Друзья"><div class="topline"><div class="grow"><h2>👥 Друзья</h2><div class="muted">Находи людей и начинай личные чаты</div></div></div><p class="muted">Используй поиск, чтобы найти пользователя по имени или дате рождения. Нажми «Написать», чтобы открыть личный чат.</p><button class="primary" id="openPeopleSearch" type="button">🔎 Найти людей</button><h3 style="margin-top:18px">Мои друзья</h3><div id="friendsList" class="people-results"><p class="muted">Загружаем друзей…</p></div></section>
       <section id="publicProfileModal" class="public-profile-modal hidden" role="dialog" aria-modal="true" aria-label="Профиль пользователя">
-        <div class="public-profile-panel"><button type="button" id="closePublicProfile" class="secondary public-profile-close" aria-label="Закрыть профиль">×</button>
+        <div class="public-profile-panel profile-energy-surface" id="publicProfilePanel" data-energy-bg="cosmos" data-energy-accent="violet" data-energy-motion="true" data-energy-avatar-glow="true"><button type="button" id="closePublicProfile" class="secondary public-profile-close" aria-label="Закрыть профиль">×</button>
           <div class="public-profile-head"><img id="publicProfileAvatar" alt="Фото профиля"/><div><h2 id="publicProfileName">Профиль</h2><div id="publicProfileUsername" class="muted"></div><div id="publicProfilePresence" class="presence-line is-unknown" aria-live="polite">Статус пока неизвестен</div><p id="publicProfileBio" class="muted"></p><div class="profile-actions"><button type="button" id="publicProfileFriend" class="primary">＋ Добавить в друзья</button><button type="button" id="publicProfileMessage" class="secondary">Написать</button></div></div></div>
           <h3>Публикации</h3><div id="publicProfilePosts" class="post-list"></div><h3>Музыка</h3><div id="publicProfileMusic" class="post-list"></div>
         </div>
@@ -1033,7 +1148,7 @@ input, textarea, select, .input, .text-input {
       <div id="imageLightbox" class="image-lightbox hidden" role="dialog" aria-modal="true" aria-label="Просмотр изображения"><button type="button" id="closeImageLightbox" aria-label="Закрыть">×</button><img id="lightboxImage" alt="Изображение"></div>
       <section id="profileView" class="card hidden" aria-label="Профиль пользователя">
         <div class="topline"><div class="grow"><h2>Мой профиль</h2><div class="muted">Твои данные в PulseUp</div></div></div>
-      <section class="profile-card" aria-label="Профиль пользователя">
+      <section class="profile-card profile-energy-surface" id="profileCardSurface" aria-label="Профиль пользователя">
         <img id="profileAvatar" class="profile-avatar" alt="Фото профиля" src="" hidden />
         <div id="profileAvatarFallback" class="profile-avatar" aria-hidden="true">💜</div>
         <div class="grow">
@@ -1042,6 +1157,48 @@ input, textarea, select, .input, .text-input {
           <div class="muted" id="profileBio">Добавь информацию о себе</div>
           <div class="profile-actions"><button class="secondary" id="editProfileButton" type="button">Редактировать профиль</button></div>
         </div>
+      </section>
+      <section id="profileEnergySection" class="profile-energy-panel profile-editor" aria-label="Энергия профиля">
+        <div class="profile-energy-heading">
+          <div><h3>✦ Энергия профиля</h3><p class="muted">Создай свой космический уголок</p></div>
+          <span class="profile-energy-chip">PULSEUP STYLE</span>
+        </div>
+        <div id="profileEnergyPreview" class="profile-energy-preview profile-energy-surface" data-energy-bg="cosmos" data-energy-accent="violet" data-energy-motion="true" data-energy-avatar-glow="true">
+          <div class="energy-preview-orbit" aria-hidden="true"></div>
+          <div class="energy-preview-content">
+            <div class="energy-preview-avatar-wrap"><img id="energyPreviewAvatar" alt="" hidden/><div id="energyPreviewAvatarFallback">✦</div></div>
+            <div class="energy-preview-name" id="energyPreviewName">Твой профиль</div>
+            <div class="energy-preview-subtitle"><span class="energy-preview-dot"></span> Твой космический уголок</div>
+            <div class="energy-preview-pills"><span>✦ Фон</span><span>☼ Эффекты</span><span>◉ Аватар</span></div>
+          </div>
+        </div>
+        <div class="energy-setting-block">
+          <div class="energy-setting-title"><strong>Фон профиля</strong><span class="muted">Выбери атмосферу</span></div>
+          <div class="energy-background-grid" id="energyBackgroundChoices">
+            <button type="button" class="energy-background-choice selected" data-energy-bg="cosmos" aria-pressed="true"><span class="energy-background-swatch energy-bg-cosmos"></span><span>Космос</span></button>
+            <button type="button" class="energy-background-choice" data-energy-bg="sunset" aria-pressed="false"><span class="energy-background-swatch energy-bg-sunset"></span><span>Закат</span></button>
+            <button type="button" class="energy-background-choice" data-energy-bg="ocean" aria-pressed="false"><span class="energy-background-swatch energy-bg-ocean"></span><span>Океан</span></button>
+            <button type="button" class="energy-background-choice" data-energy-bg="aurora" aria-pressed="false"><span class="energy-background-swatch energy-bg-aurora"></span><span>Аврора</span></button>
+            <button type="button" class="energy-background-choice" data-energy-bg="neon" aria-pressed="false"><span class="energy-background-swatch energy-bg-neon"></span><span>Неон</span></button>
+            <button type="button" class="energy-background-choice" data-energy-bg="void" aria-pressed="false"><span class="energy-background-swatch energy-bg-void"></span><span>Пустота</span></button>
+          </div>
+        </div>
+        <div class="energy-setting-block">
+          <div class="energy-setting-title"><strong>Цвет свечения</strong><span class="muted">Акцент профиля</span></div>
+          <div class="energy-accent-choices" id="energyAccentChoices" role="group" aria-label="Цвет свечения">
+            <button type="button" class="energy-accent-choice selected" data-energy-accent="violet" aria-label="Фиолетовый" aria-pressed="true"><span style="--swatch:#a56bff"></span></button>
+            <button type="button" class="energy-accent-choice" data-energy-accent="pink" aria-label="Розовый" aria-pressed="false"><span style="--swatch:#ff65c3"></span></button>
+            <button type="button" class="energy-accent-choice" data-energy-accent="blue" aria-label="Синий" aria-pressed="false"><span style="--swatch:#5f8fff"></span></button>
+            <button type="button" class="energy-accent-choice" data-energy-accent="cyan" aria-label="Бирюзовый" aria-pressed="false"><span style="--swatch:#53e5ef"></span></button>
+            <button type="button" class="energy-accent-choice" data-energy-accent="gold" aria-label="Золотой" aria-pressed="false"><span style="--swatch:#ffc56b"></span></button>
+          </div>
+        </div>
+        <div class="energy-effect-options">
+          <label class="energy-toggle-row" for="energyMotionToggle"><span><strong>Живой фон</strong><small>Мягкое движение и сияние</small></span><input type="checkbox" id="energyMotionToggle" checked /></label>
+          <label class="energy-toggle-row" for="energyAvatarGlowToggle"><span><strong>Сияние аватара</strong><small>Неоновое свечение вокруг фото</small></span><input type="checkbox" id="energyAvatarGlowToggle" checked /></label>
+        </div>
+        <div class="profile-actions energy-action-row"><button type="button" id="saveProfileEnergyButton" class="primary">Сохранить тему</button><button type="button" id="resetProfileEnergyButton" class="secondary">Сбросить</button></div>
+        <div id="profileEnergyStatus" class="status" role="status" aria-live="polite"></div>
       </section>
       <form id="profileEditor" class="profile-editor hidden">
         <h2>Редактирование профиля</h2>
@@ -1094,6 +1251,21 @@ input, textarea, select, .input, .text-input {
 
     const SUPABASE_KEY = 'sb_publishable_1vguY-TDFIuRoVdVkHKeCw_u6TmpAFj';
 
+    // Announce Android app on the website, but not inside the Android WebView itself.
+    (() => {
+      const promo = document.getElementById('androidAppPromo');
+      const dismiss = document.getElementById('androidAppPromoDismiss');
+      if (!promo) return;
+      const nativeAndroidApp = /PulseUpAndroidApp/i.test(navigator.userAgent);
+      let dismissed = false;
+      try { dismissed = localStorage.getItem('pulseup_android_promo_dismissed') === '1'; } catch (_) {}
+      if (!nativeAndroidApp && !dismissed) promo.hidden = false;
+      dismiss?.addEventListener('click', () => {
+        promo.hidden = true;
+        try { localStorage.setItem('pulseup_android_promo_dismissed', '1'); } catch (_) {}
+      });
+    })();
+
 
 
     const $ = id => document.getElementById(id);
@@ -1121,6 +1293,11 @@ input, textarea, select, .input, .text-input {
 
     let oldestLoaded = null;
     let profileAvatarUrl = null;
+    const PROFILE_ENERGY_DEFAULT = Object.freeze({ background: 'cosmos', accent: 'violet', motion: true, avatarGlow: true });
+    const PROFILE_ENERGY_BACKGROUNDS = new Set(['cosmos','sunset','ocean','aurora','neon','void']);
+    const PROFILE_ENERGY_ACCENTS = new Set(['violet','pink','blue','cyan','gold']);
+    let currentProfileEnergy = { ...PROFILE_ENERGY_DEFAULT };
+    let draftProfileEnergy = { ...PROFILE_ENERGY_DEFAULT };
     let currentConversationId = null;
     let conversations = [];
 
@@ -1500,6 +1677,21 @@ input, textarea, select, .input, .text-input {
       void refreshPresenceStatus();
       $('publicProfileAvatar').src=profile.avatar_url||'';
       $('publicProfileAvatar').style.visibility=profile.avatar_url?'visible':'hidden';
+      applyEnergyAvatarGlow($('publicProfileAvatar'), true);
+      try {
+        const { data: energyRow, error: energyError } = await supabase.from('profiles').select('profile_theme').eq('id', profile.id).maybeSingle();
+        if (!energyError) {
+          const publicTheme = normalizeProfileEnergy(energyRow?.profile_theme);
+          applyEnergySurface($('publicProfilePanel'), publicTheme);
+          applyEnergyAvatarGlow($('publicProfileAvatar'), publicTheme.avatarGlow);
+        } else {
+          applyEnergySurface($('publicProfilePanel'), PROFILE_ENERGY_DEFAULT);
+          applyEnergyAvatarGlow($('publicProfileAvatar'), PROFILE_ENERGY_DEFAULT.avatarGlow);
+        }
+      } catch (_) {
+        applyEnergySurface($('publicProfilePanel'), PROFILE_ENERGY_DEFAULT);
+        applyEnergyAvatarGlow($('publicProfileAvatar'), PROFILE_ENERGY_DEFAULT.avatarGlow);
+      }
       $('publicProfilePosts').innerHTML='<p class="muted">Загружаем публикации…</p>';
       $('publicProfileMusic').innerHTML='<p class="muted">Загружаем музыку…</p>';
       $('publicProfileFriend').textContent='＋ Добавить в друзья'; $('publicProfileFriend').disabled=profile.id===currentUser?.id;
@@ -1833,7 +2025,7 @@ input, textarea, select, .input, .text-input {
 
 
 
-      if (msg.content) {
+      if (msg.content && msg.attachment_type !== 'file') {
         const body = document.createElement('div');
         body.className = 'content';
         body.textContent = msg.content;
@@ -1855,6 +2047,37 @@ input, textarea, select, .input, .text-input {
       } else if (msg.attachment_url && msg.attachment_type === 'audio') {
         const audio = document.createElement('audio'); audio.controls = true; audio.preload = 'metadata'; audio.src = msg.attachment_url;
         audio.style.cssText = 'display:block;max-width:100%;width:280px;margin-top:8px'; item.append(audio);
+      } else if (msg.attachment_url && msg.attachment_type === 'file') {
+        const card = document.createElement('div');
+        card.className = 'chat-file-attachment';
+        const icon = document.createElement('div');
+        icon.className = 'chat-file-attachment-icon';
+        icon.textContent = 'APK';
+        icon.setAttribute('aria-hidden', 'true');
+        const copy = document.createElement('div');
+        copy.className = 'chat-file-attachment-copy';
+        const fileName = document.createElement('strong');
+        fileName.className = 'chat-file-attachment-name';
+        fileName.textContent = String(msg.content || 'PulseUp.apk').split(/[\\/]/).pop();
+        const detail = document.createElement('span');
+        detail.className = 'chat-file-attachment-detail';
+        detail.textContent = 'Установочный файл Android';
+        copy.append(fileName, detail);
+        let downloadUrl = msg.attachment_url;
+        try {
+          const parsedUrl = new URL(msg.attachment_url);
+          parsedUrl.searchParams.set('download', fileName.textContent || 'PulseUp.apk');
+          downloadUrl = parsedUrl.toString();
+        } catch (_) {}
+        const link = document.createElement('a');
+        link.className = 'chat-file-attachment-download';
+        link.href = downloadUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = '↓ Скачать';
+        link.setAttribute('aria-label', `Скачать ${fileName.textContent || 'APK-файл'}`);
+        card.append(icon, copy, link);
+        item.append(card);
       }
 
       // В личных переписках показываем статус отправки/прочтения собственных сообщений.
@@ -1948,6 +2171,130 @@ input, textarea, select, .input, .text-input {
       $('messages').scrollTop = $('messages').scrollHeight;
     }
 
+    function normalizeProfileEnergy(value) {
+      const theme = value && typeof value === 'object' ? value : {};
+      return {
+        background: PROFILE_ENERGY_BACKGROUNDS.has(theme.background) ? theme.background : PROFILE_ENERGY_DEFAULT.background,
+        accent: PROFILE_ENERGY_ACCENTS.has(theme.accent) ? theme.accent : PROFILE_ENERGY_DEFAULT.accent,
+        motion: theme.motion !== false,
+        avatarGlow: theme.avatarGlow !== false
+      };
+    }
+
+    function applyEnergySurface(element, theme) {
+      if (!element) return;
+      const safe = normalizeProfileEnergy(theme);
+      element.classList.add('profile-energy-surface');
+      element.dataset.energyBg = safe.background;
+      element.dataset.energyAccent = safe.accent;
+      element.dataset.energyMotion = String(safe.motion);
+      element.dataset.energyAvatarGlow = String(safe.avatarGlow);
+    }
+
+    function applyEnergyAvatarGlow(element, enabled) {
+      if (!element) return;
+      element.classList.toggle('energy-avatar-glow', !!enabled);
+    }
+
+    function updateProfileEnergyControls(theme) {
+      draftProfileEnergy = normalizeProfileEnergy(theme);
+      document.querySelectorAll('[data-energy-bg]').forEach(button => {
+        if (!button.classList.contains('energy-background-choice')) return;
+        const selected = button.dataset.energyBg === draftProfileEnergy.background;
+        button.classList.toggle('selected', selected);
+        button.setAttribute('aria-pressed', String(selected));
+      });
+      document.querySelectorAll('.energy-accent-choice').forEach(button => {
+        const selected = button.dataset.energyAccent === draftProfileEnergy.accent;
+        button.classList.toggle('selected', selected);
+        button.setAttribute('aria-pressed', String(selected));
+      });
+      $('energyMotionToggle').checked = draftProfileEnergy.motion;
+      $('energyAvatarGlowToggle').checked = draftProfileEnergy.avatarGlow;
+      applyProfileEnergyPreview(draftProfileEnergy);
+    }
+
+    function applyProfileEnergyPreview(theme) {
+      const safe = normalizeProfileEnergy(theme);
+      applyEnergySurface($('profileEnergyPreview'), safe);
+      applyEnergySurface($('profileCardSurface'), safe);
+      applyEnergyAvatarGlow($('profileAvatar'), safe.avatarGlow);
+      applyEnergyAvatarGlow($('profileAvatarFallback'), safe.avatarGlow);
+      $('energyPreviewName').textContent = $('profileName').textContent || 'Твой профиль';
+      const previewImage = $('energyPreviewAvatar');
+      const previewFallback = $('energyPreviewAvatarFallback');
+      if (profileAvatarUrl) {
+        previewImage.src = profileAvatarUrl;
+        previewImage.hidden = false;
+        previewFallback.hidden = true;
+      } else {
+        previewImage.removeAttribute('src');
+        previewImage.hidden = true;
+        previewFallback.hidden = false;
+      }
+      previewImage.classList.toggle('energy-avatar-glow', safe.avatarGlow);
+      previewFallback.classList.toggle('energy-avatar-glow', safe.avatarGlow);
+    }
+
+    function setProfileEnergyDraft(patch) {
+      draftProfileEnergy = normalizeProfileEnergy({ ...draftProfileEnergy, ...patch });
+      updateProfileEnergyControls(draftProfileEnergy);
+      status('profileEnergyStatus', 'Предпросмотр обновлён. Нажми «Сохранить тему», чтобы применить изменения.');
+    }
+
+    async function loadProfileEnergy(userId) {
+      let theme = { ...PROFILE_ENERGY_DEFAULT };
+      try {
+        const { data, error } = await supabase.from('profiles').select('profile_theme').eq('id', userId).maybeSingle();
+        if (!error) theme = normalizeProfileEnergy(data?.profile_theme);
+        else console.warn('Настройка энергии профиля пока не загружена. Выполни profile-energy-setup.sql:', error.message);
+      } catch (error) {
+        console.warn('Не удалось загрузить тему профиля:', error?.message || error);
+      }
+      currentProfileEnergy = theme;
+      updateProfileEnergyControls(theme);
+      applyProfileEnergyPreview(theme);
+    }
+
+    async function saveProfileEnergy() {
+      if (!currentUser || !supabase) return;
+      const button = $('saveProfileEnergyButton');
+      button.disabled = true;
+      status('profileEnergyStatus', 'Сохраняем твою тему…');
+      const theme = normalizeProfileEnergy(draftProfileEnergy);
+      try {
+        const { error } = await supabase.from('profiles').update({ profile_theme: theme, updated_at: new Date().toISOString() }).eq('id', currentUser.id);
+        if (error) {
+          if (/profile_theme|column|schema cache/i.test(error.message || '')) {
+            throw new Error('Сначала выполни файл profile-energy-setup.sql в Supabase → SQL Editor, затем нажми «Сохранить тему» ещё раз. Подробности: ' + error.message);
+          }
+          throw error;
+        }
+        currentProfileEnergy = theme;
+        draftProfileEnergy = { ...theme };
+        applyProfileEnergyPreview(theme);
+        status('profileEnergyStatus', 'Тема сохранена! Она будет отображаться в твоём публичном профиле. 💜');
+      } catch (error) {
+        status('profileEnergyStatus', error?.message || 'Не удалось сохранить тему профиля.');
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    document.querySelectorAll('.energy-background-choice').forEach(button => {
+      button.addEventListener('click', () => setProfileEnergyDraft({ background: button.dataset.energyBg }));
+    });
+    document.querySelectorAll('.energy-accent-choice').forEach(button => {
+      button.addEventListener('click', () => setProfileEnergyDraft({ accent: button.dataset.energyAccent }));
+    });
+    $('energyMotionToggle').addEventListener('change', event => setProfileEnergyDraft({ motion: event.target.checked }));
+    $('energyAvatarGlowToggle').addEventListener('change', event => setProfileEnergyDraft({ avatarGlow: event.target.checked }));
+    $('saveProfileEnergyButton').addEventListener('click', saveProfileEnergy);
+    $('resetProfileEnergyButton').addEventListener('click', () => {
+      updateProfileEnergyControls(PROFILE_ENERGY_DEFAULT);
+      status('profileEnergyStatus', 'Стандартная тема выбрана. Нажми «Сохранить тему», чтобы применить её.');
+    });
+
     function setProfileAvatar(url) {
       const pairs = [
         [$('profileAvatar'), $('profileAvatarFallback')],
@@ -1989,6 +2336,7 @@ input, textarea, select, .input, .text-input {
       if (localAvatarPreviewUrl) URL.revokeObjectURL(localAvatarPreviewUrl);
       localAvatarPreviewUrl = URL.createObjectURL(file);
       setProfileAvatar(localAvatarPreviewUrl);
+      applyProfileEnergyPreview(draftProfileEnergy);
       status('profileStatus', 'Предпросмотр фото. Нажми «Сохранить профиль», чтобы загрузить его.');
     });
 
@@ -2048,6 +2396,7 @@ input, textarea, select, .input, .text-input {
         }
       }
       setProfileAvatar(profileAvatarUrl);
+      await loadProfileEnergy(user.id);
       status('profileStatus', '');
     }
 
@@ -2092,6 +2441,7 @@ input, textarea, select, .input, .text-input {
         if (authError) throw authError;
         profileAvatarUrl = avatarUrl;
         $('profileName').textContent = displayName;
+        $('energyPreviewName').textContent = displayName;
         $('sidebarName').textContent = displayName;
         $('profileUsername').textContent = username ? '@' + username : '@username не задан';
         $('profileBio').textContent = bio || 'Добавь информацию о себе';
@@ -2299,7 +2649,9 @@ input, textarea, select, .input, .text-input {
       if (!message) return 'Пока нет сообщений';
       let preview = String(message.content || '').trim();
       const attachmentLabels = { image: '📷 Фото', video: '🎬 Видео', audio: '🎙️ Голосовое сообщение' };
-      if (message.attachment_type && attachmentLabels[message.attachment_type]) {
+      if (message.attachment_type === 'file') {
+        preview = `📦 ${String(message.content || 'APK-файл').split(/[\\/]/).pop()}`;
+      } else if (message.attachment_type && attachmentLabels[message.attachment_type]) {
         preview = attachmentLabels[message.attachment_type];
       } else if (!preview && message.attachment_url) {
         preview = '📎 Вложение';
@@ -2703,13 +3055,15 @@ input, textarea, select, .input, .text-input {
     async function uploadChatFile(file, type) {
       if (!currentUser) throw new Error('Сначала войди в аккаунт.');
       if (!currentConversationId) throw new Error('Сначала открой нужный чат.');
-      const limits = { image: 12 * 1024 * 1024, video: 40 * 1024 * 1024, audio: 12 * 1024 * 1024 };
+      const limits = { image: 12 * 1024 * 1024, video: 40 * 1024 * 1024, audio: 12 * 1024 * 1024, file: 50 * 1024 * 1024 };
       const limit = limits[type] || 12 * 1024 * 1024;
-      if (file.size > limit) throw new Error(type === 'video' ? 'Видео должно быть до 40 МБ.' : type === 'image' ? 'Фото должно быть до 12 МБ.' : 'Голосовое должно быть до 12 МБ.');
+      if (file.size > limit) throw new Error(type === 'video' ? 'Видео должно быть до 40 МБ.' : type === 'image' ? 'Фото должно быть до 12 МБ.' : type === 'file' ? 'APK-файл должен быть до 50 МБ.' : 'Голосовое должно быть до 12 МБ.');
+      if (type === 'file' && !String(file.name || '').toLowerCase().endsWith('.apk')) throw new Error('Для отправки файла выбери Android-приложение с расширением .apk.');
       const ext = (file.name.split('.').pop() || (type === 'audio' ? 'webm' : type === 'video' ? 'mp4' : 'jpg')).replace(/[^a-z0-9]/gi, '').toLowerCase() || 'bin';
       const path = `${currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
       const bucket = supabase.storage.from('chat-media');
-      const { error: uploadError } = await bucket.upload(path, file, { upsert: false, contentType: file.type || 'application/octet-stream' });
+      const uploadContentType = type === 'file' ? 'application/vnd.android.package-archive' : (file.type || 'application/octet-stream');
+      const { error: uploadError } = await bucket.upload(path, file, { upsert: false, contentType: uploadContentType });
       if (uploadError) {
         if (/bucket not found/i.test(uploadError.message || '')) throw new Error('В Supabase не создан Storage bucket chat-media. Выполни SQL-файл для настройки вложений.');
         if (/row-level security|permission|not authorized/i.test(uploadError.message || '')) throw new Error('Supabase запретил загрузку в Storage. Проверь политики bucket chat-media и выполни SQL-файл для настройки вложений.');
@@ -2719,10 +3073,11 @@ input, textarea, select, .input, .text-input {
       const senderName = String(currentUser.user_metadata?.display_name || currentUser.email?.split('@')[0] || 'User').trim().slice(0, 40) || 'User';
       // messages.content in the original schema requires 1..2000 characters; an empty string rejects attachments.
       const labels = { image: '📷 Фото', video: '🎬 Видео', audio: '🎙️ Голосовое сообщение' };
+      const messageContent = type === 'file' ? String(file.name || 'PulseUp.apk').slice(0, 2000) : (labels[type] || 'Вложение');
       const { error: msgError } = await supabase.from('messages').insert({
         sender_id: currentUser.id,
         sender_name: senderName,
-        content: labels[type] || 'Вложение',
+        content: messageContent,
         conversation_id: currentConversationId,
         attachment_url: url,
         attachment_type: type
@@ -2736,7 +3091,25 @@ input, textarea, select, .input, .text-input {
       await loadMessages();
     }
     $('attachChatPhoto').onclick=()=>$('chatPhotoInput').click();
-    $('chatPhotoInput').addEventListener('change',async()=>{const file=$('chatPhotoInput').files?.[0];if(!file)return;const type=file.type.startsWith('image/')?'image':file.type.startsWith('video/')?'video':null;try{if(!type)throw new Error('Выбери изображение или видео.');if(type==='image'&&file.size>12*1024*1024)throw new Error('Фото должно быть до 12 МБ.');if(type==='video'&&file.size>40*1024*1024)throw new Error('Видео должно быть до 40 МБ.');status('chatStatus',type==='image'?'Отправляем фото…':'Отправляем видео…');await uploadChatFile(file,type);status('chatStatus',type==='image'?'Фото отправлено':'Видео отправлено');}catch(e){status('chatStatus','Не удалось отправить файл: '+e.message);}finally{$('chatPhotoInput').value='';}});
+    $('chatPhotoInput').addEventListener('change', async () => {
+      const file = $('chatPhotoInput').files?.[0];
+      if (!file) return;
+      const name = String(file.name || '').toLowerCase();
+      const type = file.type.startsWith('image/') ? 'image' : file.type.startsWith('video/') ? 'video' : name.endsWith('.apk') ? 'file' : null;
+      try {
+        if (!type) throw new Error('Выбери фото, видео или Android-приложение (.apk).');
+        if (type === 'image' && file.size > 12 * 1024 * 1024) throw new Error('Фото должно быть до 12 МБ.');
+        if (type === 'video' && file.size > 40 * 1024 * 1024) throw new Error('Видео должно быть до 40 МБ.');
+        if (type === 'file' && file.size > 50 * 1024 * 1024) throw new Error('APK-файл должен быть до 50 МБ.');
+        status('chatStatus', type === 'image' ? 'Отправляем фото…' : type === 'video' ? 'Отправляем видео…' : 'Отправляем APK-файл…');
+        await uploadChatFile(file, type);
+        status('chatStatus', type === 'image' ? 'Фото отправлено' : type === 'video' ? 'Видео отправлено' : 'APK-файл отправлен');
+      } catch (e) {
+        status('chatStatus', 'Не удалось отправить файл: ' + e.message);
+      } finally {
+        $('chatPhotoInput').value = '';
+      }
+    });
     let mediaRecorder=null, voiceChunks=[];
     $('recordVoiceButton').onclick=async()=>{const btn=$('recordVoiceButton');if(mediaRecorder?.state==='recording'){btn.disabled=true;mediaRecorder.stop();btn.textContent='🎙️';btn.title='Записать голосовое';return;}try{if(!currentConversationId)throw new Error('Сначала открой нужный чат.');if(location.protocol!=='https:'&&location.hostname!=='localhost'&&location.protocol!=='file:')throw new Error('Для микрофона открой сайт по HTTPS.');if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder)throw new Error('Запись голосовых не поддерживается этим браузером. Открой сайт по HTTPS и разреши микрофон.');const stream=await navigator.mediaDevices.getUserMedia({audio:true});const options=['audio/webm;codecs=opus','audio/ogg;codecs=opus','audio/mp4'].find(t=>MediaRecorder.isTypeSupported?.(t));mediaRecorder=options?new MediaRecorder(stream,{mimeType:options}):new MediaRecorder(stream);const recorder=mediaRecorder;voiceChunks=[];recorder.ondataavailable=e=>{if(e.data?.size)voiceChunks.push(e.data);};recorder.onerror=()=>status('chatStatus','Ошибка записи голосового. Попробуй ещё раз.');recorder.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());btn.disabled=false;const mime=recorder.mimeType||voiceChunks[0]?.type||'audio/webm';const blob=new Blob(voiceChunks,{type:mime});if(blob.size){const ext=mime.includes('mp4')?'m4a':mime.includes('ogg')?'ogg':'webm';const file=new File([blob],`voice-${Date.now()}.${ext}`,{type:mime});try{status('chatStatus','Отправляем голосовое…');await uploadChatFile(file,'audio');status('chatStatus','Голосовое отправлено');}catch(e){status('chatStatus','Не удалось отправить голосовое: '+e.message);}}};recorder.start(250);btn.textContent='⏹️';btn.title='Остановить запись и отправить';status('chatStatus','Запись… Нажми ⏹️, чтобы отправить.');}catch(e){status('chatStatus',e.message||'Нет доступа к микрофону. Разреши его в браузере.');}};
 
@@ -3349,6 +3722,18 @@ article.message::before, article.message::after {
     <button type="button" id="sitePhotoViewerClose" aria-label="Закрыть фотографию">×</button>
     <img id="sitePhotoViewerImage" alt="Фотография в полном размере">
   </div>
+
+<style id="pulseup-apk-attachment-style">
+  .chat-file-attachment{display:flex;align-items:center;gap:10px;width:min(100%,390px);max-width:100%;margin-top:9px;padding:10px;border:1px solid rgba(176,125,255,.38);border-radius:14px;background:linear-gradient(120deg,rgba(91,42,157,.26),rgba(20,17,48,.55));box-shadow:inset 0 0 18px rgba(146,81,255,.06)}
+  .chat-file-attachment-icon{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border-radius:11px;border:1px solid rgba(187,140,255,.42);background:linear-gradient(145deg,rgba(133,60,240,.42),rgba(42,31,91,.7));color:#e4ccff;font-size:11px;font-weight:900;letter-spacing:.04em}
+  .chat-file-attachment-copy{display:flex;flex:1;flex-direction:column;gap:4px;min-width:0}
+  .chat-file-attachment-name{overflow-wrap:anywhere;word-break:break-word;font-size:13px;color:#f6edff}
+  .chat-file-attachment-detail{color:#b9a8d6;font-size:11px}
+  .chat-file-attachment-download{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;padding:8px 10px;border:1px solid rgba(181,132,255,.45);border-radius:10px;background:rgba(112,62,206,.25);color:#eee1ff!important;text-decoration:none;font-size:12px;font-weight:750;white-space:nowrap}
+  .chat-file-attachment-download:hover{background:rgba(139,77,238,.42)}
+  @media(max-width:420px){.chat-file-attachment{gap:8px;padding:8px}.chat-file-attachment-icon{width:36px;height:36px;flex-basis:36px}.chat-file-attachment-download{padding:7px 8px;font-size:11px}}
+</style>
+
 </body>
 
 
