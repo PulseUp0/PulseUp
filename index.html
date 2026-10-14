@@ -952,6 +952,7 @@ input, textarea, select, .input, .text-input {
   .theme-swatch-graphite{background:linear-gradient(140deg,#14171c,#333a44)}.theme-swatch-graphite i{background:rgba(225,232,242,.2)}.theme-swatch-graphite i:nth-child(3){background:linear-gradient(90deg,#aeb8c7,#617fa7)}
   .theme-swatch-sunset{background:radial-gradient(circle at 80% 15%,#c84e4c,transparent 38%),linear-gradient(140deg,#1a0916,#4b1a2b)}.theme-swatch-sunset i:nth-child(3){background:linear-gradient(90deg,#ffb15b,#ec4f82)}
   .theme-swatch-gothic{background:radial-gradient(circle at 75% 18%,#6e1b35,transparent 40%),linear-gradient(140deg,#080508,#210913 65%,#090509)}.theme-swatch-gothic i{background:rgba(230,208,215,.28)}.theme-swatch-gothic i:nth-child(3){background:linear-gradient(90deg,#a82e4e,#c8b7c0,#601326)}
+  .theme-swatch-japanese{background:radial-gradient(circle at 72% 17%,#e94f70 0 9%,rgba(233,79,112,.18) 10%,transparent 34%),linear-gradient(140deg,#071020,#29152f 56%,#080b19)}.theme-swatch-japanese i{background:rgba(250,212,233,.35)}.theme-swatch-japanese i:nth-child(3){background:linear-gradient(90deg,#ee597d,#9b69c5,#527bc4)}
   .site-theme-card-copy{display:flex;flex-direction:column;gap:4px;min-width:0}.site-theme-card-copy strong{font-size:13px;font-weight:800}.site-theme-card-copy small{font-size:11px;line-height:1.35;color:var(--muted)}
   .site-theme-check{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;border:1px solid var(--border);color:transparent;font-size:12px;font-weight:900}
   .site-theme-card[aria-pressed="true"] .site-theme-check{background:var(--accent);color:#fff;border-color:var(--accent)}
@@ -1096,6 +1097,81 @@ input, textarea, select, .input, .text-input {
   body[data-site-theme="gothic"] .site-theme-card[data-site-theme-choice="gothic"] .site-theme-swatch {position:relative}
   body[data-site-theme="gothic"] .site-theme-card[data-site-theme-choice="gothic"] .site-theme-swatch::after {content:"✝";position:absolute;right:9px;top:3px;color:#d7c4cb;font-size:21px;text-shadow:0 0 10px rgba(183,48,79,.8)}
   @media(max-width:760px) { body[data-site-theme="gothic"] .app-sidebar::after {display:none} }
+</style>
+
+
+<style id="pulseup-japanese-theme-details">
+  /* Japanese night theme: indigo night, sakura petals, moon, torii and distant pagodas. */
+  body[data-site-theme="japanese"] {
+    background-color:#080b19!important;
+    background-image:radial-gradient(ellipse at 50% 10%,rgba(88,44,109,.34),transparent 50%),linear-gradient(180deg,#080b19 0%,#120d25 56%,#070b16 100%)!important;
+    background-attachment:fixed!important;background-position:center!important;color:#f7f0fa!important;
+  }
+  body[data-site-theme="japanese"]::before {
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.72;
+    background-image:linear-gradient(180deg,rgba(5,7,18,.16),rgba(5,7,18,.5)),url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAwIDEwMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIHNsaWNlIj4KPGRlZnM+CiA8bGluZWFyR3JhZGllbnQgaWQ9InNreSIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIHN0b3AtY29sb3I9IiMwNTA5MTgiLz48c3RvcCBvZmZzZXQ9Ii40OCIgc3RvcC1jb2xvcj0iIzFhMTAyYiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzA4MGQxYiIvPjwvbGluZWFyR3JhZGllbnQ+CiA8cmFkaWFsR3JhZGllbnQgaWQ9Im1vb24iPjxzdG9wIHN0b3AtY29sb3I9IiNmZmIwYzYiLz48c3RvcCBvZmZzZXQ9Ii41NSIgc3RvcC1jb2xvcj0iI2VkNTg3OCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzhkMjU0ZiIvPjwvcmFkaWFsR3JhZGllbnQ+CiA8bGluZWFyR3JhZGllbnQgaWQ9IndhdGVyIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iIzI2MTMyZCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzA2MGIxOCIvPjwvbGluZWFyR3JhZGllbnQ+CiA8ZyBpZD0iYmxvc3NvbSIgZmlsbD0iI2Y3YTVjMSIgc3Ryb2tlPSIjNzUxZjU1IiBzdHJva2Utd2lkdGg9IjEuNCI+PGVsbGlwc2UgY3k9Ii04IiByeD0iNSIgcnk9IjgiLz48ZWxsaXBzZSB0cmFuc2Zvcm09InJvdGF0ZSg3MikiIGN5PSItOCIgcng9IjUiIHJ5PSI4Ii8+PGVsbGlwc2UgdHJhbnNmb3JtPSJyb3RhdGUoMTQ0KSIgY3k9Ii04IiByeD0iNSIgcnk9IjgiLz48ZWxsaXBzZSB0cmFuc2Zvcm09InJvdGF0ZSgyMTYpIiBjeT0iLTgiIHJ4PSI1IiByeT0iOCIvPjxlbGxpcHNlIHRyYW5zZm9ybT0icm90YXRlKDI4OCkiIGN5PSItOCIgcng9IjUiIHJ5PSI4Ii8+PGNpcmNsZSByPSIzIiBmaWxsPSIjZmZkNmE4IiBzdHJva2U9Im5vbmUiLz48L2c+CiA8ZyBpZD0icGFnb2RhIiBmaWxsPSIjMDcwYTE1IiBzdHJva2U9IiM1MTMwNDQiIHN0cm9rZS13aWR0aD0iMyI+PHBhdGggZD0iTS02NSAwTDAtMjUgNjUgMCA0NSA0SC00NVoiLz48cGF0aCBkPSJNLTUyLTIxTDAtNDMgNTItMjEgMzgtMTdILTM4WiIvPjxwYXRoIGQ9Ik0tMzktMzlMMC01OCAzOS0zOSAyOC0zNUgtMjhaIi8+PHBhdGggZD0iTS04LTU4TDAtNzkgOC01OFoiLz48cGF0aCBkPSJNLTQ4IDVINDhWNzBILTQ4WiIvPjwvZz4KPC9kZWZzPgo8cmVjdCB3aWR0aD0iMTYwMCIgaGVpZ2h0PSIxMDAwIiBmaWxsPSJ1cmwoI3NreSkiLz4KPGNpcmNsZSBjeD0iMTE2MCIgY3k9IjIxMCIgcj0iMTAwIiBmaWxsPSIjYTcyZTU5IiBvcGFjaXR5PSIuMTYiLz48Y2lyY2xlIGN4PSIxMTYwIiBjeT0iMjEwIiByPSI3MiIgZmlsbD0idXJsKCNtb29uKSIgb3BhY2l0eT0iLjkiLz4KPGcgZmlsbD0iI2VhYzdmMSIgb3BhY2l0eT0iLjQ1Ij48Y2lyY2xlIGN4PSIyNTAiIGN5PSIxNzUiIHI9IjIiLz48Y2lyY2xlIGN4PSIzOTAiIGN5PSIxMTUiIHI9IjEuNyIvPjxjaXJjbGUgY3g9IjkwMCIgY3k9IjE0MCIgcj0iMiIvPjxjaXJjbGUgY3g9IjEzNDAiIGN5PSIzMTAiIHI9IjEuNSIvPjxjaXJjbGUgY3g9IjcyMCIgY3k9IjIyNSIgcj0iMS40Ii8+PGNpcmNsZSBjeD0iMTAyMCIgY3k9Ijg1IiByPSIxLjYiLz48L2c+CjxwYXRoIGQ9Ik0wIDUyMEwxMzAgNDIwIDIyMCA0NjAgMzcwIDMyMCA0OTAgNDIwIDY1MCAzMDAgODAwIDQzMyA5MzAgMzMwIDEwNjAgNDI1IDExOTAgMzAwIDEzMzAgNDIwIDE0NjAgMzQ1IDE2MDAgNDMwVjc1MEgwWiIgZmlsbD0iIzE3MjEzYyIgb3BhY2l0eT0iLjg1Ii8+CjxwYXRoIGQ9Ik0wIDYwMEwxNTAgNDk1IDI2MCA1MzAgNDEwIDQzNSA1NjAgNTIwIDc0MCA0MDUgODkwIDUxNSAxMDMwIDQyNSAxMTYwIDQ5MCAxMzMwIDQwMCAxNDYwIDQ5NSAxNjAwIDQyNVY3NzBIMFoiIGZpbGw9IiMxMDE4MmYiLz4KPHBhdGggZD0iTTAgNjYwUTE4MCA2MTAgMzUwIDY2NVQ3MDAgNjUwVDEwNDAgNjU1VDEzODAgNjMwVDE2MDAgNjUwVjEwMDBIMFoiIGZpbGw9InVybCgjd2F0ZXIpIi8+CjxnIG9wYWNpdHk9Ii40NSIgc3Ryb2tlPSIjOWU0ZTg1IiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiPjxwYXRoIGQ9Ik0xMDIwIDY4NXExNDAgMjAgMzAwIDBNMTA4MCA3MTVxMTAwIDEyIDIyMCAwTTEwMDAgNzU1cTE0MCAxMiAzMjAgME0xMTAwIDc5MnE4MCA4IDE3MCAwTTgwIDczMHExMjAgMTQgMjYwIDBNMTMwIDc3MHExMDAgMTAgMjMwIDAiLz48L2c+CjwhLS0gZGlzdGFudCB0ZW1wbGUgc2lsaG91ZXR0ZXMgLS0+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEzOTAgNTAwKSBzY2FsZSgxLjE1KSI+PHVzZSBocmVmPSIjcGFnb2RhIi8+PC9nPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyMjAgNTY1KSBzY2FsZSguNzIpIj48dXNlIGhyZWY9IiNwYWdvZGEiLz48L2c+CjwhLS0gdG9yaWkgZ2F0ZSAtLT4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoODAwIDU1MCkiIGZpbGw9IiNiZDNkNjUiIHN0cm9rZT0iIzNkMTYzYiIgc3Ryb2tlLXdpZHRoPSI1Ij48cGF0aCBkPSJNLTExMi03OFEwLTEwMCAxMTItNzhMMTI2LTU4UTAtNzYtMTI2LTU4WiIvPjxwYXRoIGQ9Ik0tOTMtNjFILTc1Vjc0SC05M1oiLz48cGF0aCBkPSJNNzUtNjFIOTNWNzRINzVaIi8+PHBhdGggZD0iTS0xMTItMzhIMTEyVi0yMEgtMTEyWiIvPjxwYXRoIGQ9Ik0tNzItMjBINzJWLTdILTcyWiIgb3BhY2l0eT0iLjkiLz48L2c+CjwhLS0gc2hvcmVsaW5lIGxhbnRlcm5zIC0tPgo8ZyBzdHJva2U9IiM3YjMxNWQiIHN0cm9rZS13aWR0aD0iMyI+PHBhdGggZD0iTTkyIDU0MHY5Mk0xNTA4IDUyMHYxMTIiLz48cmVjdCB4PSI3NyIgeT0iNTU3IiB3aWR0aD0iMzAiIGhlaWdodD0iNDIiIHJ4PSI1IiBmaWxsPSIjZWQ3MTkxIi8+PHJlY3QgeD0iMTQ5MyIgeT0iNTM3IiB3aWR0aD0iMzAiIGhlaWdodD0iNDIiIHJ4PSI1IiBmaWxsPSIjZWQ3MTkxIi8+PC9nPjxnIGZpbGw9IiNmZmMxZDMiIG9wYWNpdHk9Ii42NSI+PGNpcmNsZSBjeD0iOTIiIGN5PSI1NzgiIHI9IjE0Ii8+PGNpcmNsZSBjeD0iMTUwOCIgY3k9IjU1OCIgcj0iMTQiLz48L2c+CjwhLS0gY2hlcnJ5IGJyYW5jaGVzIGFyb3VuZCB0aGUgcGVyaW1ldGVyIC0tPgo8ZyBmaWxsPSJub25lIiBzdHJva2U9IiMzNTIwM2IiIHN0cm9rZS13aWR0aD0iMTgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+PHBhdGggZD0iTS0yMCA3MFExNDAgMTA1IDIyNSAyNVQ0NzAgMzBNMCAxNTBRMTEwIDE4NSAxNTAgMTE1VDI5MCA5Nk0xNjIwIDc1UTE0NzAgMTE1IDE0MDAgMTVUMTE3MCA0NU0xNjAwIDE3NVExNTA1IDIyMCAxNDUwIDE1MFQxMzIwIDEyMCIvPjwvZz4KPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWM0MjZkIiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+PHBhdGggZD0iTS0yMCA3MFExNDAgMTA1IDIyNSAyNVQ0NzAgMzBNMCAxNTBRMTEwIDE4NSAxNTAgMTE1VDI5MCA5Nk0xNjIwIDc1UTE0NzAgMTE1IDE0MDAgMTVUMTE3MCA0NU0xNjAwIDE3NVExNTA1IDIyMCAxNDUwIDE1MFQxMzIwIDEyMCIvPjwvZz4KPGc+CiA8dXNlIGhyZWY9IiNibG9zc29tIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg1MiA0NCkgc2NhbGUoMS41KSIvPjx1c2UgaHJlZj0iI2Jsb3Nzb20iIHRyYW5zZm9ybT0idHJhbnNsYXRlKDExMCAxMDQpIHNjYWxlKDEuMikiLz48dXNlIGhyZWY9IiNibG9zc29tIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxODUgNjMpIHNjYWxlKDEuNDUpIi8+PHVzZSBocmVmPSIjYmxvc3NvbSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjM1IDIwKSBzY2FsZSgxLjcpIi8+PHVzZSBocmVmPSIjYmxvc3NvbSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzE4IDQyKSBzY2FsZSgxLjM1KSIvPjx1c2UgaHJlZj0iI2Jsb3Nzb20iIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM5MCAyNCkgc2NhbGUoMS40KSIvPjx1c2UgaHJlZj0iI2Jsb3Nzb20iIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE1MzYgNjQpIHNjYWxlKDEuNDUpIi8+PHVzZSBocmVmPSIjYmxvc3NvbSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTQ4MCAxMTkpIHNjYWxlKDEuMikiLz48dXNlIGhyZWY9IiNibG9zc29tIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNDAxIDU4KSBzY2FsZSgxLjQpIi8+PHVzZSBocmVmPSIjYmxvc3NvbSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTMzNiAyNSkgc2NhbGUoMS40NSkiLz48dXNlIGhyZWY9IiNibG9zc29tIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMjQ1IDUzKSBzY2FsZSgxLjI1KSIvPgogPHVzZSBocmVmPSIjYmxvc3NvbSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTUgMzU1KSBzY2FsZSguNzUpIi8+PHVzZSBocmVmPSIjYmxvc3NvbSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTU0NSAzOTUpIHNjYWxlKC43KSIvPjx1c2UgaHJlZj0iI2Jsb3Nzb20iIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEzOCA4NTUpIHNjYWxlKDEuMDUpIi8+PHVzZSBocmVmPSIjYmxvc3NvbSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTQ1NSA4ODApIHNjYWxlKDEuMSkiLz48dXNlIGhyZWY9IiNibG9zc29tIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzMTAgOTMwKSBzY2FsZSguOCkiLz48dXNlIGhyZWY9IiNibG9zc29tIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMjkwIDk0NSkgc2NhbGUoLjkpIi8+CjwvZz4KPGcgZmlsbD0iI2Y3YTVjMSIgb3BhY2l0eT0iLjciPjxlbGxpcHNlIGN4PSI1MDAiIGN5PSIyNDAiIHJ4PSI3IiByeT0iMyIgdHJhbnNmb3JtPSJyb3RhdGUoMjggNTAwIDI0MCkiLz48ZWxsaXBzZSBjeD0iNjEwIiBjeT0iMzYwIiByeD0iOCIgcnk9IjMiIHRyYW5zZm9ybT0icm90YXRlKC0yMiA2MTAgMzYwKSIvPjxlbGxpcHNlIGN4PSIxMDUwIiBjeT0iMzc1IiByeD0iNyIgcnk9IjMiIHRyYW5zZm9ybT0icm90YXRlKDM0IDEwNTAgMzc1KSIvPjxlbGxpcHNlIGN4PSIxMjIwIiBjeT0iNDY1IiByeD0iOCIgcnk9IjMiIHRyYW5zZm9ybT0icm90YXRlKC0xNSAxMjIwIDQ2NSkiLz48ZWxsaXBzZSBjeD0iNDA1IiBjeT0iNTY1IiByeD0iNyIgcnk9IjMiIHRyYW5zZm9ybT0icm90YXRlKDQyIDQwNSA1NjUpIi8+PC9nPgo8cmVjdCB3aWR0aD0iMTYwMCIgaGVpZ2h0PSIxMDAwIiBmaWxsPSJ1cmwoI3NoYWRlKSIgb3BhY2l0eT0iLjA1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJzaGFkZSI+PHN0b3Agb2Zmc2V0PSIuMiIgc3RvcC1jb2xvcj0iIzAwMCIgc3RvcC1vcGFjaXR5PSIwIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDAwIiBzdG9wLW9wYWNpdHk9Ii44NSIvPjwvcmFkaWFsR3JhZGllbnQ+PC9kZWZzPgo8L3N2Zz4=");
+    background-repeat:no-repeat!important;background-size:cover!important;background-position:center center!important;
+    filter:saturate(.9) contrast(1.04);
+  }
+  body[data-site-theme="japanese"] .card,
+  body[data-site-theme="japanese"] .app-sidebar,
+  body[data-site-theme="japanese"] .auth-form-panel,
+  body[data-site-theme="japanese"] .profile-card,
+  body[data-site-theme="japanese"] .profile-editor,
+  body[data-site-theme="japanese"] .person-card,
+  body[data-site-theme="japanese"] .post-card,
+  body[data-site-theme="japanese"] .music-pane,
+  body[data-site-theme="japanese"] .conversation-list,
+  body[data-site-theme="japanese"] .public-profile-panel,
+  body[data-site-theme="japanese"] .profile-energy-panel,
+  body[data-site-theme="japanese"] .post-composer,
+  body[data-site-theme="japanese"] .site-theme-dialog {
+    color:var(--text)!important;background-color:rgba(8,11,25,.84)!important;
+    border-color:rgba(228,83,124,.34)!important;
+    box-shadow:0 0 0 1px rgba(106,57,124,.16),0 14px 42px rgba(0,0,12,.30),inset 0 0 24px rgba(215,65,111,.035)!important;
+    backdrop-filter:blur(13px);-webkit-backdrop-filter:blur(13px);
+  }
+  body[data-site-theme="japanese"] h1,
+  body[data-site-theme="japanese"] h2,
+  body[data-site-theme="japanese"] h3,
+  body[data-site-theme="japanese"] label,
+  body[data-site-theme="japanese"] .sidebar-brand,
+  body[data-site-theme="japanese"] .profile-name,
+  body[data-site-theme="japanese"] .post-author {color:#fff0f6!important;text-shadow:0 0 12px rgba(230,77,124,.12)}
+  body[data-site-theme="japanese"] .muted,
+  body[data-site-theme="japanese"] .hero-copy,
+  body[data-site-theme="japanese"] .form-note,
+  body[data-site-theme="japanese"] .conversation-row-subtitle,
+  body[data-site-theme="japanese"] .post-meta {color:#bdaecb!important}
+  body[data-site-theme="japanese"] input,
+  body[data-site-theme="japanese"] textarea,
+  body[data-site-theme="japanese"] select,
+  body[data-site-theme="japanese"] .search-input {background:rgba(7,11,26,.94)!important;background-color:rgba(7,11,26,.94)!important;border-color:rgba(228,83,124,.38)!important;color:#f7f0fa!important;box-shadow:inset 0 0 12px rgba(51,31,79,.15)!important}
+  body[data-site-theme="japanese"] .primary,
+  body[data-site-theme="japanese"] .message.mine {background:linear-gradient(115deg,#c63d68,#6f3d99)!important;color:#fff7fb!important;border:1px solid rgba(255,178,204,.3)!important;box-shadow:0 0 18px rgba(201,54,108,.18)!important}
+  body[data-site-theme="japanese"] .secondary,
+  body[data-site-theme="japanese"] .message,
+  body[data-site-theme="japanese"] .message-bubble,
+  body[data-site-theme="japanese"] .chat-bubble,
+  body[data-site-theme="japanese"] .composer {background:rgba(38,21,51,.88)!important;background-color:rgba(38,21,51,.88)!important;border-color:rgba(228,83,124,.30)!important;color:#f7f0fa!important}
+  body[data-site-theme="japanese"] .nav-button,
+  body[data-site-theme="japanese"] .mobile-nav-button {color:#c4b8d6!important;border-color:transparent!important}
+  body[data-site-theme="japanese"] .nav-button.active,
+  body[data-site-theme="japanese"] .mobile-nav-button.active {color:#fff3f8!important;background:linear-gradient(110deg,rgba(201,54,108,.26),rgba(99,66,164,.26))!important;border-color:rgba(228,83,124,.32)!important;box-shadow:0 0 17px rgba(201,54,108,.13)!important}
+  body[data-site-theme="japanese"] .logo {background:linear-gradient(135deg,#e75d82,#714db0)!important;box-shadow:0 0 23px rgba(201,54,108,.22)!important;border:1px solid rgba(255,198,218,.3)}
+  body[data-site-theme="japanese"] .mobile-bottom-nav {background:rgba(7,10,23,.96)!important;border-top-color:rgba(228,83,124,.34)!important;box-shadow:0 -8px 26px rgba(0,0,12,.38)!important}
+  body[data-site-theme="japanese"] .site-theme-open {background:rgba(18,13,35,.90)!important;border-color:rgba(228,83,124,.38)!important;color:#fff0f6!important}
+  body[data-site-theme="japanese"] .site-theme-dialog {background:rgba(7,10,23,.97)!important}
+  body[data-site-theme="japanese"] .site-theme-eyebrow {color:#f080a0!important}
+  body[data-site-theme="japanese"] .sidebar-brand::after {content:" 桜";font-size:.75em;color:#f080a0;text-shadow:0 0 8px rgba(228,83,124,.44)}
+  body[data-site-theme="japanese"] .app-sidebar::after {content:"✿　❀　⛩";position:absolute;right:14px;bottom:10px;color:rgba(238,142,177,.34);font-size:12px;letter-spacing:2px;pointer-events:none}
+  body[data-site-theme="japanese"] .site-theme-card[data-site-theme-choice="japanese"] .site-theme-swatch {position:relative}
+  body[data-site-theme="japanese"] .site-theme-card[data-site-theme-choice="japanese"] .site-theme-swatch::after {content:"桜";position:absolute;right:8px;top:3px;color:#ffd2e0;font-size:16px;font-weight:800;text-shadow:0 0 9px rgba(238,75,125,.8)}
+  @media(max-width:760px) {
+    body[data-site-theme="japanese"]::before {background-position:center center!important;opacity:.52}
+    body[data-site-theme="japanese"] .app-sidebar::after {display:none}
+  }
+  @media(prefers-reduced-motion:reduce) {body[data-site-theme="japanese"]::before {transition:none!important;animation:none!important}}
 </style>
 
 </head>
@@ -1447,6 +1523,10 @@ input, textarea, select, .input, .text-input {
         <button type="button" class="site-theme-card" data-site-theme-choice="gothic" aria-pressed="false">
           <span class="site-theme-swatch theme-swatch-gothic"><i></i><i></i><i></i></span>
           <span class="site-theme-card-copy"><strong>Готика</strong><small>Чёрный бархат, бордо, серебро, кресты и шипы</small></span><span class="site-theme-check" aria-hidden="true">✓</span>
+        </button>
+        <button type="button" class="site-theme-card" data-site-theme-choice="japanese" aria-pressed="false">
+          <span class="site-theme-swatch theme-swatch-japanese"><i></i><i></i><i></i></span>
+          <span class="site-theme-card-copy"><strong>Японский</strong><small>Сакура, красная луна, пагоды и ночной индиго</small></span><span class="site-theme-check" aria-hidden="true">✓</span>
         </button>
       </div>
       <div class="site-theme-dialog-foot">
@@ -3480,7 +3560,8 @@ input, textarea, select, .input, .text-input {
       rose: { label:'Розовый свет', bg:'#f7eef8', panel:'rgba(255,251,255,.88)', panelSolid:'rgba(255,250,255,.98)', text:'#43264d', muted:'#886f8f', accent:'#e45caf', accent2:'#8d69ed', border:'rgba(197,119,177,.34)', field:'rgba(255,255,255,.96)', bubble:'rgba(239,221,249,.96)', shadow:'0 16px 48px rgba(94,54,101,.12)', themeColor:'#f7eef8' },
       graphite: { label:'Графит', bg:'#101419', panel:'rgba(28,32,39,.94)', panelSolid:'#1c2027', text:'#f1f4f8', muted:'#a6aeb9', accent:'#a9b7cb', accent2:'#617fa7', border:'rgba(168,183,202,.22)', field:'rgba(18,22,29,.94)', bubble:'rgba(53,61,73,.92)', shadow:'0 15px 38px rgba(0,0,0,.25)', themeColor:'#101419' },
       sunset: { label:'Закат', bg:'#190b16', panel:'rgba(42,20,29,.93)', panelSolid:'#2a141d', text:'#fff2e7', muted:'#cfaaab', accent:'#ff9f55', accent2:'#ee4e8f', border:'rgba(255,156,104,.32)', field:'rgba(25,10,20,.88)', bubble:'rgba(92,32,50,.85)', shadow:'0 18px 55px rgba(68,11,33,.28)', themeColor:'#190b16' },
-      gothic: { label:'Готика', bg:'#0a0609', panel:'rgba(25,8,15,.86)', panelSolid:'#17070d', text:'#f7eaf0', muted:'#c4a5b0', accent:'#b52e4d', accent2:'#711a33', border:'rgba(182,62,88,.40)', field:'rgba(15,5,10,.92)', bubble:'rgba(58,17,32,.88)', shadow:'0 18px 60px rgba(4,0,3,.42)', themeColor:'#0a0609' }
+      gothic: { label:'Готика', bg:'#0a0609', panel:'rgba(25,8,15,.86)', panelSolid:'#17070d', text:'#f7eaf0', muted:'#c4a5b0', accent:'#b52e4d', accent2:'#711a33', border:'rgba(182,62,88,.40)', field:'rgba(15,5,10,.92)', bubble:'rgba(58,17,32,.88)', shadow:'0 18px 60px rgba(4,0,3,.42)', themeColor:'#0a0609' },
+      japanese: { label:'Японский', bg:'#080b19', panel:'rgba(9,13,30,.86)', panelSolid:'rgba(8,11,25,.98)', text:'#f7f0fa', muted:'#b7abc9', accent:'#ed5878', accent2:'#7059bf', border:'rgba(228,83,124,.35)', field:'rgba(8,12,27,.93)', bubble:'rgba(69,25,64,.84)', shadow:'0 18px 60px rgba(0,0,12,.38)', themeColor:'#080b19' }
     };
     const SITE_THEME_STORAGE_KEY = 'pulseup-site-theme-v1';
     const siteThemeModal = document.getElementById('siteThemeModal');
