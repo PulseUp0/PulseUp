@@ -1540,7 +1540,169 @@ input, textarea, select, .input, .text-input {
     </section>
   </div>
 
-  <script type="module">
+  <!-- Theme chooser is initialized independently from Supabase so appearance remains usable while auth/network boot is slow. -->
+<script id="pulseup-site-theme-controller">
+    // Site-wide appearance presets; separate from the per-profile "Энергия профиля" settings.
+    const SITE_THEME_PRESETS = {
+      neon: { label: 'Неон', bg:'#050113', panel:'rgba(13,7,39,.88)', panelSolid:'#10072d', text:'#fbf7ff', muted:'#b9a8df', accent:'#c000ff', accent2:'#713bff', border:'rgba(157,58,255,.42)', field:'rgba(18,8,48,.92)', bubble:'rgba(46,20,101,.88)', shadow:'0 18px 60px rgba(30,0,90,.22)', themeColor:'#080416' },
+      glass: { label:'Матовое стекло', bg:'#10111e', panel:'rgba(31,31,52,.66)', panelSolid:'rgba(25,26,43,.97)', text:'#f4f2ff', muted:'#b7b4d2', accent:'#a69cff', accent2:'#687fda', border:'rgba(180,179,235,.28)', field:'rgba(19,21,37,.72)', bubble:'rgba(65,65,99,.7)', shadow:'0 18px 52px rgba(2,4,19,.22)', themeColor:'#10111e' },
+      ocean: { label:'Океан', bg:'#03111d', panel:'rgba(4,28,45,.91)', panelSolid:'#061b2b', text:'#eafaff', muted:'#8db5c8', accent:'#40d9e8', accent2:'#367bff', border:'rgba(86,209,233,.32)', field:'rgba(2,17,32,.88)', bubble:'rgba(8,61,83,.83)', shadow:'0 18px 52px rgba(0,18,30,.3)', themeColor:'#03111d' },
+      rose: { label:'Розовый свет', bg:'#f7eef8', panel:'rgba(255,251,255,.88)', panelSolid:'rgba(255,250,255,.98)', text:'#43264d', muted:'#886f8f', accent:'#e45caf', accent2:'#8d69ed', border:'rgba(197,119,177,.34)', field:'rgba(255,255,255,.96)', bubble:'rgba(239,221,249,.96)', shadow:'0 16px 48px rgba(94,54,101,.12)', themeColor:'#f7eef8' },
+      graphite: { label:'Графит', bg:'#101419', panel:'rgba(28,32,39,.94)', panelSolid:'#1c2027', text:'#f1f4f8', muted:'#a6aeb9', accent:'#a9b7cb', accent2:'#617fa7', border:'rgba(168,183,202,.22)', field:'rgba(18,22,29,.94)', bubble:'rgba(53,61,73,.92)', shadow:'0 15px 38px rgba(0,0,0,.25)', themeColor:'#101419' },
+      sunset: { label:'Закат', bg:'#190b16', panel:'rgba(42,20,29,.93)', panelSolid:'#2a141d', text:'#fff2e7', muted:'#cfaaab', accent:'#ff9f55', accent2:'#ee4e8f', border:'rgba(255,156,104,.32)', field:'rgba(25,10,20,.88)', bubble:'rgba(92,32,50,.85)', shadow:'0 18px 55px rgba(68,11,33,.28)', themeColor:'#190b16' },
+      gothic: { label:'Готика', bg:'#0a0609', panel:'rgba(25,8,15,.86)', panelSolid:'#17070d', text:'#f7eaf0', muted:'#c4a5b0', accent:'#b52e4d', accent2:'#711a33', border:'rgba(182,62,88,.40)', field:'rgba(15,5,10,.92)', bubble:'rgba(58,17,32,.88)', shadow:'0 18px 60px rgba(4,0,3,.42)', themeColor:'#0a0609' },
+      japanese: { label:'Японский', bg:'#080b19', panel:'rgba(9,13,30,.86)', panelSolid:'rgba(8,11,25,.98)', text:'#f7f0fa', muted:'#b7abc9', accent:'#ed5878', accent2:'#7059bf', border:'rgba(228,83,124,.35)', field:'rgba(8,12,27,.93)', bubble:'rgba(69,25,64,.84)', shadow:'0 18px 60px rgba(0,0,12,.38)', themeColor:'#080b19' },
+      westeros: { label:'Вестерос', bg:'#080b0d', panel:'rgba(8,11,13,.93)', panelSolid:'rgba(9,12,14,.98)', text:'#eee4cf', muted:'#b5ad9e', accent:'#b72f2b', accent2:'#8e683b', border:'rgba(184,146,87,.42)', field:'rgba(7,10,12,.94)', bubble:'rgba(46,30,23,.92)', shadow:'0 18px 58px rgba(0,0,0,.48)', themeColor:'#080b0d' }
+    };
+    // Theme-aware glyph sets: navigation and key profile controls change symbols with the selected style.
+    const SITE_THEME_ICON_PRESETS = {
+      neon: { logo:'P', brand:'💜', theme:'🎨', profile:'👤', posts:'📰', chat:'💬', friends:'👥', music:'🎵', search:'🔎', energy:'✦', background:'✦', effects:'☼', avatar:'◉' },
+      glass: { logo:'◈', brand:'◈', theme:'◐', profile:'◉', posts:'▤', chat:'◌', friends:'♧', music:'♫', search:'⌕', energy:'✧', background:'◈', effects:'☼', avatar:'◉' },
+      ocean: { logo:'⚓', brand:'🌊', theme:'🌊', profile:'🫧', posts:'🌊', chat:'🐚', friends:'🐟', music:'♫', search:'⚓', energy:'≈', background:'🌊', effects:'〰', avatar:'◉' },
+      rose: { logo:'♡', brand:'💗', theme:'🌷', profile:'♡', posts:'🌸', chat:'💌', friends:'💕', music:'♫', search:'⌕', energy:'✿', background:'🌸', effects:'✧', avatar:'♡' },
+      graphite: { logo:'◆', brand:'◆', theme:'◈', profile:'◉', posts:'▤', chat:'▣', friends:'♧', music:'♫', search:'⌕', energy:'◆', background:'▤', effects:'✧', avatar:'◉' },
+      sunset: { logo:'☼', brand:'☀', theme:'🌅', profile:'☼', posts:'🌇', chat:'✉', friends:'☀', music:'♫', search:'⌕', energy:'☼', background:'☼', effects:'✺', avatar:'◉' },
+      gothic: { logo:'†', brand:'†', theme:'✝', profile:'♜', posts:'📜', chat:'✉', friends:'⚜', music:'♬', search:'⌕', energy:'✝', background:'✝', effects:'☽', avatar:'♜' },
+      japanese: { logo:'桜', brand:'桜', theme:'⛩', profile:'人', posts:'桜', chat:'文', friends:'⛩', music:'琴', search:'月', energy:'桜', background:'桜', effects:'花', avatar:'人' },
+      westeros: { logo:'⚜', brand:'🐺', theme:'♜', profile:'♛', posts:'📜', chat:'✉', friends:'⚔', music:'♬', search:'⌕', energy:'♜', background:'⚜', effects:'✦', avatar:'♛' }
+    };
+    const SITE_THEME_BACKGROUND_GLYPHS = {
+      neon:{cosmos:'✦',sunset:'☀',ocean:'≈',aurora:'✧',neon:'✦',void:'◯'},
+      glass:{cosmos:'◈',sunset:'◒',ocean:'◉',aurora:'◌',neon:'◆',void:'◯'},
+      ocean:{cosmos:'✦',sunset:'☀',ocean:'🐚',aurora:'🌊',neon:'◉',void:'◯'},
+      rose:{cosmos:'✿',sunset:'♡',ocean:'🌸',aurora:'❀',neon:'✧',void:'☾'},
+      graphite:{cosmos:'◈',sunset:'▰',ocean:'◉',aurora:'⌁',neon:'◆',void:'●'},
+      sunset:{cosmos:'☼',sunset:'🌅',ocean:'≈',aurora:'✺',neon:'✦',void:'☾'},
+      gothic:{cosmos:'✝',sunset:'☽',ocean:'♜',aurora:'✠',neon:'†',void:'◯'},
+      japanese:{cosmos:'桜',sunset:'夕',ocean:'波',aurora:'⛩',neon:'ネ',void:'月'},
+      westeros:{cosmos:'🐺',sunset:'♜',ocean:'❄',aurora:'🐉',neon:'♛',void:'†'}
+    };
+    const SITE_THEME_ACCENT_GLYPHS = {
+      neon:{violet:'✦',pink:'♡',blue:'◉',cyan:'◌',gold:'☼'},
+      glass:{violet:'◈',pink:'◇',blue:'◉',cyan:'◌',gold:'✧'},
+      ocean:{violet:'≈',pink:'🐚',blue:'🌊',cyan:'⚓',gold:'☼'},
+      rose:{violet:'✧',pink:'♡',blue:'◉',cyan:'❀',gold:'☼'},
+      graphite:{violet:'◆',pink:'◇',blue:'◉',cyan:'◌',gold:'✦'},
+      sunset:{violet:'☾',pink:'🌅',blue:'≈',cyan:'✺',gold:'☼'},
+      gothic:{violet:'†',pink:'♦',blue:'☽',cyan:'✠',gold:'⚜'},
+      japanese:{violet:'月',pink:'桜',blue:'波',cyan:'⛩',gold:'提'},
+      westeros:{violet:'🐺',pink:'🐉',blue:'❄',cyan:'⚓',gold:'♛'}
+    };
+    const SITE_THEME_ACCENT_LABELS = {
+      gothic:{violet:'Сумеречный аметист',pink:'Кровавый рубин',blue:'Ледяной свет',cyan:'Лунное серебро',gold:'Старая бронза'},
+      japanese:{violet:'Ночная лаванда',pink:'Цвет сакуры',blue:'Лунный синий',cyan:'Морская бирюза',gold:'Свет фонаря'},
+      westeros:{violet:'Дом Старков — серебро и лёд',pink:'Дом Таргариенов — кровь и огонь',blue:'Северная зима',cyan:'Морская сталь',gold:'Дом Ланнистеров — золото'}
+    };
+    const SITE_THEME_TAGLINES = {
+      neon:'Stay close. Chat freely.', glass:'Спокойное место для общения.', ocean:'Плыви к своим.', rose:'Больше света, больше общения.', graphite:'Просто. Надёжно. Рядом.', sunset:'Общение в тёплых тонах.', gothic:'Свои люди, тёмная романтика.', japanese:'つながる。もっと近くに。', westeros:'Сила в общении.'
+    };
+    const SITE_THEME_ENERGY_LABELS = {
+      gothic: {cosmos:'Чёрная часовня', sunset:'Кровавая луна', ocean:'Терновый сад', aurora:'Багровый туман', neon:'Бархатная ночь', void:'Пустота'},
+      japanese: {cosmos:'Киото', sunset:'Красная луна', ocean:'Тихая бухта', aurora:'Сакура', neon:'Ночной Токио', void:'Туманное озеро'},
+      westeros: {cosmos:'Винтерфелл', sunset:'Королевская гавань', ocean:'Холодные земли', aurora:'Драконья гавань', neon:'Драконий камень', void:'Стена'}
+    };
+    const SITE_THEME_ENERGY_SUBTITLES = {
+      gothic:'Создай свой мрачный уголок.', japanese:'Создай свой уголок под сакурой.', westeros:'Выбери свой герб и земли.'
+    };
+    const SITE_THEME_PREVIEW_SUBTITLES = {
+      gothic:'Твоё место среди теней.', japanese:'Твой тихий сад сакуры.', westeros:'Твой замок в Семи королевствах.'
+    };
+    function setThemedTitle(element, iconKey, label) {
+      if (!element) return;
+      element.replaceChildren();
+      const icon = document.createElement('span');
+      icon.className = 'theme-icon';
+      icon.dataset.themeIcon = iconKey;
+      icon.setAttribute('aria-hidden', 'true');
+      const key = document.body.dataset.siteTheme || 'neon';
+      icon.textContent = (SITE_THEME_ICON_PRESETS[key] || SITE_THEME_ICON_PRESETS.neon)[iconKey] || '';
+      const text = document.createElement('span');
+      text.textContent = label;
+      element.append(icon, document.createTextNode(' '), text);
+    }
+
+    const SITE_THEME_STORAGE_KEY = 'pulseup-site-theme-v1';
+    const siteThemeModal = document.getElementById('siteThemeModal');
+    const siteThemeOpenButton = document.getElementById('siteThemeOpen');
+    const siteThemeCloseButton = document.getElementById('siteThemeClose');
+    const siteThemeCurrentLabel = document.getElementById('siteThemeCurrent');
+    const siteThemeButtons = Array.from(document.querySelectorAll('[data-site-theme-choice]'));
+
+    function applySiteTheme(themeKey, save = true) {
+      const key = SITE_THEME_PRESETS[themeKey] ? themeKey : 'neon';
+      const theme = SITE_THEME_PRESETS[key];
+      document.body.dataset.siteTheme = key;
+      const variables = {
+        '--bg': theme.bg, '--panel': theme.panel, '--panel-solid': theme.panelSolid,
+        '--text': theme.text, '--muted': theme.muted, '--accent': theme.accent,
+        '--accent2': theme.accent2, '--border': theme.border, '--field': theme.field,
+        '--bubble': theme.bubble, '--shadow': theme.shadow
+      };
+      Object.entries(variables).forEach(([name, value]) => document.documentElement.style.setProperty(name, value));
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+      if (metaThemeColor) metaThemeColor.content = theme.themeColor;
+      siteThemeButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.siteThemeChoice === key)));
+      const iconSet = SITE_THEME_ICON_PRESETS[key] || SITE_THEME_ICON_PRESETS.neon;
+      document.querySelectorAll('[data-theme-icon]').forEach(icon => {
+        const iconName = icon.dataset.themeIcon;
+        if (Object.prototype.hasOwnProperty.call(iconSet, iconName)) icon.textContent = iconSet[iconName];
+      });
+      document.querySelectorAll('.energy-background-choice').forEach(button => {
+        const label = button.querySelector('.energy-bg-label') || button.querySelector('span:last-child');
+        if (label) {
+          if (!label.dataset.defaultThemeLabel) label.dataset.defaultThemeLabel = label.textContent.trim();
+          label.textContent = (SITE_THEME_ENERGY_LABELS[key] && SITE_THEME_ENERGY_LABELS[key][button.dataset.energyBg]) || label.dataset.defaultThemeLabel;
+        }
+        const swatch = button.querySelector('.energy-background-swatch');
+        if (swatch) swatch.dataset.themeGlyph = (SITE_THEME_BACKGROUND_GLYPHS[key] || SITE_THEME_BACKGROUND_GLYPHS.neon)[button.dataset.energyBg] || '';
+      });
+      document.querySelectorAll('.energy-accent-choice').forEach(button => {
+        const swatch = button.querySelector('span');
+        if (!swatch) return;
+        const value = button.dataset.energyAccent;
+        swatch.dataset.themeGlyph = (SITE_THEME_ACCENT_GLYPHS[key] || SITE_THEME_ACCENT_GLYPHS.neon)[value] || '';
+        if (!button.dataset.defaultAriaLabel) button.dataset.defaultAriaLabel = button.getAttribute('aria-label') || value;
+        const themedLabel = SITE_THEME_ACCENT_LABELS[key] && SITE_THEME_ACCENT_LABELS[key][value];
+        button.setAttribute('aria-label', themedLabel || button.dataset.defaultAriaLabel);
+        button.title = themedLabel || button.dataset.defaultAriaLabel;
+      });
+      const tagline = document.getElementById('siteTagline');
+      if (tagline) tagline.textContent = SITE_THEME_TAGLINES[key] || SITE_THEME_TAGLINES.neon;
+      const energySubtitle = document.getElementById('profileEnergySubtitle');
+      if (energySubtitle) energySubtitle.textContent = SITE_THEME_ENERGY_SUBTITLES[key] || 'Создай свой космический уголок';
+      const energyPreviewSubtitle = document.getElementById('profileEnergyPreviewSubtitle');
+      if (energyPreviewSubtitle) energyPreviewSubtitle.textContent = SITE_THEME_PREVIEW_SUBTITLES[key] || 'Твой космический уголок';
+      if (siteThemeCurrentLabel) siteThemeCurrentLabel.textContent = 'Сейчас: ' + theme.label;
+      if (save) {
+        try { localStorage.setItem(SITE_THEME_STORAGE_KEY, key); }
+        catch (error) { console.warn('Не удалось сохранить стиль сайта в браузере:', error); }
+      }
+    }
+
+    function openSiteThemeChooser() {
+      if (!siteThemeModal) return;
+      siteThemeModal.hidden = false;
+      document.body.style.overflow = 'hidden';
+      siteThemeCloseButton?.focus();
+    }
+    function closeSiteThemeChooser() {
+      if (!siteThemeModal) return;
+      siteThemeModal.hidden = true;
+      document.body.style.overflow = '';
+      siteThemeOpenButton?.focus();
+    }
+    siteThemeOpenButton?.addEventListener('click', openSiteThemeChooser);
+    siteThemeCloseButton?.addEventListener('click', closeSiteThemeChooser);
+    siteThemeModal?.addEventListener('click', event => { if (event.target === siteThemeModal) closeSiteThemeChooser(); });
+    siteThemeButtons.forEach(button => button.addEventListener('click', () => applySiteTheme(button.dataset.siteThemeChoice)));
+    document.addEventListener('keydown', event => { if (event.key === 'Escape' && siteThemeModal && !siteThemeModal.hidden) closeSiteThemeChooser(); });
+    let savedSiteTheme = 'neon';
+    try { savedSiteTheme = localStorage.getItem(SITE_THEME_STORAGE_KEY) || 'neon'; }
+    catch (error) { console.warn('Не удалось прочитать сохранённую тему сайта:', error); }
+    applySiteTheme(savedSiteTheme, false);
+</script>
+
+<script type="module">
 
     import { createClient } from
 
@@ -3556,164 +3718,7 @@ input, textarea, select, .input, .text-input {
       viewerImage.addEventListener('click', closeViewer);
     })();
 
-    // Site-wide appearance presets; separate from the per-profile "Энергия профиля" settings.
-    const SITE_THEME_PRESETS = {
-      neon: { label: 'Неон', bg:'#050113', panel:'rgba(13,7,39,.88)', panelSolid:'#10072d', text:'#fbf7ff', muted:'#b9a8df', accent:'#c000ff', accent2:'#713bff', border:'rgba(157,58,255,.42)', field:'rgba(18,8,48,.92)', bubble:'rgba(46,20,101,.88)', shadow:'0 18px 60px rgba(30,0,90,.22)', themeColor:'#080416' },
-      glass: { label:'Матовое стекло', bg:'#10111e', panel:'rgba(31,31,52,.66)', panelSolid:'rgba(25,26,43,.97)', text:'#f4f2ff', muted:'#b7b4d2', accent:'#a69cff', accent2:'#687fda', border:'rgba(180,179,235,.28)', field:'rgba(19,21,37,.72)', bubble:'rgba(65,65,99,.7)', shadow:'0 18px 52px rgba(2,4,19,.22)', themeColor:'#10111e' },
-      ocean: { label:'Океан', bg:'#03111d', panel:'rgba(4,28,45,.91)', panelSolid:'#061b2b', text:'#eafaff', muted:'#8db5c8', accent:'#40d9e8', accent2:'#367bff', border:'rgba(86,209,233,.32)', field:'rgba(2,17,32,.88)', bubble:'rgba(8,61,83,.83)', shadow:'0 18px 52px rgba(0,18,30,.3)', themeColor:'#03111d' },
-      rose: { label:'Розовый свет', bg:'#f7eef8', panel:'rgba(255,251,255,.88)', panelSolid:'rgba(255,250,255,.98)', text:'#43264d', muted:'#886f8f', accent:'#e45caf', accent2:'#8d69ed', border:'rgba(197,119,177,.34)', field:'rgba(255,255,255,.96)', bubble:'rgba(239,221,249,.96)', shadow:'0 16px 48px rgba(94,54,101,.12)', themeColor:'#f7eef8' },
-      graphite: { label:'Графит', bg:'#101419', panel:'rgba(28,32,39,.94)', panelSolid:'#1c2027', text:'#f1f4f8', muted:'#a6aeb9', accent:'#a9b7cb', accent2:'#617fa7', border:'rgba(168,183,202,.22)', field:'rgba(18,22,29,.94)', bubble:'rgba(53,61,73,.92)', shadow:'0 15px 38px rgba(0,0,0,.25)', themeColor:'#101419' },
-      sunset: { label:'Закат', bg:'#190b16', panel:'rgba(42,20,29,.93)', panelSolid:'#2a141d', text:'#fff2e7', muted:'#cfaaab', accent:'#ff9f55', accent2:'#ee4e8f', border:'rgba(255,156,104,.32)', field:'rgba(25,10,20,.88)', bubble:'rgba(92,32,50,.85)', shadow:'0 18px 55px rgba(68,11,33,.28)', themeColor:'#190b16' },
-      gothic: { label:'Готика', bg:'#0a0609', panel:'rgba(25,8,15,.86)', panelSolid:'#17070d', text:'#f7eaf0', muted:'#c4a5b0', accent:'#b52e4d', accent2:'#711a33', border:'rgba(182,62,88,.40)', field:'rgba(15,5,10,.92)', bubble:'rgba(58,17,32,.88)', shadow:'0 18px 60px rgba(4,0,3,.42)', themeColor:'#0a0609' },
-      japanese: { label:'Японский', bg:'#080b19', panel:'rgba(9,13,30,.86)', panelSolid:'rgba(8,11,25,.98)', text:'#f7f0fa', muted:'#b7abc9', accent:'#ed5878', accent2:'#7059bf', border:'rgba(228,83,124,.35)', field:'rgba(8,12,27,.93)', bubble:'rgba(69,25,64,.84)', shadow:'0 18px 60px rgba(0,0,12,.38)', themeColor:'#080b19' },
-      westeros: { label:'Вестерос', bg:'#080b0d', panel:'rgba(8,11,13,.93)', panelSolid:'rgba(9,12,14,.98)', text:'#eee4cf', muted:'#b5ad9e', accent:'#b72f2b', accent2:'#8e683b', border:'rgba(184,146,87,.42)', field:'rgba(7,10,12,.94)', bubble:'rgba(46,30,23,.92)', shadow:'0 18px 58px rgba(0,0,0,.48)', themeColor:'#080b0d' }
-    };
-    // Theme-aware glyph sets: navigation and key profile controls change symbols with the selected style.
-    const SITE_THEME_ICON_PRESETS = {
-      neon: { logo:'P', brand:'💜', theme:'🎨', profile:'👤', posts:'📰', chat:'💬', friends:'👥', music:'🎵', search:'🔎', energy:'✦', background:'✦', effects:'☼', avatar:'◉' },
-      glass: { logo:'◈', brand:'◈', theme:'◐', profile:'◉', posts:'▤', chat:'◌', friends:'♧', music:'♫', search:'⌕', energy:'✧', background:'◈', effects:'☼', avatar:'◉' },
-      ocean: { logo:'⚓', brand:'🌊', theme:'🌊', profile:'🫧', posts:'🌊', chat:'🐚', friends:'🐟', music:'♫', search:'⚓', energy:'≈', background:'🌊', effects:'〰', avatar:'◉' },
-      rose: { logo:'♡', brand:'💗', theme:'🌷', profile:'♡', posts:'🌸', chat:'💌', friends:'💕', music:'♫', search:'⌕', energy:'✿', background:'🌸', effects:'✧', avatar:'♡' },
-      graphite: { logo:'◆', brand:'◆', theme:'◈', profile:'◉', posts:'▤', chat:'▣', friends:'♧', music:'♫', search:'⌕', energy:'◆', background:'▤', effects:'✧', avatar:'◉' },
-      sunset: { logo:'☼', brand:'☀', theme:'🌅', profile:'☼', posts:'🌇', chat:'✉', friends:'☀', music:'♫', search:'⌕', energy:'☼', background:'☼', effects:'✺', avatar:'◉' },
-      gothic: { logo:'†', brand:'†', theme:'✝', profile:'♜', posts:'📜', chat:'✉', friends:'⚜', music:'♬', search:'⌕', energy:'✝', background:'✝', effects:'☽', avatar:'♜' },
-      japanese: { logo:'桜', brand:'桜', theme:'⛩', profile:'人', posts:'桜', chat:'文', friends:'⛩', music:'琴', search:'月', energy:'桜', background:'桜', effects:'花', avatar:'人' },
-      westeros: { logo:'⚜', brand:'🐺', theme:'♜', profile:'♛', posts:'📜', chat:'✉', friends:'⚔', music:'♬', search:'⌕', energy:'♜', background:'⚜', effects:'✦', avatar:'♛' }
-    };
-    const SITE_THEME_BACKGROUND_GLYPHS = {
-      neon:{cosmos:'✦',sunset:'☀',ocean:'≈',aurora:'✧',neon:'✦',void:'◯'},
-      glass:{cosmos:'◈',sunset:'◒',ocean:'◉',aurora:'◌',neon:'◆',void:'◯'},
-      ocean:{cosmos:'✦',sunset:'☀',ocean:'🐚',aurora:'🌊',neon:'◉',void:'◯'},
-      rose:{cosmos:'✿',sunset:'♡',ocean:'🌸',aurora:'❀',neon:'✧',void:'☾'},
-      graphite:{cosmos:'◈',sunset:'▰',ocean:'◉',aurora:'⌁',neon:'◆',void:'●'},
-      sunset:{cosmos:'☼',sunset:'🌅',ocean:'≈',aurora:'✺',neon:'✦',void:'☾'},
-      gothic:{cosmos:'✝',sunset:'☽',ocean:'♜',aurora:'✠',neon:'†',void:'◯'},
-      japanese:{cosmos:'桜',sunset:'夕',ocean:'波',aurora:'⛩',neon:'ネ',void:'月'},
-      westeros:{cosmos:'🐺',sunset:'♜',ocean:'❄',aurora:'🐉',neon:'♛',void:'†'}
-    };
-    const SITE_THEME_ACCENT_GLYPHS = {
-      neon:{violet:'✦',pink:'♡',blue:'◉',cyan:'◌',gold:'☼'},
-      glass:{violet:'◈',pink:'◇',blue:'◉',cyan:'◌',gold:'✧'},
-      ocean:{violet:'≈',pink:'🐚',blue:'🌊',cyan:'⚓',gold:'☼'},
-      rose:{violet:'✧',pink:'♡',blue:'◉',cyan:'❀',gold:'☼'},
-      graphite:{violet:'◆',pink:'◇',blue:'◉',cyan:'◌',gold:'✦'},
-      sunset:{violet:'☾',pink:'🌅',blue:'≈',cyan:'✺',gold:'☼'},
-      gothic:{violet:'†',pink:'♦',blue:'☽',cyan:'✠',gold:'⚜'},
-      japanese:{violet:'月',pink:'桜',blue:'波',cyan:'⛩',gold:'提'},
-      westeros:{violet:'🐺',pink:'🐉',blue:'❄',cyan:'⚓',gold:'♛'}
-    };
-    const SITE_THEME_ACCENT_LABELS = {
-      gothic:{violet:'Сумеречный аметист',pink:'Кровавый рубин',blue:'Ледяной свет',cyan:'Лунное серебро',gold:'Старая бронза'},
-      japanese:{violet:'Ночная лаванда',pink:'Цвет сакуры',blue:'Лунный синий',cyan:'Морская бирюза',gold:'Свет фонаря'},
-      westeros:{violet:'Дом Старков — серебро и лёд',pink:'Дом Таргариенов — кровь и огонь',blue:'Северная зима',cyan:'Морская сталь',gold:'Дом Ланнистеров — золото'}
-    };
-    const SITE_THEME_TAGLINES = {
-      neon:'Stay close. Chat freely.', glass:'Спокойное место для общения.', ocean:'Плыви к своим.', rose:'Больше света, больше общения.', graphite:'Просто. Надёжно. Рядом.', sunset:'Общение в тёплых тонах.', gothic:'Свои люди, тёмная романтика.', japanese:'つながる。もっと近くに。', westeros:'Сила в общении.'
-    };
-    const SITE_THEME_ENERGY_LABELS = {
-      gothic: {cosmos:'Чёрная часовня', sunset:'Кровавая луна', ocean:'Терновый сад', aurora:'Багровый туман', neon:'Бархатная ночь', void:'Пустота'},
-      japanese: {cosmos:'Киото', sunset:'Красная луна', ocean:'Тихая бухта', aurora:'Сакура', neon:'Ночной Токио', void:'Туманное озеро'},
-      westeros: {cosmos:'Винтерфелл', sunset:'Королевская гавань', ocean:'Холодные земли', aurora:'Драконья гавань', neon:'Драконий камень', void:'Стена'}
-    };
-    const SITE_THEME_ENERGY_SUBTITLES = {
-      gothic:'Создай свой мрачный уголок.', japanese:'Создай свой уголок под сакурой.', westeros:'Выбери свой герб и земли.'
-    };
-    const SITE_THEME_PREVIEW_SUBTITLES = {
-      gothic:'Твоё место среди теней.', japanese:'Твой тихий сад сакуры.', westeros:'Твой замок в Семи королевствах.'
-    };
-    function setThemedTitle(element, iconKey, label) {
-      if (!element) return;
-      element.replaceChildren();
-      const icon = document.createElement('span');
-      icon.className = 'theme-icon';
-      icon.dataset.themeIcon = iconKey;
-      icon.setAttribute('aria-hidden', 'true');
-      const key = document.body.dataset.siteTheme || 'neon';
-      icon.textContent = (SITE_THEME_ICON_PRESETS[key] || SITE_THEME_ICON_PRESETS.neon)[iconKey] || '';
-      const text = document.createElement('span');
-      text.textContent = label;
-      element.append(icon, document.createTextNode(' '), text);
-    }
 
-    const SITE_THEME_STORAGE_KEY = 'pulseup-site-theme-v1';
-    const siteThemeModal = document.getElementById('siteThemeModal');
-    const siteThemeOpenButton = document.getElementById('siteThemeOpen');
-    const siteThemeCloseButton = document.getElementById('siteThemeClose');
-    const siteThemeCurrentLabel = document.getElementById('siteThemeCurrent');
-    const siteThemeButtons = Array.from(document.querySelectorAll('[data-site-theme-choice]'));
-
-    function applySiteTheme(themeKey, save = true) {
-      const key = SITE_THEME_PRESETS[themeKey] ? themeKey : 'neon';
-      const theme = SITE_THEME_PRESETS[key];
-      document.body.dataset.siteTheme = key;
-      const variables = {
-        '--bg': theme.bg, '--panel': theme.panel, '--panel-solid': theme.panelSolid,
-        '--text': theme.text, '--muted': theme.muted, '--accent': theme.accent,
-        '--accent2': theme.accent2, '--border': theme.border, '--field': theme.field,
-        '--bubble': theme.bubble, '--shadow': theme.shadow
-      };
-      Object.entries(variables).forEach(([name, value]) => document.documentElement.style.setProperty(name, value));
-      const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-      if (metaThemeColor) metaThemeColor.content = theme.themeColor;
-      siteThemeButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.siteThemeChoice === key)));
-      const iconSet = SITE_THEME_ICON_PRESETS[key] || SITE_THEME_ICON_PRESETS.neon;
-      document.querySelectorAll('[data-theme-icon]').forEach(icon => {
-        const iconName = icon.dataset.themeIcon;
-        if (Object.prototype.hasOwnProperty.call(iconSet, iconName)) icon.textContent = iconSet[iconName];
-      });
-      document.querySelectorAll('.energy-background-choice').forEach(button => {
-        const label = button.querySelector('.energy-bg-label') || button.querySelector('span:last-child');
-        if (label) {
-          if (!label.dataset.defaultThemeLabel) label.dataset.defaultThemeLabel = label.textContent.trim();
-          label.textContent = (SITE_THEME_ENERGY_LABELS[key] && SITE_THEME_ENERGY_LABELS[key][button.dataset.energyBg]) || label.dataset.defaultThemeLabel;
-        }
-        const swatch = button.querySelector('.energy-background-swatch');
-        if (swatch) swatch.dataset.themeGlyph = (SITE_THEME_BACKGROUND_GLYPHS[key] || SITE_THEME_BACKGROUND_GLYPHS.neon)[button.dataset.energyBg] || '';
-      });
-      document.querySelectorAll('.energy-accent-choice').forEach(button => {
-        const swatch = button.querySelector('span');
-        if (!swatch) return;
-        const value = button.dataset.energyAccent;
-        swatch.dataset.themeGlyph = (SITE_THEME_ACCENT_GLYPHS[key] || SITE_THEME_ACCENT_GLYPHS.neon)[value] || '';
-        if (!button.dataset.defaultAriaLabel) button.dataset.defaultAriaLabel = button.getAttribute('aria-label') || value;
-        const themedLabel = SITE_THEME_ACCENT_LABELS[key] && SITE_THEME_ACCENT_LABELS[key][value];
-        button.setAttribute('aria-label', themedLabel || button.dataset.defaultAriaLabel);
-        button.title = themedLabel || button.dataset.defaultAriaLabel;
-      });
-      const tagline = document.getElementById('siteTagline');
-      if (tagline) tagline.textContent = SITE_THEME_TAGLINES[key] || SITE_THEME_TAGLINES.neon;
-      const energySubtitle = document.getElementById('profileEnergySubtitle');
-      if (energySubtitle) energySubtitle.textContent = SITE_THEME_ENERGY_SUBTITLES[key] || 'Создай свой космический уголок';
-      const energyPreviewSubtitle = document.getElementById('profileEnergyPreviewSubtitle');
-      if (energyPreviewSubtitle) energyPreviewSubtitle.textContent = SITE_THEME_PREVIEW_SUBTITLES[key] || 'Твой космический уголок';
-      if (siteThemeCurrentLabel) siteThemeCurrentLabel.textContent = 'Сейчас: ' + theme.label;
-      if (save) {
-        try { localStorage.setItem(SITE_THEME_STORAGE_KEY, key); }
-        catch (error) { console.warn('Не удалось сохранить стиль сайта в браузере:', error); }
-      }
-    }
-
-    function openSiteThemeChooser() {
-      if (!siteThemeModal) return;
-      siteThemeModal.hidden = false;
-      document.body.style.overflow = 'hidden';
-      siteThemeCloseButton?.focus();
-    }
-    function closeSiteThemeChooser() {
-      if (!siteThemeModal) return;
-      siteThemeModal.hidden = true;
-      document.body.style.overflow = '';
-      siteThemeOpenButton?.focus();
-    }
-    siteThemeOpenButton?.addEventListener('click', openSiteThemeChooser);
-    siteThemeCloseButton?.addEventListener('click', closeSiteThemeChooser);
-    siteThemeModal?.addEventListener('click', event => { if (event.target === siteThemeModal) closeSiteThemeChooser(); });
-    siteThemeButtons.forEach(button => button.addEventListener('click', () => applySiteTheme(button.dataset.siteThemeChoice)));
-    document.addEventListener('keydown', event => { if (event.key === 'Escape' && siteThemeModal && !siteThemeModal.hidden) closeSiteThemeChooser(); });
-    let savedSiteTheme = 'neon';
-    try { savedSiteTheme = localStorage.getItem(SITE_THEME_STORAGE_KEY) || 'neon'; }
-    catch (error) { console.warn('Не удалось прочитать сохранённую тему сайта:', error); }
-    applySiteTheme(savedSiteTheme, false);
 
 </script>
 
